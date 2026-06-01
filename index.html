@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DIGI · Simulador de Elite</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --orange: #FF5A00;
+    --orange-dim: #cc4800;
+    --dark: #0A0C10;
+    --dark2: #111318;
+    --dark3: #181C24;
+    --card: #1A1F2B;
+    --border: #252A36;
+    --text: #E8EAF0;
+    --muted: #6B7280;
+    --success: #22C55E;
+    --warn: #F59E0B;
+    --danger: #EF4444;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    background: var(--dark);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ── NOISE OVERLAY ── */
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 0; opacity: 0.5;
+  }
+
+  /* ── SCREEN SYSTEM ── */
+  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
+  .screen.active { display: flex; flex-direction: column; }
+
+  /* ── HEADER ── */
+  .header {
+    padding: 18px 24px;
+    display: flex; align-items: center; justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,12,16,0.9);
+    backdrop-filter: blur(12px);
+    position: sticky; top: 0; z-index: 100;
+  }
+  .logo { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 4px; color: var(--orange); }
+  .logo span { color: var(--text); opacity: 0.4; font-size: 13px; font-family: 'DM Sans'; letter-spacing: 1px; display: block; margin-top: -4px; }
+  .stats-bar { display: flex; gap: 20px; }
+  .stat { text-align: center; }
+  .stat-val { font-family: 'Bebas Neue'; font-size: 22px; color: var(--orange); }
+  .stat-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+
+  /* ── HOME SCREEN ── */
+  #home {
+    align-items: center; justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,90,0,0.12) 0%, transparent 70%);
+    padding: 40px 24px;
+  }
+  .home-inner { max-width: 600px; width: 100%; text-align: center; }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,90,0,0.15);
+    border: 1px solid rgba(255,90,0,0.3);
+    color: var(--orange);
+    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
+    padding: 6px 16px; border-radius: 2px; margin-bottom: 28px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue'; font-size: clamp(52px, 10vw, 88px);
+    line-height: 0.9; letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+  .hero-title .accent { color: var(--orange); }
+  .hero-sub {
+    color: var(--muted); font-size: 15px; line-height: 1.6;
+    margin-bottom: 48px; max-width: 440px; margin-left: auto; margin-right: auto;
+  }
+  .modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+  .mode-card {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 20px 16px; cursor: pointer;
+    transition: all 0.2s; text-align: left;
+    position: relative; overflow: hidden;
+  }
+  .mode-card::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: var(--orange); transform: scaleX(0); transition: transform 0.2s;
+  }
+  .mode-card:hover { border-color: var(--orange); transform: translateY(-2px); }
+  .mode-card:hover::before { transform: scaleX(1); }
+  .mode-icon { font-size: 28px; margin-bottom: 10px; }
+  .mode-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .mode-desc { font-size: 12px; color: var(--muted); line-height: 1.4; }
+  .mode-card.featured { grid-column: 1/-1; background: linear-gradient(135deg, rgba(255,90,0,0.1), var(--card)); border-color: rgba(255,90,0,0.4); }
+
+  /* ── BTN ── */
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--orange); color: #fff;
+    font-family: 'DM Sans'; font-weight: 600; font-size: 14px; letter-spacing: 1px;
+    padding: 14px 28px; border: none; border-radius: 4px; cursor: pointer;
+    transition: all 0.2s; text-transform: uppercase;
+  }
+  .btn:hover { background: var(--orange-dim); transform: translateY(-1px); }
+  .btn-ghost {
+    background: transparent; border: 1px solid var(--border);
+    color: var(--muted);
+  }
+  .btn-ghost:hover { border-color: var(--text); color: var(--text); background: transparent; }
+  .btn-sm { padding: 9px 18px; font-size: 12px; }
+  .btn-full { width: 100%; justify-content: center; }
+
+  /* ── SIMULATION SCREEN ── */
+  #simulation { flex-direction: column; }
+  .sim-layout {
+    display: grid; grid-template-columns: 260px 1fr;
+    gap: 0; flex: 1; height: calc(100vh - 65px);
+  }
+
+  /* ── SIDEBAR ── */
+  .sidebar {
+    background: var(--dark2); border-right: 1px solid var(--border);
+    padding: 20px 16px; display: flex; flex-direction: column; gap: 20px;
+    overflow-y: auto;
+  }
+  .sidebar-section { }
+  .sidebar-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
+  .client-card {
+    background: var(--dark3); border: 1px solid var(--border);
+    border-radius: 6px; padding: 14px;
+  }
+  .client-name { font-weight: 600; font-size: 15px; margin-bottom: 4px; }
+  .client-type {
+    display: inline-block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase;
+    padding: 3px 8px; border-radius: 2px; margin-bottom: 10px;
+  }
+  .type-desconfiado { background: rgba(239,68,68,0.15); color: #EF4444; }
+  .type-apressado { background: rgba(245,158,11,0.15); color: #F59E0B; }
+  .type-racional { background: rgba(59,130,246,0.15); color: #60A5FA; }
+  .type-indeciso { background: rgba(168,85,247,0.15); color: #A78BFA; }
+  .client-info { font-size: 12px; color: var(--muted); line-height: 1.7; }
+  .client-info span { color: var(--text); }
+
+  .funnel-steps { display: flex; flex-direction: column; gap: 6px; }
+  .funnel-step {
+    display: flex; align-items: center; gap: 10px;
+    padding: 8px 10px; border-radius: 4px;
+    font-size: 12px; color: var(--muted);
+    background: var(--dark3); border: 1px solid transparent;
+    transition: all 0.3s;
+  }
+  .funnel-step.done { border-color: var(--success); color: var(--success); }
+  .funnel-step.active { border-color: var(--orange); color: var(--text); background: rgba(255,90,0,0.08); }
+  .funnel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); flex-shrink: 0; transition: all 0.3s; }
+  .funnel-step.done .funnel-dot { background: var(--success); }
+  .funnel-step.active .funnel-dot { background: var(--orange); box-shadow: 0 0 8px var(--orange); }
+
+  .score-bar { }
+  .score-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 6px; }
+  .score-label span:last-child { color: var(--orange); font-weight: 600; }
+  .score-track { background: var(--dark3); border-radius: 2px; height: 4px; overflow: hidden; }
+  .score-fill { height: 100%; background: linear-gradient(90deg, var(--orange), #FF8A40); border-radius: 2px; transition: width 0.5s ease; }
+
+  /* ── CHAT AREA ── */
+  .chat-area {
+    display: flex; flex-direction: column;
+    background: var(--dark);
+  }
+  .chat-messages {
+    flex: 1; overflow-y: auto; padding: 24px 28px;
+    display: flex; flex-direction: column; gap: 16px;
+  }
+  .chat-messages::-webkit-scrollbar { width: 4px; }
+  .chat-messages::-webkit-scrollbar-track { background: transparent; }
+  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .msg { display: flex; gap: 12px; max-width: 78%; animation: fadeUp 0.3s ease; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
+  .msg-avatar {
+    width: 36px; height: 36px; border-radius: 50%; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 700;
+  }
+  .msg.client .msg-avatar { background: var(--card); border: 1px solid var(--border); }
+  .msg.user .msg-avatar { background: var(--orange); color: #fff; }
+  .msg.system .msg-avatar { background: rgba(34,197,94,0.15); border: 1px solid rgba(34,197,94,0.3); font-size: 16px; }
+  .msg-bubble {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 12px 16px;
+    font-size: 14px; line-height: 1.6;
+  }
+  .msg.user .msg-bubble { background: rgba(255,90,0,0.12); border-color: rgba(255,90,0,0.25); }
+  .msg.system .msg-bubble {
+    background: rgba(34,197,94,0.06); border-color: rgba(34,197,94,0.2);
+    font-size: 13px; color: #86EFAC; width: 100%; max-width: 100%;
+  }
+  .msg.system { max-width: 100%; }
+  .msg-name { font-size: 11px; color: var(--muted); margin-bottom: 4px; letter-spacing: 0.5px; }
+  .feedback-block {
+    margin-top: 10px; padding: 10px 12px;
+    background: rgba(0,0,0,0.3); border-radius: 4px;
+    border-left: 3px solid var(--orange);
+    font-size: 12px; color: #CBD5E1; line-height: 1.5;
+  }
+  .feedback-block .fb-title { color: var(--orange); font-weight: 600; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
+  .score-pill {
+    display: inline-flex; align-items: center; gap: 4px;
+    background: rgba(255,90,0,0.15); color: var(--orange);
+    font-size: 11px; font-weight: 700; padding: 3px 8px; border-radius: 12px; margin-top: 6px;
+  }
+
+  /* ── INPUT AREA ── */
+  .chat-input-area {
+    border-top: 1px solid var(--border);
+    padding: 16px 24px;
+    background: var(--dark2);
+  }
+  .quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+  .qr-btn {
+    background: var(--dark3); border: 1px solid var(--border);
+    color: var(--text); font-size: 12px; padding: 6px 12px;
+    border-radius: 4px; cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans';
+  }
+  .qr-btn:hover { border-color: var(--orange); color: var(--orange); }
+  .input-row { display: flex; gap: 10px; }
+  .chat-input {
+    flex: 1; background: var(--dark3); border: 1px solid var(--border);
+    color: var(--text); font-family: 'DM Sans'; font-size: 14px;
+    padding: 12px 16px; border-radius: 6px; outline: none;
+    transition: border-color 0.2s; resize: none; height: 50px;
+  }
+  .chat-input:focus { border-color: var(--orange); }
+  .chat-input::placeholder { color: var(--muted); }
+  .send-btn {
+    background: var(--orange); border: none; color: #fff;
+    width: 50px; height: 50px; border-radius: 6px; cursor: pointer;
+    font-size: 18px; transition: all 0.2s; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .send-btn:hover { background: var(--orange-dim); }
+  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+  /* ── THINKING ── */
+  .thinking { display: flex; align-items: center; gap: 6px; padding: 10px 14px; }
+  .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: pulse 1.2s ease-in-out infinite; }
+  .dot:nth-child(2) { animation-delay: 0.2s; }
+  .dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes pulse { 0%,60%,100% { transform: scale(1); opacity: 0.4; } 30% { transform: scale(1.3); opacity: 1; } }
+
+  /* ── RESULTS SCREEN ── */
+  #results {
+    align-items: center; justify-content: center;
+    background: radial-gradient(ellipse 60% 50% at 50% 0%, rgba(255,90,0,0.1) 0%, transparent 70%);
+    padding: 40px 24px;
+  }
+  .results-inner { max-width: 560px; width: 100%; }
+  .results-title { font-family: 'Bebas Neue'; font-size: 56px; letter-spacing: 3px; line-height: 1; margin-bottom: 6px; }
+  .results-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+  .big-score {
+    background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+    padding: 32px; text-align: center; margin-bottom: 20px;
+    position: relative; overflow: hidden;
+  }
+  .big-score::before {
+    content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, var(--orange), #FF8A40);
+  }
+  .big-score-num { font-family: 'Bebas Neue'; font-size: 96px; color: var(--orange); line-height: 1; }
+  .big-score-lbl { font-size: 13px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; }
+  .breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+  .breakdown-item { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; }
+  .breakdown-item .bi-val { font-family: 'Bebas Neue'; font-size: 32px; color: var(--text); }
+  .breakdown-item .bi-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+  .feedback-summary { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 24px; font-size: 14px; line-height: 1.7; color: var(--muted); }
+  .feedback-summary strong { color: var(--text); }
+
+  /* ── MENU SCREEN ── */
+  #menu {
+    align-items: center; justify-content: center;
+    padding: 40px 24px;
+  }
+  .menu-inner { max-width: 480px; width: 100%; }
+  .menu-title { font-family: 'Bebas Neue'; font-size: 42px; letter-spacing: 3px; margin-bottom: 6px; }
+  .menu-sub { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+  .menu-list { display: flex; flex-direction: column; gap: 10px; }
+  .menu-item {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 18px 20px; cursor: pointer;
+    display: flex; align-items: center; gap: 16px; transition: all 0.2s;
+  }
+  .menu-item:hover { border-color: var(--orange); transform: translateX(4px); }
+  .menu-item-icon { font-size: 24px; }
+  .menu-item-title { font-weight: 600; font-size: 15px; }
+  .menu-item-desc { font-size: 12px; color: var(--muted); }
+  .menu-item-arrow { margin-left: auto; color: var(--muted); font-size: 18px; }
+
+  /* ── TEORIA SCREEN ── */
+  #teoria { padding: 0; }
+  .teoria-content { max-width: 680px; margin: 0 auto; padding: 40px 24px; }
+  .teoria-nav { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+  .teoria-tab {
+    background: var(--card); border: 1px solid var(--border);
+    color: var(--muted); font-size: 12px; padding: 7px 14px;
+    border-radius: 4px; cursor: pointer; transition: all 0.15s;
+    font-family: 'DM Sans';
+  }
+  .teoria-tab.active { background: var(--orange); border-color: var(--orange); color: #fff; }
+  .teoria-card { display: none; }
+  .teoria-card.active { display: block; animation: fadeUp 0.3s ease; }
+  .t-title { font-family: 'Bebas Neue'; font-size: 36px; letter-spacing: 2px; margin-bottom: 6px; color: var(--orange); }
+  .t-sub { color: var(--muted); font-size: 13px; margin-bottom: 24px; }
+  .t-block { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 20px; margin-bottom: 12px; }
+  .t-block-title { font-weight: 600; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; }
+  .t-block p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+  .t-block ul { font-size: 13px; color: var(--muted); line-height: 1.8; padding-left: 16px; }
+  .t-highlight {
+    background: rgba(255,90,0,0.08); border-left: 3px solid var(--orange);
+    padding: 14px 16px; border-radius: 4px; margin-top: 20px;
+    font-style: italic; font-size: 14px; color: #CBD5E1;
+  }
+  .back-btn { display: flex; align-items: center; gap: 8px; color: var(--muted); cursor: pointer; font-size: 13px; margin-bottom: 24px; transition: color 0.2s; }
+  .back-btn:hover { color: var(--text); }
+
+  /* QUIZ SCREEN */
+  #quiz { align-items: center; justify-content: center; padding: 40px 24px; }
+  .quiz-inner { max-width: 560px; width: 100%; }
+  .quiz-progress { display: flex; gap: 4px; margin-bottom: 28px; }
+  .qp-dot { flex: 1; height: 3px; background: var(--border); border-radius: 2px; transition: background 0.3s; }
+  .qp-dot.done { background: var(--orange); }
+  .quiz-q { font-size: 17px; font-weight: 500; line-height: 1.5; margin-bottom: 24px; }
+  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
+  .quiz-opt {
+    background: var(--card); border: 1px solid var(--border);
+    border-radius: 8px; padding: 16px 18px; cursor: pointer;
+    font-size: 14px; transition: all 0.15s; text-align: left;
+    font-family: 'DM Sans';
+  }
+  .quiz-opt:hover { border-color: var(--orange); }
+  .quiz-opt.correct { border-color: var(--success); background: rgba(34,197,94,0.08); color: var(--success); }
+  .quiz-opt.wrong { border-color: var(--danger); background: rgba(239,68,68,0.08); color: var(--danger); }
+  .quiz-feedback { margin-top: 16px; padding: 14px; background: var(--card); border-radius: 6px; font-size: 13px; color: var(--muted); line-height: 1.6; border-left: 3px solid var(--orange); display: none; }
+  .quiz-feedback.show { display: block; }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .sim-layout { grid-template-columns: 1fr; }
+    .sidebar { display: none; }
+    .modes-grid { grid-template-columns: 1fr; }
+    .breakdown { grid-template-columns: 1fr; }
+    .stats-bar { gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     HOME
+══════════════════════════════════════════ -->
+<div id="home" class="screen active">
+  <div class="home-inner">
+    <div class="hero-badge">Sistema de Alta Performance</div>
+    <h1 class="hero-title">DIGI<br><span class="accent">ELITE</span><br>TRAINER</h1>
+    <p class="hero-sub">Simulador de vendas porta a porta com IA. Treina técnicas reais, recebe feedback instantâneo e torna-te um consultor de elite.</p>
+
+    <div class="modes-grid">
+      <div class="mode-card featured" onclick="showScreen('menu')">
+        <div class="mode-icon">🎯</div>
+        <div class="mode-title">Simulação Completa</div>
+        <div class="mode-desc">Conversa em tempo real com um cliente simulado por IA. Abordagem → Diagnóstico → Fecho.</div>
+      </div>
+      <div class="mode-card" onclick="showScreen('quiz'); initQuiz()">
+        <div class="mode-icon">⚡</div>
+        <div class="mode-title">Teste Rápido</div>
+        <div class="mode-desc">10 perguntas sobre técnicas DIGI</div>
+      </div>
+      <div class="mode-card" onclick="showScreen('teoria')">
+        <div class="mode-icon">📖</div>
+        <div class="mode-title">Manual Digital</div>
+        <div class="mode-desc">Consulta técnicas e scripts</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     MENU (escolha de cliente)
+══════════════════════════════════════════ -->
+<div id="menu" class="screen">
+  <div class="header">
+    <div class="logo">DIGI <span>ELITE TRAINER</span></div>
+    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
+  </div>
+  <div class="menu-inner" style="margin:auto;">
+    <div class="menu-title">ESCOLHE O CLIENTE</div>
+    <div class="menu-sub">Cada perfil exige uma abordagem diferente. Estás pronto?</div>
+    <div class="menu-list" id="clientList"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     SIMULATION
+══════════════════════════════════════════ -->
+<div id="simulation" class="screen">
+  <div class="header">
+    <div class="logo">DIGI <span>ELITE TRAINER</span></div>
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-val" id="st-score">0</div><div class="stat-lbl">Score</div></div>
+      <div class="stat"><div class="stat-val" id="st-turns">0</div><div class="stat-lbl">Trocas</div></div>
+      <div class="stat"><div class="stat-val" id="st-phase">—</div><div class="stat-lbl">Fase</div></div>
+    </div>
+    <button class="btn btn-ghost btn-sm" onclick="endSim()">Terminar</button>
+  </div>
+
+  <div class="sim-layout">
+    <div class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-title">Perfil do Cliente</div>
+        <div class="client-card" id="clientCard"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Funil de Conversão</div>
+        <div class="funnel-steps" id="funnelSteps"></div>
+      </div>
+      <div class="sidebar-section">
+        <div class="sidebar-title">Performance</div>
+        <div id="scoreMetrics"></div>
+      </div>
+    </div>
+    <div class="chat-area">
+      <div class="chat-messages" id="chatMessages"></div>
+      <div class="chat-input-area">
+        <div class="quick-replies" id="quickReplies"></div>
+        <div class="input-row">
+          <textarea class="chat-input" id="chatInput" placeholder="O que dizes ao cliente?" rows="1"
+            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
+          <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     RESULTS
+══════════════════════════════════════════ -->
+<div id="results" class="screen">
+  <div class="results-inner">
+    <div class="results-title">RESULTADO</div>
+    <div class="results-sub" id="results-sub">Simulação concluída</div>
+    <div class="big-score">
+      <div class="big-score-num" id="final-score">—</div>
+      <div class="big-score-lbl">Pontuação Final</div>
+    </div>
+    <div class="breakdown" id="results-breakdown"></div>
+    <div class="feedback-summary" id="results-feedback"></div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;">
+      <button class="btn" onclick="showScreen('menu')">Tentar Outro Cliente</button>
+      <button class="btn btn-ghost" onclick="showScreen('home')">← Início</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     TEORIA
+══════════════════════════════════════════ -->
+<div id="teoria" class="screen">
+  <div class="header">
+    <div class="logo">DIGI <span>MANUAL DIGITAL</span></div>
+    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
+  </div>
+  <div class="teoria-content">
+    <div class="teoria-nav">
+      <button class="teoria-tab active" onclick="showTeoria(0,this)">Filosofia</button>
+      <button class="teoria-tab" onclick="showTeoria(1,this)">Abordagem</button>
+      <button class="teoria-tab" onclick="showTeoria(2,this)">Diagnóstico</button>
+      <button class="teoria-tab" onclick="showTeoria(3,this)">Objeções</button>
+      <button class="teoria-tab" onclick="showTeoria(4,this)">Fecho</button>
+      <button class="teoria-tab" onclick="showTeoria(5,this)">Perfis</button>
+    </div>
+    <div id="teoriaCards"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     QUIZ
+══════════════════════════════════════════ -->
+<div id="quiz" class="screen">
+  <div class="header">
+    <div class="logo">DIGI <span>TESTE RÁPIDO</span></div>
+    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
+  </div>
+  <div class="quiz-inner" style="margin:auto;">
+    <div class="quiz-progress" id="quizProgress"></div>
+    <div class="quiz-q" id="quizQ"></div>
+    <div class="quiz-options" id="quizOpts"></div>
+    <div class="quiz-feedback" id="quizFeedback"></div>
+    <button class="btn btn-full" id="quizNext" style="display:none;margin-top:16px;" onclick="nextQuiz()">Próxima →</button>
+  </div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════
+let state = {
+  screen: 'home',
+  client: null,
+  messages: [],
+  score: 0,
+  turns: 0,
+  phase: 0,
+  metrics: { abertura: 0, diagnostico: 0, objections: 0, fecho: 0 },
+  isThinking: false,
+  conversationHistory: []
+};
+
+const PHASES = ['Abordagem', 'Diagnóstico', 'Proposta', 'Objeções', 'Fecho'];
+
+const CLIENTS = [
+  {
+    id: 'desconfiado',
+    name: 'Sr. António Ferreira',
+    age: 58, type: 'desconfiado',
+    operator: 'MEO', bill: 72, services: 'Fibra 500Mbps + 3 telemóveis',
+    loyalty: 'Termina em Março 2026',
+    pain: 'Nunca soube o que pagava extra',
+    icon: '🧔',
+    hint: 'Usa dados e factos técnicos. Posiciona-te como técnico.',
+    systemPrompt: `És o Sr. António Ferreira, 58 anos, cliente MEO há 12 anos, desconfiado de vendedores. Pagas 72€/mês por fibra + 3 telemóveis. A fidelização termina em Março 2026. A tua maior frustração é não perceber as cobranças extras. 
+Comportamento: começas muito reservado e cético. Usas frases como "Já me vieram vender muita coisa..." e "Isso é publicidade...". Só abres quando o consultor usa factos concretos e dados técnicos. Se ele/ela mencionar o prémio nPerf ou mostrar comparação de velocidade, ficas mais interessado. Perguntas muito sobre cobertura, velocidade real e o que acontece se o serviço falhar. Se o consultor for honesto e usar dados reais, no final podes concordar em ver uma simulação. NUNCA aceitas imediatamente. Respondes em Português de Portugal. Respostas curtas e secas no início.`
+  },
+  {
+    id: 'apressado',
+    name: 'Dra. Sofia Martins',
+    age: 34, type: 'apressado',
+    operator: 'NOS', bill: 65, services: 'Fibra + TV + 2 móveis',
+    loyalty: 'Termina em Junho 2026',
+    pain: 'Não tem tempo para nada',
+    icon: '👩‍💼',
+    hint: 'Ultra-direto. Mostra o preço em 2 minutos.',
+    systemPrompt: `És a Dra. Sofia Martins, 34 anos, advogada ocupada, cliente NOS, pagas 65€/mês. Estás sempre com pressa, o telemóvel toca constantemente. A fidelização termina em Junho 2026. 
+Comportamento: Abres a porta já a dizer que tens pouco tempo. Se o consultor for lento ou vago, dizes "Ok, obrigada" e fechas a porta. Se for direto e mostrar o preço em menos de 2 min, ouves. Perguntas diretas: "Quanto custa exactamente?", "Quanto demora a instalação?", "Há fidelização?". Se a resposta for clara e rápida, consideras. Respondes em Português de Portugal. Muito breve.`
+  },
+  {
+    id: 'racional',
+    name: 'Eng. Manuel Costa',
+    age: 46, type: 'racional',
+    operator: 'Vodafone', bill: 80, services: 'Fibra 1Gbps + TV + 4 móveis',
+    loyalty: 'Termina em Setembro 2026',
+    pain: 'Os preços sobem todos os anos',
+    icon: '👨‍💻',
+    hint: 'Mostra ROI claro. Adora dados e simuladores.',
+    systemPrompt: `És o Eng. Manuel Costa, 46 anos, engenheiro informático, cliente Vodafone há 8 anos, pagas 80€/mês por pacote completo. Fidelização em Setembro 2026. Detestas que os preços subam todos os anos — este ano subiram 7%.
+Comportamento: Analítico e metódico. Fazes perguntas sobre velocidade real vs contratada, uptime garantido, SLA de suporte. Só te convences com números: poupança anual, ROI, prova de preços congelados. Se o consultor mencionar que a DIGI comprometeu-se a não subir preços em 2026, ficas muito interessado. Pedes comparações de velocidade, detalhes do contrato. Com bom diagnóstico e ROI claro, avanças para simulação. Respondes em Português de Portugal.`
+  },
+  {
+    id: 'indeciso',
+    name: 'Sra. Lurdes Pereira',
+    age: 62, type: 'indeciso',
+    operator: 'MEO', bill: 58, services: 'Fibra + TV',
+    loyalty: 'Já expirou',
+    pain: 'Medo de mudar e dar errado',
+    icon: '👵',
+    hint: 'Simplifica. Duas opções apenas. Baixo risco.',
+    systemPrompt: `És a Sra. Lurdes Pereira, 62 anos, reformada, cliente MEO há 15 anos, pagas 58€/mês. A fidelização já expirou. Tens medo de mudar porque "já sei o que tenho" e temes complicações.
+Comportamento: Dizes muitas vezes "Não sei, vou pensar..." e "Tenho que falar com o meu filho". Tens muitas dúvidas pequenas: o número muda? Ficam dias sem Internet? E se não gostar? O consultor precisa de simplificar tudo e oferecer apenas 2 opções claras (não mais). Se mencionar que não há fidelização longa e pode sair ao fim de 3 meses, ficas mais tranquila. Valorizas muito a simpatia e paciência. Com abordagem calma e 2 opções simples, podes aceitar ver a simulação. Respondes em Português de Portugal. Falas em frases longas, cheias de hesitações.`
+  }
+];
+
+// ═══════════════════════════════════════════
+// SCREEN MANAGEMENT
+// ═══════════════════════════════════════════
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  state.screen = id;
+}
+
+// ═══════════════════════════════════════════
+// CLIENT MENU
+// ═══════════════════════════════════════════
+function buildClientMenu() {
+  const list = document.getElementById('clientList');
+  list.innerHTML = CLIENTS.map(c => `
+    <div class="menu-item" onclick="startSim('${c.id}')">
+      <div class="menu-item-icon">${c.icon}</div>
+      <div>
+        <div class="menu-item-title">${c.name}</div>
+        <div class="menu-item-desc">Operador: ${c.operator} · ${c.bill}€/mês · Perfil: ${c.type}</div>
+      </div>
+      <div class="menu-item-arrow">›</div>
+    </div>
+  `).join('');
+}
+
+// ═══════════════════════════════════════════
+// SIMULATION
+// ═══════════════════════════════════════════
+function startSim(clientId) {
+  state.client = CLIENTS.find(c => c.id === clientId);
+  state.messages = [];
+  state.score = 0;
+  state.turns = 0;
+  state.phase = 0;
+  state.metrics = { abertura: 0, diagnostico: 0, objections: 0, fecho: 0 };
+  state.conversationHistory = [];
+
+  showScreen('simulation');
+  buildSidebar();
+  buildFunnel();
+  renderScoreMetrics();
+  updateStats();
+
+  document.getElementById('chatMessages').innerHTML = '';
+
+  // System welcome message
+  addSystemMsg(`🏠 Acabas de chegar à porta de <strong>${state.client.name}</strong>. ${state.client.operator}, ${state.client.bill}€/mês. Tens 20 segundos para causar uma boa impressão.<br><br>💡 <em>Dica: ${state.client.hint}</em>`);
+
+  setQuickReplies([
+    'Bom dia, sou da DIGI. Posso mostrar-lhe quanto poupa em 2 minutos?',
+    'Olá! Estamos aqui na zona a apresentar as nossas combinações. Tem 2 minutos?',
+    'Boa tarde! Sou consultor da DIGI — veio apresentar uma alternativa que pode poupar ' + (state.client.bill - 30) + '€/mês.'
+  ]);
+}
+
+function buildSidebar() {
+  const c = state.client;
+  document.getElementById('clientCard').innerHTML = `
+    <div class="client-name">${c.icon} ${c.name}</div>
+    <span class="client-type type-${c.type}">${c.type}</span>
+    <div class="client-info">
+      Operador: <span>${c.operator}</span><br>
+      Fatura: <span>${c.bill}€/mês</span><br>
+      Serviços: <span>${c.services}</span><br>
+      Fidelização: <span>${c.loyalty}</span><br>
+      Dor: <span>${c.pain}</span>
+    </div>
+  `;
+}
+
+function buildFunnel() {
+  document.getElementById('funnelSteps').innerHTML = PHASES.map((p, i) => `
+    <div class="funnel-step ${i === 0 ? 'active' : ''}" id="funnel-${i}">
+      <div class="funnel-dot"></div> ${p}
+    </div>
+  `).join('');
+}
+
+function updateFunnel(phase) {
+  PHASES.forEach((_, i) => {
+    const el = document.getElementById(`funnel-${i}`);
+    el.classList.remove('active', 'done');
+    if (i < phase) el.classList.add('done');
+    if (i === phase) el.classList.add('active');
+  });
+  state.phase = phase;
+  document.getElementById('st-phase').textContent = PHASES[phase] || '✓';
+}
+
+function renderScoreMetrics() {
+  const m = state.metrics;
+  const items = [
+    { lbl: 'Abertura', val: m.abertura },
+    { lbl: 'Diagnóstico', val: m.diagnostico },
+    { lbl: 'Objeções', val: m.objections },
+    { lbl: 'Fecho', val: m.fecho }
+  ];
+  document.getElementById('scoreMetrics').innerHTML = items.map(i => `
+    <div class="score-bar" style="margin-bottom:10px;">
+      <div class="score-label"><span>${i.lbl}</span><span>${i.val}/25</span></div>
+      <div class="score-track"><div class="score-fill" style="width:${(i.val/25)*100}%"></div></div>
+    </div>
+  `).join('');
+}
+
+function updateStats() {
+  document.getElementById('st-score').textContent = state.score;
+  document.getElementById('st-turns').textContent = state.turns;
+}
+
+function addMsg(role, text, feedback = null, scoreDelta = 0) {
+  const msgs = document.getElementById('chatMessages');
+  const isUser = role === 'user';
+  const isSystem = role === 'system';
+  const c = state.client;
+
+  const avatar = isUser ? '🧑' : isSystem ? '💡' : c.icon;
+  const name = isUser ? 'Tu (Consultor)' : isSystem ? 'Sistema' : c.name;
+
+  let feedbackHtml = '';
+  if (feedback) {
+    feedbackHtml = `<div class="feedback-block">
+      <div class="fb-title">📊 Análise</div>
+      ${feedback}
+      ${scoreDelta > 0 ? `<div class="score-pill">+${scoreDelta} pts</div>` : ''}
+    </div>`;
+  }
+
+  const div = document.createElement('div');
+  div.className = `msg ${role}`;
+  div.innerHTML = `
+    <div class="msg-avatar">${avatar}</div>
+    <div>
+      <div class="msg-name">${name}</div>
+      <div class="msg-bubble">${text}${feedbackHtml}</div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function addSystemMsg(html) {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg system';
+  div.innerHTML = `
+    <div class="msg-avatar">💡</div>
+    <div style="flex:1;">
+      <div class="msg-bubble">${html}</div>
+    </div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showThinking() {
+  const msgs = document.getElementById('chatMessages');
+  const div = document.createElement('div');
+  div.className = 'msg client'; div.id = 'thinking-msg';
+  div.innerHTML = `
+    <div class="msg-avatar">${state.client.icon}</div>
+    <div><div class="msg-bubble"><div class="thinking"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>
+  `;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function hideThinking() {
+  const el = document.getElementById('thinking-msg');
+  if (el) el.remove();
+}
+
+function setQuickReplies(options) {
+  document.getElementById('quickReplies').innerHTML = options.map(o =>
+    `<button class="qr-btn" onclick="useQR(this)">${o}</button>`
+  ).join('');
+}
+
+function useQR(btn) {
+  document.getElementById('chatInput').value = btn.textContent;
+  sendMsg();
+}
+
+async function sendMsg() {
+  if (state.isThinking) return;
+  const input = document.getElementById('chatInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  state.turns++;
+  state.isThinking = true;
+  document.getElementById('sendBtn').disabled = true;
+  document.getElementById('quickReplies').innerHTML = '';
+
+  addMsg('user', text);
+  updateStats();
+  showThinking();
+
+  // Build conversation history
+  state.conversationHistory.push({ role: 'user', content: text });
+
+  try {
+    const response = await callClaude(text);
+    hideThinking();
+
+    const { clientReply, feedback, scoreDelta, newPhase, quickReplies } = response;
+
+    // Update score & metrics
+    state.score += scoreDelta;
+    updateStats();
+
+    if (newPhase !== undefined && newPhase > state.phase) updateFunnel(newPhase);
+
+    addMsg('client', clientReply, feedback, scoreDelta);
+
+    state.conversationHistory.push({ role: 'assistant', content: clientReply });
+
+    if (quickReplies && quickReplies.length) setQuickReplies(quickReplies);
+    renderScoreMetrics();
+
+    // Check for end
+    if (response.ended) {
+      setTimeout(() => endSim(response.finalSummary), 1200);
+    }
+
+  } catch (e) {
+    hideThinking();
+    addSystemMsg('⚠️ Erro de ligação. Tenta novamente.');
+    console.error(e);
+  }
+
+  state.isThinking = false;
+  document.getElementById('sendBtn').disabled = false;
+}
+
+async function callClaude(userMsg) {
+  const c = state.client;
+  const historyStr = state.conversationHistory.slice(0, -1)
+    .map(m => `${m.role === 'user' ? 'CONSULTOR' : 'CLIENTE'}: ${m.content}`)
+    .join('\n');
+
+  const systemPrompt = `${c.systemPrompt}
+
+---
+INSTRUÇÕES DE JOGO (NÃO PARTILHES COM O CONSULTOR):
+O consultor é um formando a treinar técnicas de venda DIGI porta a porta. O teu papel tem DOIS componentes:
+
+1. CLIENTE: Responde como o cliente descrito acima, de forma realista e em personagem.
+
+2. AVALIADOR: Avalia a mensagem do consultor segundo as técnicas do Manual DIGI:
+- Abertura (linguagem corporal imaginada, apresentação honesta)
+- Diagnóstico (perguntas certas, escuta ativa, identificar dor)
+- Proposta (poupança real, matemática clara)
+- Gestão de Objeções (reenquadramento honesto, sem pressão)
+- Fecho (assumido, alternativa dupla, silêncio)
+
+Responde APENAS com JSON válido neste formato:
+{
+  "clientReply": "Texto da resposta do cliente (em personagem, em pt-PT)",
+  "feedback": "Análise breve (2-3 frases) sobre o que o consultor fez bem ou pode melhorar. Menciona a técnica específica do Manual DIGI.",
+  "scoreDelta": <0-25, baseado na qualidade da abordagem>,
+  "newPhase": <0=Abordagem, 1=Diagnóstico, 2=Proposta, 3=Objeções, 4=Fecho — atualiza quando progredir>,
+  "quickReplies": ["Sugestão 1 de próxima fala", "Sugestão 2", "Sugestão 3"],
+  "ended": <true se a simulação terminou (cliente aceitou ou recusou definitivamente)>,
+  "finalSummary": "Resumo final apenas se ended=true: o que correu bem, mal, e pontuação justificada."
+}
+
+Fase atual: ${PHASES[state.phase]}
+Histórico:
+${historyStr || '(início da conversa)'}
+Última fala do consultor: "${userMsg}"
+Score acumulado: ${state.score}
+Número de trocas: ${state.turns}`;
+
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMsg }]
+    })
+  });
+
+  const data = await res.json();
+  const raw = data.content?.[0]?.text || '{}';
+  const clean = raw.replace(/```json|```/g, '').trim();
+
+  try {
+    const parsed = JSON.parse(clean);
+    // Update metrics based on phase
+    if (state.phase === 0) state.metrics.abertura = Math.min(25, state.metrics.abertura + parsed.scoreDelta);
+    else if (state.phase === 1) state.metrics.diagnostico = Math.min(25, state.metrics.diagnostico + parsed.scoreDelta);
+    else if (state.phase === 3) state.metrics.objections = Math.min(25, state.metrics.objections + parsed.scoreDelta);
+    else if (state.phase === 4) state.metrics.fecho = Math.min(25, state.metrics.fecho + parsed.scoreDelta);
+    return parsed;
+  } catch {
+    return { clientReply: raw, feedback: null, scoreDelta: 0, newPhase: state.phase, quickReplies: [], ended: false };
+  }
+}
+
+function endSim(summary = null) {
+  const c = state.client;
+  const pct = Math.min(100, Math.round((state.score / 100) * 100));
+  const grade = pct >= 80 ? '🏆 ELITE' : pct >= 60 ? '⭐ BOM' : pct >= 40 ? '📈 A MELHORAR' : '💪 INICIANTE';
+
+  document.getElementById('final-score').textContent = state.score;
+  document.getElementById('results-sub').textContent = `${grade} · Cliente: ${c.name} · ${state.turns} trocas`;
+
+  const m = state.metrics;
+  document.getElementById('results-breakdown').innerHTML = `
+    <div class="breakdown-item"><div class="bi-val">${m.abertura}</div><div class="bi-lbl">Abertura</div></div>
+    <div class="breakdown-item"><div class="bi-val">${m.diagnostico}</div><div class="bi-lbl">Diagnóstico</div></div>
+    <div class="breakdown-item"><div class="bi-val">${m.objections}</div><div class="bi-lbl">Objeções</div></div>
+    <div class="breakdown-item"><div class="bi-val">${m.fecho}</div><div class="bi-lbl">Fecho</div></div>
+  `;
+
+  document.getElementById('results-feedback').innerHTML = summary
+    ? `<strong>Análise IA:</strong><br>${summary}`
+    : `Simulação com <strong>${c.name}</strong> (${c.type}). Score: <strong>${state.score} pts</strong> em ${state.turns} trocas.`;
+
+  showScreen('results');
+}
+
+// ═══════════════════════════════════════════
+// TEORIA
+// ═══════════════════════════════════════════
+const TEORIA_DATA = [
+  {
+    title: 'FILOSOFIA DO CONSULTOR', sub: 'A diferença entre vendedor e consultor de elite',
+    blocks: [
+      { icon: '🎯', title: 'Objetivo', body: 'O vendedor procura aprovação. O consultor diagnostica e resolve um problema real de custo. A conversa é guiada por perguntas, não reativa.' },
+      { icon: '📊', title: 'Padrão de Performance', body: '80 portas/dia → 40 aberturas → 20 abordagens → 10 com controlo → 4 adesões. A matemática protege-te da emoção.' },
+      { icon: '💎', title: 'Responsabilidade Total', body: 'O resultado depende da tua execução: preparação, escuta e clareza. Sem desculpas. O mercado é o mesmo para todos.' }
+    ],
+    quote: '"Quem ouve melhor, vende melhor. O controlo nasce da clareza, não da pressão."'
+  },
+  {
+    title: 'ABORDAGEM', sub: 'Os primeiros 20 segundos definem a venda',
+    blocks: [
+      { icon: '🧍', title: 'Linguagem Corporal', body: 'Postura aberta, ombros para trás. Mãos visíveis. Passo atrás após bater a porta — dá espaço, elimina ameaça.' },
+      { icon: '🗣️', title: 'Tom e Ritmo', body: 'Fala mais devagar que o normal. Tom firme e tranquilo. Usa pausas — a informação precisa de assentar.' },
+      { icon: '✅', title: 'Script de Abertura', body: '"Bom dia, sou da DIGI e estamos a apresentar as combinações de fibra e móvel aqui na zona. Posso mostrar-lhe em 2 min quanto pode poupar face ao que paga hoje?"' }
+    ],
+    quote: '"Objetivo: passar de desconhecido a consultor de confiança — com transparência total."'
+  },
+  {
+    title: 'DIAGNÓSTICO ESTRATÉGICO', sub: 'Escuta ativa: perceber a dor real',
+    blocks: [
+      { icon: '❓', title: 'Sequência de Perguntas', body: '<ol style="padding-left:16px;font-size:13px;color:#9CA3AF;line-height:2;"><li>Qual é o seu operador atual?</li><li>Quanto paga por mês na fatura?</li><li>O que menos o satisfaz: velocidade, preço ou apoio?</li><li>Quando termina a fidelização?</li><li>Quantos telemóveis tem associados?</li><li>É o(a) decisor(a) do contrato?</li></ol>' },
+      { icon: '🤫', title: 'O Uso do Silêncio', body: 'Após uma pergunta-chave, faz uma pausa. Dá espaço ao cliente para pensar e responder com sinceridade. Silêncio = controlo.' },
+      { icon: '👤', title: 'Identificar o Decisor', body: 'Confirma cedo quem assina. Se não está, agenda o regresso — respeitando o tempo de todos.' }
+    ],
+    quote: '"O diagnóstico é escuta ativa: percebes a dor real e mostras como a DIGI a resolve."'
+  },
+  {
+    title: 'REENQUADRAMENTO DE OBJEÇÕES', sub: 'Nunca distorcer factos. A confiança é o teu maior ativo.',
+    blocks: [
+      { icon: '🆕', title: '"A DIGI é nova, não conheço..."', body: 'É verdade que somos recentes em Portugal — mas com rede própria, premiada como a fibra mais rápida pela nPerf 2025. Posso mostrar-lhe os testes independentes.' },
+      { icon: '📋', title: '"Mudar dá muito trabalho..."', body: 'Tratamos da portabilidade por si: o seu número mantém-se e nós coordenamos a mudança. O passo que dá é só dizer "sim".' },
+      { icon: '🔒', title: '"Ainda tenho fidelização."', body: 'Sem problema — vemos quando termina e agendamos. Entretanto deixo-lhe a simulação para comparar com calma. Sem compromisso.' }
+    ],
+    quote: '"Reenquadrar é dar contexto verdadeiro — nunca distorcer factos."'
+  },
+  {
+    title: 'O FECHO NATURAL', sub: 'Consequência de um bom diagnóstico, não uma armadilha',
+    blocks: [
+      { icon: '✅', title: 'Fecho Assumido', body: 'Quando os sinais de "sim" aparecem, avança para a logística: "Perfeito. Para registar a adesão preciso só do seu Cartão de Cidadão e IBAN. Tem aí consigo?"' },
+      { icon: '🅰️🅱️', title: 'Alternativa Dupla', body: 'Oferece duas opções positivas: "Para a instalação, prefere quinta de manhã ou sexta à tarde?"' },
+      { icon: '🤐', title: 'Fecho com Pausa', body: '"Então avançamos com a combinação que lhe poupa 34€/mês?" (pausa). O silêncio respeita o tempo de decisão.' }
+    ],
+    quote: '"O fecho é a consequência natural de um bom diagnóstico."'
+  },
+  {
+    title: 'PERFIS DE CLIENTE', sub: 'Cada perfil exige uma abordagem diferente',
+    blocks: [
+      { icon: '🧔', title: 'O Desconfiado', body: 'Usa factos e dados técnicos. A DIGI é a fibra mais rápida (nPerf 2025). Posiciona-te como técnico, não vendedor. Dados · Transparência.' },
+      { icon: '👩‍💼', title: 'O Apressado', body: 'Ultra-direto: "Em 2 min mostro-lhe o preço. Adere quando quiser, sem fidelização longa." Simplicidade · Rapidez.' },
+      { icon: '👨‍💻', title: 'O Racional', body: 'Mostra a poupança anual no simulador. ROI claro e preços congelados em 2026. Ganho Financeiro · ROI.' },
+      { icon: '👵', title: 'O Indeciso', body: 'Simplifica para 2 opções (A ou B). Reforça: sem fidelização, pode sair ao fim de 3 meses, risco baixo. Decisão Binária · Baixo Risco.' }
+    ],
+    quote: '"Adapta a linguagem ao cliente, não o produto."'
+  }
+];
+
+function buildTeoria() {
+  const container = document.getElementById('teoriaCards');
+  container.innerHTML = TEORIA_DATA.map((t, i) => `
+    <div class="teoria-card ${i === 0 ? 'active' : ''}" id="tc-${i}">
+      <div class="t-title">${t.title}</div>
+      <div class="t-sub">${t.sub}</div>
+      ${t.blocks.map(b => `
+        <div class="t-block">
+          <div class="t-block-title">${b.icon} ${b.title}</div>
+          <div>${b.body}</div>
+        </div>
+      `).join('')}
+      <div class="t-highlight">${t.quote}</div>
+    </div>
+  `).join('');
+}
+
+function showTeoria(idx, btn) {
+  document.querySelectorAll('.teoria-card').forEach(c => c.classList.remove('active'));
+  document.querySelectorAll('.teoria-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById(`tc-${idx}`).classList.add('active');
+  btn.classList.add('active');
+}
+
+// ═══════════════════════════════════════════
+// QUIZ
+// ═══════════════════════════════════════════
+const QUIZ_DATA = [
+  { q: 'Qual é o objetivo do funil de conversão DIGI com 80 portas/dia?', opts: ['10 adesões', '4 adesões', '20 adesões', '8 adesões'], correct: 1, fb: 'O modelo matemático: 80 portas → 40 aberturas → 20 abordagens → 10 controlos → 4 adesões/dia.' },
+  { q: 'Qual é a técnica correta para fechar com um cliente indeciso?', opts: ['Pressionar para decidir agora', 'Oferecer 5 opções diferentes', 'Simplificar para 2 opções e reforçar baixo risco', 'Dizer que a oferta acaba hoje'], correct: 2, fb: 'O Indeciso precisa de "Decisão Binária · Baixo Risco" — 2 opções claras e garantia de que pode sair ao fim de 3 meses.' },
+  { q: 'O que significa "Taxa de Abertura < 50%"?', opts: ['O produto é mau', 'Presença ou apresentação fraca', 'O preço é alto', 'Falta de fidelização'], correct: 1, fb: 'Diagnóstico de falhas: Taxa Abertura < 50% indica problema na presença/apresentação — os primeiros 20 segundos.' },
+  { q: 'Como responder à objeção "Ainda tenho fidelização"?', opts: ['Dizer que a DIGI paga a fidelização', 'Insistir em fechar mesmo assim', 'Agendar para quando terminar e deixar simulação', 'Ignorar a objeção'], correct: 2, fb: 'Reenquadramento honesto: "Sem problema — vemos quando termina e agendamos. Entretanto deixo a simulação para comparar." Sem pressão.' },
+  { q: 'Qual é o script de fecho por "Alternativa Dupla"?', opts: ['"Então quer ou não quer?"', '"Para a instalação, prefere quinta de manhã ou sexta à tarde?"', '"Posso voltar amanhã se precisar?"', '"Assine aqui por favor"'], correct: 1, fb: 'Alternativa Dupla: ofereces dois momentos positivos — ambos assumem que o cliente avança. Eliminas um "sim/não".' },
+  { q: 'Qual prémio distingue a DIGI para o cliente Desconfiado?', opts: ['Premio SAPO', 'nPerf 2025 — fibra mais rápida', 'ANACOM 2024', 'Top Marca Portugal'], correct: 1, fb: 'Com o Desconfiado usas dados técnicos: "Rede própria, premiada como a fibra mais rápida pela nPerf 2025."' },
+  { q: 'No diagnóstico, qual é o objetivo de "usar o silêncio"?', opts: ['Criar tensão para fechar mais rápido', 'Dar espaço ao cliente para pensar e responder com sinceridade', 'Mostrar que tens experiência', 'Esperar que o cliente faça perguntas'], correct: 1, fb: 'Silêncio após pergunta-chave = controlo. O cliente preenche o vazio e revela a sua dor real.' },
+  { q: 'Qual é a poupança ilustrativa que o Manual DIGI apresenta?', opts: ['≈ 200€/ano', '≈ 300€/ano', '≈ 408€/ano', '≈ 600€/ano'], correct: 2, fb: '64€ (MEO/NOS/VDF) - 30€ (DIGI) = 34€/mês × 12 = 408€/ano — sem subida ao 13.º mês.' },
+  { q: 'Qual é o comportamento correto ao bater à porta?', opts: ['Ficar encostado à porta para mostrar confiança', 'Dar um passo atrás após bater para dar espaço', 'Tocar a campainha 2x para mostrar urgência', 'Começar a falar imediatamente quando abrem'], correct: 1, fb: 'Passo atrás = elimina sensação de ameaça, transmite respeito pelo espaço do cliente.' },
+  { q: 'O que distingue o "Consultor de Elite" do "Vendedor" segundo o Manual?', opts: ['O consultor tem mais produtos para vender', 'O consultor espera reação do cliente', 'O consultor vende features do produto', 'O consultor resolve o problema real e guia com perguntas'], correct: 3, fb: 'Consultor: resolve o problema, guia com perguntas, constrói confiança com factos, vende a poupança real. Não a feature.' }
+];
+
+let quizState = { idx: 0, score: 0, answered: false };
+
+function initQuiz() {
+  quizState = { idx: 0, score: 0, answered: false };
+  renderQuiz();
+}
+
+function renderQuiz() {
+  const q = QUIZ_DATA[quizState.idx];
+  // Progress
+  document.getElementById('quizProgress').innerHTML = QUIZ_DATA.map((_, i) =>
+    `<div class="qp-dot ${i < quizState.idx ? 'done' : ''}"></div>`
+  ).join('');
+  document.getElementById('quizQ').textContent = `${quizState.idx + 1}. ${q.q}`;
+  document.getElementById('quizOpts').innerHTML = q.opts.map((o, i) =>
+    `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`
+  ).join('');
+  document.getElementById('quizFeedback').classList.remove('show');
+  document.getElementById('quizFeedback').textContent = '';
+  document.getElementById('quizNext').style.display = 'none';
+  quizState.answered = false;
+}
+
+function answerQuiz(idx) {
+  if (quizState.answered) return;
+  quizState.answered = true;
+  const q = QUIZ_DATA[quizState.idx];
+  const opts = document.querySelectorAll('.quiz-opt');
+  opts[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
+  opts[q.correct].classList.add('correct');
+  if (idx === q.correct) quizState.score++;
+  const fb = document.getElementById('quizFeedback');
+  fb.textContent = q.fb;
+  fb.classList.add('show');
+  document.getElementById('quizNext').style.display = 'block';
+  document.getElementById('quizNext').textContent = quizState.idx < QUIZ_DATA.length - 1 ? 'Próxima →' : `Ver Resultado (${quizState.score}/${QUIZ_DATA.length})`;
+}
+
+function nextQuiz() {
+  if (quizState.idx < QUIZ_DATA.length - 1) {
+    quizState.idx++;
+    renderQuiz();
+  } else {
+    // Show result
+    const pct = Math.round((quizState.score / QUIZ_DATA.length) * 100);
+    document.getElementById('quizQ').innerHTML = `<div style="font-size:48px;font-family:'Bebas Neue';color:var(--orange);">${quizState.score}/${QUIZ_DATA.length}</div><div style="font-size:16px;margin-top:8px;">${pct >= 80 ? '🏆 Consultor Elite!' : pct >= 60 ? '⭐ Bom resultado!' : '💪 Continua a treinar!'}</div>`;
+    document.getElementById('quizOpts').innerHTML = '';
+    document.getElementById('quizFeedback').classList.remove('show');
+    document.getElementById('quizNext').textContent = '← Recomeçar';
+    document.getElementById('quizNext').onclick = () => { initQuiz(); };
+  }
+}
+
+// ═══════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════
+buildClientMenu();
+buildTeoria();
+</script>
+</body>
+</html>
