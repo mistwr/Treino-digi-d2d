@@ -5,34 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIGI · Simulador de Elite</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
-<script type="module">
-  import { CreateMLCEngine } from "https://esm.run/@mlc-ai/web-llm";
-  window._llmReady = false;
-  window._llmEngine = null;
-
-  async function loadModel() {
-    const bar = document.getElementById('load-bar-fill');
-    const pct = document.getElementById('load-pct');
-    const status = document.getElementById('load-status');
-
-    try {
-      window._llmEngine = await CreateMLCEngine("Llama-3.2-3B-Instruct-q4f16_1-MLC", {
-        initProgressCallback: (p) => {
-          const v = Math.round((p.progress || 0) * 100);
-          if (bar) bar.style.width = v + '%';
-          if (pct) pct.textContent = v + '%';
-          if (status) status.textContent = p.text || 'A carregar modelo...';
-        }
-      });
-      window._llmReady = true;
-      const overlay = document.getElementById('load-overlay');
-      if (overlay) overlay.style.display = 'none';
-    } catch(e) {
-      const status = document.getElementById('load-status');
-      if (status) status.textContent = '❌ Erro: ' + e.message;
-    }
-  }
-  window.addEventListener('DOMContentLoaded', loadModel);
+<script>
+  // ⬇️ Cola aqui a tua API Key gratuita de console.groq.com
+  window.GROQ_API_KEY = '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';
 </script>
 <style>
   :root {
@@ -379,22 +354,6 @@
   .quiz-feedback { margin-top: 16px; padding: 14px; background: var(--card); border-radius: 6px; font-size: 13px; color: var(--muted); line-height: 1.6; border-left: 3px solid var(--orange); display: none; }
   .quiz-feedback.show { display: block; }
 
-  /* ── LOADING OVERLAY ── */
-  #load-overlay {
-    position: fixed; inset: 0; z-index: 9999;
-    background: var(--dark);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 20px; padding: 40px;
-  }
-  #load-overlay .load-logo { font-family: 'Bebas Neue'; font-size: 52px; letter-spacing: 4px; color: var(--orange); }
-  #load-overlay .load-title { font-size: 15px; color: var(--muted); letter-spacing: 1px; text-align: center; }
-  #load-track { width: 100%; max-width: 360px; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
-  #load-bar-fill { height: 100%; background: linear-gradient(90deg, var(--orange), #FF8A40); width: 0%; transition: width 0.3s ease; border-radius: 2px; }
-  #load-pct { font-family: 'Bebas Neue'; font-size: 36px; color: var(--orange); }
-  #load-status { font-size: 11px; color: var(--muted); text-align: center; max-width: 360px; line-height: 1.5; }
-  #load-note { font-size: 11px; color: var(--muted); opacity: 0.5; text-align: center; max-width: 320px; line-height: 1.6; }
-
   /* RESPONSIVE */
   @media (max-width: 700px) {
     .sim-layout { grid-template-columns: 1fr; }
@@ -407,15 +366,6 @@
 </head>
 <body>
 
-<!-- ══ LOADING OVERLAY ══ -->
-<div id="load-overlay">
-  <div class="load-logo">DIGI</div>
-  <div class="load-title">A CARREGAR INTELIGÊNCIA ARTIFICIAL LOCAL</div>
-  <div id="load-pct">0%</div>
-  <div id="load-track"><div id="load-bar-fill"></div></div>
-  <div id="load-status">A inicializar modelo...</div>
-  <div id="load-note">O modelo de IA corre no teu browser, sem servidor.<br>Primeira vez demora 1-2 min. Depois fica em cache.</div>
-</div>
 
 <!-- ══════════════════════════════════════════
      HOME
@@ -869,8 +819,10 @@ async function sendMsg() {
 }
 
 async function callClaude(userMsg) {
-  if (!window._llmReady || !window._llmEngine) {
-    throw new Error('Modelo ainda a carregar. Aguarda uns segundos.');
+  const key = window.GROQ_API_KEY;
+  if (!key || key.includes('COLA_AQUI')) {
+    addSystemMsg('⚠️ Falta a API Key do Groq. Abre o ficheiro HTML e cola a tua key na linha indicada no topo.');
+    throw new Error('API key em falta');
   }
 
   const c = state.client;
@@ -886,42 +838,63 @@ O consultor é um formando a treinar técnicas de venda DIGI porta a porta. O te
 
 1. CLIENTE: Responde como o cliente descrito, de forma realista e em personagem, em Português de Portugal.
 
-2. AVALIADOR: Avalia a mensagem do consultor segundo as técnicas do Manual DIGI.
+2. AVALIADOR: Avalia a mensagem do consultor segundo as técnicas do Manual DIGI:
+- Abertura (apresentação honesta, linguagem corporal)
+- Diagnóstico (perguntas certas, escuta ativa, identificar dor)
+- Proposta (poupança real, matemática clara)
+- Gestão de Objeções (reenquadramento honesto, sem pressão)
+- Fecho (assumido, alternativa dupla, silêncio)
 
-Responde APENAS com JSON válido, sem texto extra, sem markdown, neste formato exato:
-{"clientReply":"resposta do cliente em pt-PT","feedback":"análise breve 2-3 frases sobre técnica usada","scoreDelta":10,"newPhase":0,"quickReplies":["sugestão 1","sugestão 2","sugestão 3"],"ended":false,"finalSummary":""}
+Responde APENAS com JSON válido, sem texto adicional, sem markdown:
+{"clientReply":"resposta do cliente em pt-PT","feedback":"análise 2-3 frases sobre a técnica usada, menciona técnica específica do Manual DIGI","scoreDelta":10,"newPhase":0,"quickReplies":["sugestão de próxima fala 1","sugestão 2","sugestão 3"],"ended":false,"finalSummary":""}
+
+Regras do scoreDelta: 0-5 = fraco, 6-12 = razoável, 13-20 = bom, 21-25 = excelente.
+newPhase: 0=Abordagem, 1=Diagnóstico, 2=Proposta, 3=Objeções, 4=Fecho. Só avança quando fizer sentido na conversa.
+ended: true apenas se cliente aceitou definitivamente OU recusou de forma absoluta.
 
 Fase atual: ${PHASES[state.phase]}
-Histórico: ${historyStr || '(início)'}
+Histórico:
+${historyStr || '(início da conversa — porta ainda não foi aberta)'}
 Última fala do consultor: "${userMsg}"
-Score: ${state.score} | Trocas: ${state.turns}`;
+Score acumulado: ${state.score} | Trocas: ${state.turns}`;
 
-  const reply = await window._llmEngine.chat.completions.create({
-    messages: [
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userMsg }
-    ],
-    temperature: 0.7,
-    max_tokens: 600
+  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`
+    },
+    body: JSON.stringify({
+      model: 'llama-3.3-70b-versatile',
+      temperature: 0.7,
+      max_tokens: 700,
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userMsg }
+      ]
+    })
   });
 
-  const raw = reply.choices?.[0]?.message?.content || '{}';
-  const clean = raw.replace(/```json|```/g, '').trim();
-  // Extract JSON even if model added text around it
-  const jsonMatch = clean.match(/\{[\s\S]*\}/);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message);
+
+  const raw = data.choices?.[0]?.message?.content || '{}';
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
   const jsonStr = jsonMatch ? jsonMatch[0] : '{}';
 
   try {
     const parsed = JSON.parse(jsonStr);
     parsed.scoreDelta = Math.max(0, Math.min(25, parseInt(parsed.scoreDelta) || 0));
+    parsed.newPhase = Math.max(state.phase, Math.min(4, parseInt(parsed.newPhase) ?? state.phase));
+    if (!Array.isArray(parsed.quickReplies)) parsed.quickReplies = [];
+    // Update metrics
     if (state.phase === 0) state.metrics.abertura = Math.min(25, state.metrics.abertura + parsed.scoreDelta);
     else if (state.phase === 1) state.metrics.diagnostico = Math.min(25, state.metrics.diagnostico + parsed.scoreDelta);
     else if (state.phase === 3) state.metrics.objections = Math.min(25, state.metrics.objections + parsed.scoreDelta);
     else if (state.phase === 4) state.metrics.fecho = Math.min(25, state.metrics.fecho + parsed.scoreDelta);
-    if (!parsed.quickReplies) parsed.quickReplies = [];
     return parsed;
   } catch {
-    return { clientReply: raw.slice(0, 300), feedback: null, scoreDelta: 0, newPhase: state.phase, quickReplies: [], ended: false };
+    return { clientReply: raw.slice(0, 400), feedback: null, scoreDelta: 0, newPhase: state.phase, quickReplies: [], ended: false };
   }
 }
 
