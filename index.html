@@ -5,64 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIGI · Simulador de Elite</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
-<!-- Transformers.js via CDN (zero install, zero API key) -->
-<script type="module">
-  import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/dist/transformers.min.js';
-
-  window._aiReady = false;
-  window._aiPipeline = null;
-
-  const bar   = document.getElementById('load-bar-fill');
-  const pct   = document.getElementById('load-pct');
-  const stat  = document.getElementById('load-status');
-
-  try {
-    window._aiPipeline = await pipeline(
-      'text-generation',
-      'onnx-community/Qwen2.5-0.5B-Instruct',
-      {
-        dtype: 'q4',
-        device: 'webgpu',
-        progress_callback: (p) => {
-          if (p.status === 'progress') {
-            const v = Math.round((p.loaded / p.total) * 100) || 0;
-            if (bar) bar.style.width = v + '%';
-            if (pct) pct.textContent = v + '%';
-          }
-          if (stat) stat.textContent = p.file
-            ? `A carregar: ${p.file.split('/').pop()}`
-            : (p.status || '');
-        }
-      }
-    );
-    window._aiReady = true;
-    document.getElementById('load-overlay').style.display = 'none';
-  } catch (e) {
-    // WebGPU failed → fallback to WASM/CPU
-    try {
-      if (stat) stat.textContent = 'WebGPU indisponível, a usar CPU (mais lento)...';
-      window._aiPipeline = await pipeline(
-        'text-generation',
-        'onnx-community/Qwen2.5-0.5B-Instruct',
-        {
-          dtype: 'q4',
-          device: 'wasm',
-          progress_callback: (p) => {
-            if (p.status === 'progress') {
-              const v = Math.round((p.loaded / p.total) * 100) || 0;
-              if (bar) bar.style.width = v + '%';
-              if (pct) pct.textContent = v + '%';
-            }
-          }
-        }
-      );
-      window._aiReady = true;
-      document.getElementById('load-overlay').style.display = 'none';
-    } catch (e2) {
-      if (stat) stat.textContent = '❌ Erro: ' + e2.message;
-    }
-  }
-</script>
+<!-- Pollinations.ai: IA gratuita, sem API key, sem limite, open source -->
 <style>
   :root {
     --blue: #002BFF;
@@ -323,22 +266,6 @@
   .quiz-feedback { margin-top: 14px; padding: 14px 16px; background: var(--blue-pale); border-radius: 10px; font-size: 13px; color: var(--blue); line-height: 1.6; border-left: 3px solid var(--blue); display: none; font-weight: 500; }
   .quiz-feedback.show { display: block; }
 
-  /* ── LOADING OVERLAY ── */
-  #load-overlay {
-    position: fixed; inset: 0; z-index: 9999;
-    background: linear-gradient(160deg,#002BFF,#0A0F2E);
-    display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    gap: 16px; padding: 40px; text-align: center;
-  }
-  #load-overlay .ll-logo { font-family:'Bebas Neue'; font-size:52px; letter-spacing:6px; color:#fff; }
-  #load-overlay .ll-title { font-size:13px; color:rgba(255,255,255,0.6); letter-spacing:2px; text-transform:uppercase; }
-  #load-track { width:100%; max-width:340px; height:4px; background:rgba(255,255,255,0.15); border-radius:4px; overflow:hidden; }
-  #load-bar-fill { height:100%; background:#fff; width:0%; transition:width 0.3s ease; border-radius:4px; }
-  #load-pct { font-family:'Bebas Neue'; font-size:40px; color:#fff; }
-  #load-status { font-size:11px; color:rgba(255,255,255,0.45); max-width:320px; line-height:1.6; }
-  #load-note { font-size:11px; color:rgba(255,255,255,0.25); max-width:320px; line-height:1.6; }
-
   /* ── LOGIN ── */
   #login {
     align-items: center; justify-content: center;
@@ -500,16 +427,6 @@
     <div class="menu-sub">Cada perfil exige uma abordagem diferente. Estás pronto?</div>
     <div class="menu-list" id="clientList"></div>
   </div>
-</div>
-
-<!-- ══ LOADING OVERLAY ══ -->
-<div id="load-overlay">
-  <div class="ll-logo">DIGI</div>
-  <div class="ll-title">A carregar IA local · sem servidor</div>
-  <div id="load-pct">0%</div>
-  <div id="load-track"><div id="load-bar-fill"></div></div>
-  <div id="load-status">A inicializar modelo...</div>
-  <div id="load-note">Primeira visita: ~400MB em cache.<br>Próximas vezes abre instantaneamente.</div>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -1001,10 +918,6 @@ async function sendMsg() {
 }
 
 async function callClaude(userMsg) {
-  if (!window._aiReady || !window._aiPipeline) {
-    throw new Error('Modelo ainda a carregar. Aguarda uns segundos.');
-  }
-
   const c = state.client;
   const historyStr = state.conversationHistory.slice(0, -1)
     .map(m => `${m.role === 'user' ? 'CONSULTOR' : 'CLIENTE'}: ${m.content}`)
@@ -1012,51 +925,52 @@ async function callClaude(userMsg) {
 
   const systemPrompt = `${c.systemPrompt}
 
-INSTRUÇÕES: Responde APENAS em JSON válido sem texto extra:
-{"clientReply":"resposta do cliente em pt-PT (max 3 frases)","feedback":"análise 1-2 frases da técnica usada","scoreDelta":10,"newPhase":${state.phase},"quickReplies":["sugestão 1","sugestão 2"],"ended":false}
+INSTRUÇÕES DE JOGO:
+És simultaneamente CLIENTE (em personagem) e AVALIADOR das técnicas do consultor DIGI.
+Responde APENAS com JSON válido, sem texto extra, sem markdown:
+{"clientReply":"resposta do cliente em Português de Portugal (max 3 frases, totalmente em personagem)","feedback":"análise 1-2 frases da técnica usada referindo o Manual DIGI","scoreDelta":10,"newPhase":${state.phase},"quickReplies":["sugestão de próxima fala 1","sugestão 2","sugestão 3"],"ended":false,"finalSummary":""}
 
-scoreDelta: 0-5 fraco, 6-15 razoável, 16-25 excelente.
+scoreDelta: 0-5 fraco, 6-12 razoável, 13-20 bom, 21-25 excelente.
 newPhase: 0=Abordagem 1=Diagnóstico 2=Proposta 3=Objeções 4=Fecho. Só avança quando fizer sentido.
 ended: true só se cliente aceitou definitivamente OU recusou de forma absoluta.
-Fase: ${PHASES[state.phase]} | Trocas: ${state.turns}
-${historyStr ? 'Histórico:\n' + historyStr : '(início)'}`;
+Fase atual: ${PHASES[state.phase]} | Score: ${state.score} | Trocas: ${state.turns}
+${historyStr ? 'Histórico:\n' + historyStr : '(início da conversa — porta ainda não foi aberta)'}`;
 
   const messages = [
     { role: 'system', content: systemPrompt },
-    { role: 'user', content: `CONSULTOR diz: "${userMsg}". Responde como cliente E avaliador em JSON.` }
+    { role: 'user', content: userMsg }
   ];
 
-  const output = await window._aiPipeline(messages, {
-    max_new_tokens: 300,
-    temperature: 0.7,
-    do_sample: true,
-    return_full_text: false
+  const res = await fetch('https://text.pollinations.ai/', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      messages,
+      model: 'openai',
+      seed: Math.floor(Math.random() * 9999),
+      jsonMode: true
+    })
   });
 
-  const raw = output?.[0]?.generated_text ?? '';
-  const lastMsg = Array.isArray(raw) ? raw[raw.length - 1]?.content ?? '' : raw;
-  const jsonMatch = lastMsg.match(/\{[\s\S]*\}/);
-  const jsonStr = jsonMatch ? jsonMatch[0] : '';
+  if (!res.ok) throw new Error(`Pollinations erro: ${res.status}`);
+
+  const raw = await res.text();
+  const jsonMatch = raw.match(/\{[\s\S]*\}/);
+  const jsonStr = jsonMatch ? jsonMatch[0] : '{}';
 
   try {
     const parsed = JSON.parse(jsonStr);
     parsed.scoreDelta = Math.max(0, Math.min(25, parseInt(parsed.scoreDelta) || 5));
     parsed.newPhase = Math.max(state.phase, Math.min(4, parseInt(parsed.newPhase) ?? state.phase));
     if (!Array.isArray(parsed.quickReplies)) parsed.quickReplies = [];
-    if (!parsed.clientReply) parsed.clientReply = lastMsg.slice(0, 200);
-    // Update metrics
-    if (state.phase === 0) state.metrics.abertura   = Math.min(25, state.metrics.abertura   + parsed.scoreDelta);
+    if (!parsed.clientReply) parsed.clientReply = raw.slice(0, 300);
+    if (state.phase === 0) state.metrics.abertura    = Math.min(25, state.metrics.abertura    + parsed.scoreDelta);
     else if (state.phase === 1) state.metrics.diagnostico = Math.min(25, state.metrics.diagnostico + parsed.scoreDelta);
     else if (state.phase === 3) state.metrics.objections  = Math.min(25, state.metrics.objections  + parsed.scoreDelta);
     else if (state.phase === 4) state.metrics.fecho       = Math.min(25, state.metrics.fecho       + parsed.scoreDelta);
     return parsed;
   } catch {
-    // JSON parse failed — use raw as client reply
-    return {
-      clientReply: lastMsg.slice(0, 300) || '...',
-      feedback: 'O modelo não devolveu JSON válido. Continua a conversa.',
-      scoreDelta: 5, newPhase: state.phase, quickReplies: [], ended: false
-    };
+    return { clientReply: raw.slice(0, 300) || '...', feedback: null, scoreDelta: 5, newPhase: state.phase, quickReplies: [], ended: false };
   }
 }
 
