@@ -368,6 +368,86 @@
     margin-bottom: 12px; font-family: 'Inter';
   }
 
+  /* ── NOTAS ── */
+  #notas { background: var(--bg); }
+  .notas-layout { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 64px); }
+  .notas-sidebar {
+    background: var(--white); border-right: 1px solid var(--border);
+    display: flex; flex-direction: column; overflow: hidden;
+  }
+  .notas-sidebar-top {
+    padding: 16px; border-bottom: 1px solid var(--border);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .notas-search {
+    width: 100%; background: var(--bg); border: 1px solid var(--border);
+    color: var(--text); font-family: 'Inter'; font-size: 13px;
+    padding: 9px 12px; border-radius: 8px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .notas-search:focus { border-color: var(--blue); }
+  .notas-list { flex: 1; overflow-y: auto; padding: 8px; }
+  .nota-item {
+    padding: 12px 14px; border-radius: 10px; cursor: pointer;
+    transition: all 0.15s; margin-bottom: 4px; border: 1px solid transparent;
+  }
+  .nota-item:hover { background: var(--bg); }
+  .nota-item.active { background: var(--blue-ghost); border-color: var(--blue); }
+  .nota-item-title { font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nota-item-preview { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nota-item-meta { font-size: 10px; color: var(--muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
+  .nota-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; }
+  .tag-relatorio { background: rgba(0,43,255,0.1); color: var(--blue); }
+  .tag-nota { background: rgba(0,184,122,0.1); color: var(--success); }
+  .tag-objetivo { background: rgba(245,158,11,0.12); color: #D97706; }
+  .tag-cliente { background: rgba(139,92,246,0.1); color: #7C3AED; }
+  .notas-editor { display: flex; flex-direction: column; }
+  .notas-toolbar {
+    padding: 12px 20px; border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+    background: var(--white);
+  }
+  .tb-btn {
+    background: var(--bg); border: 1px solid var(--border); color: var(--text);
+    font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer;
+    font-family: 'Inter'; font-weight: 600; transition: all 0.15s;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .tb-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-ghost); }
+  .tb-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(229,57,53,0.06); }
+  .tb-sep { width: 1px; height: 24px; background: var(--border); }
+  .nota-title-input {
+    width: 100%; border: none; outline: none; background: transparent;
+    font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 2px;
+    color: var(--text); padding: 20px 24px 8px;
+  }
+  .nota-title-input::placeholder { color: var(--border); }
+  .nota-body-input {
+    flex: 1; border: none; outline: none; background: transparent;
+    font-family: 'Inter'; font-size: 14px; line-height: 1.8;
+    color: var(--text); padding: 8px 24px 24px; resize: none;
+  }
+  .nota-body-input::placeholder { color: var(--muted); }
+  .notas-empty {
+    flex: 1; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    color: var(--muted); text-align: center; padding: 40px;
+  }
+  .notas-empty .ne-icon { font-size: 56px; margin-bottom: 16px; }
+  .notas-empty .ne-title { font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 2px; margin-bottom: 6px; color: var(--text); }
+  .notas-empty .ne-sub { font-size: 13px; line-height: 1.6; }
+
+  /* Relatório rápido */
+  .relatorio-modal .modal-box { max-width: 520px; }
+  .rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
+  .rel-field label { font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px; }
+  .rel-field input, .rel-field select {
+    width: 100%; background: var(--bg); border: 2px solid var(--border);
+    color: var(--text); font-family: 'Inter'; font-size: 13px;
+    padding: 9px 12px; border-radius: 8px; outline: none; transition: border-color 0.2s;
+  }
+  .rel-field input:focus, .rel-field select:focus { border-color: var(--blue); }
+
   /* RESPONSIVE */
   @media (max-width: 700px) {
     .sim-layout { grid-template-columns: 1fr; }
@@ -393,6 +473,8 @@
     <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;">
       <button class="btn btn-white" onclick="showScreen('menu')">Começar a Treinar →</button>
       <button class="btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);" onclick="openPerfil()">👤 O Meu Perfil</button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);font-size:12px;" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')">🔗 DealerCare</button>
+      <button class="btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);font-size:12px;" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')">🔐 Authenticator</button>
     </div>
     <div class="modes-grid">
       <div class="mode-card featured" onclick="showScreen('menu')">
@@ -409,6 +491,21 @@
         <div class="mode-icon">📖</div>
         <div class="mode-title">Manual Digital</div>
         <div class="mode-desc">Consulta técnicas e scripts</div>
+      </div>
+      <div class="mode-card" onclick="openNotas()">
+        <div class="mode-icon">📝</div>
+        <div class="mode-title">Notas & Relatórios</div>
+        <div class="mode-desc">Guarda notas, relatórios de portas e documentos do dia</div>
+      </div>
+      <div class="mode-card" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')">
+        <div class="mode-icon">🔗</div>
+        <div class="mode-title">DealerCare DIGI</div>
+        <div class="mode-desc">Portal oficial de registo de vendas DIGI</div>
+      </div>
+      <div class="mode-card" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')">
+        <div class="mode-icon">🔐</div>
+        <div class="mode-title">Google Authenticator</div>
+        <div class="mode-desc">App de autenticação 2FA para aceder ao DealerCare</div>
       </div>
     </div>
   </div>
@@ -608,6 +705,90 @@
     <div class="quiz-options" id="quizOpts"></div>
     <div class="quiz-feedback" id="quizFeedback"></div>
     <button class="btn btn-full" id="quizNext" style="display:none;margin-top:16px;" onclick="nextQuiz()">Próxima →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     NOTAS & RELATÓRIOS
+══════════════════════════════════════════ -->
+<div id="notas" class="screen">
+  <div class="header">
+    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Notas & Relatórios</div></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-sm" onclick="openRelatorioModal()">📊 Relatório Rápido</button>
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
+    </div>
+  </div>
+  <div class="notas-layout">
+    <!-- SIDEBAR lista de notas -->
+    <div class="notas-sidebar">
+      <div class="notas-sidebar-top">
+        <input class="notas-search" id="notasSearch" placeholder="🔍 Pesquisar notas..." oninput="filterNotas()">
+        <div style="display:flex;gap:6px;flex-wrap:wrap;">
+          <button class="tb-btn" style="flex:1;justify-content:center;" onclick="newNota('nota')">+ Nota</button>
+          <button class="tb-btn" style="flex:1;justify-content:center;" onclick="newNota('relatorio')">+ Relatório</button>
+        </div>
+        <div style="display:flex;gap:4px;flex-wrap:wrap;" id="tagFilter">
+          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('')">Todas</button>
+          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('relatorio')">📊 Relatórios</button>
+          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('nota')">📝 Notas</button>
+          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('objetivo')">🎯 Objetivos</button>
+          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('cliente')">👤 Clientes</button>
+        </div>
+      </div>
+      <div class="notas-list" id="notasList"></div>
+    </div>
+
+    <!-- EDITOR -->
+    <div class="notas-editor" id="notasEditor">
+      <div class="notas-empty" id="notasEmpty">
+        <div class="ne-icon">📝</div>
+        <div class="ne-title">SEM NOTA SELECIONADA</div>
+        <div class="ne-sub">Cria uma nova nota ou relatório<br>e começa a escrever.</div>
+      </div>
+      <div id="notasEditorInner" style="display:none;flex-direction:column;flex:1;">
+        <div class="notas-toolbar">
+          <select id="notaTag" onchange="saveCurrentNota()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Inter';font-size:12px;font-weight:600;padding:6px 10px;border-radius:6px;outline:none;cursor:pointer;">
+            <option value="nota">📝 Nota</option>
+            <option value="relatorio">📊 Relatório</option>
+            <option value="objetivo">🎯 Objetivo</option>
+            <option value="cliente">👤 Cliente</option>
+          </select>
+          <div class="tb-sep"></div>
+          <button class="tb-btn" onclick="exportNota()">⬇ Exportar</button>
+          <button class="tb-btn" onclick="copyNota()">📋 Copiar</button>
+          <button class="tb-btn" onclick="shareNotaWA()">💬 WhatsApp</button>
+          <div class="tb-sep"></div>
+          <button class="tb-btn danger" onclick="deleteCurrentNota()">🗑 Apagar</button>
+          <span id="notaSaved" style="margin-left:auto;font-size:11px;color:var(--success);font-weight:600;opacity:0;transition:opacity 0.3s;">✓ Guardado</span>
+        </div>
+        <input class="nota-title-input" id="notaTitleInput" placeholder="TÍTULO DA NOTA" oninput="saveCurrentNota()">
+        <textarea class="nota-body-input" id="notaBodyInput" placeholder="Começa a escrever aqui...&#10;&#10;Usa esta nota para:&#10;• Relatório de portas do dia&#10;• Notas de cliente&#10;• Objetivos da semana&#10;• Qualquer documento que precises guardar" oninput="saveCurrentNota()"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL RELATÓRIO RÁPIDO -->
+<div class="modal-overlay relatorio-modal" id="relatorioModal">
+  <div class="modal-box">
+    <div class="modal-title">📊 RELATÓRIO DE PORTAS</div>
+    <div class="modal-sub">Preenche os dados do dia para gerar o relatório automaticamente</div>
+    <div class="rel-grid">
+      <div class="rel-field"><label>Data</label><input type="date" id="rel-data"></div>
+      <div class="rel-field"><label>Vendedor</label><input type="text" id="rel-vendedor" placeholder="Nome"></div>
+      <div class="rel-field"><label>Portas Batidas</label><input type="number" id="rel-portas" placeholder="80" min="0"></div>
+      <div class="rel-field"><label>Aberturas</label><input type="number" id="rel-aberturas" placeholder="40" min="0"></div>
+      <div class="rel-field"><label>Abordagens</label><input type="number" id="rel-abordagens" placeholder="20" min="0"></div>
+      <div class="rel-field"><label>Controlos</label><input type="number" id="rel-controlos" placeholder="10" min="0"></div>
+      <div class="rel-field"><label>Adesões</label><input type="number" id="rel-adesoes" placeholder="4" min="0"></div>
+      <div class="rel-field"><label>Zona</label><input type="text" id="rel-zona" placeholder="Ex: Matosinhos"></div>
+    </div>
+    <div class="rel-field" style="margin-bottom:16px;"><label>Observações</label><input type="text" id="rel-obs" placeholder="Notas adicionais do dia..."></div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-sm" onclick="gerarRelatorio()">✅ Gerar & Guardar</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeRelatorioModal()">Cancelar</button>
+    </div>
   </div>
 </div>
 
