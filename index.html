@@ -941,20 +941,22 @@ ${historyStr ? 'Histórico:\n' + historyStr : '(início da conversa — porta ai
     { role: 'user', content: userMsg }
   ];
 
-  const res = await fetch('https://text.pollinations.ai/', {
+  const res = await fetch('https://text.pollinations.ai/openai', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
-      messages,
       model: 'openai',
-      seed: Math.floor(Math.random() * 9999),
-      jsonMode: true
+      messages,
+      temperature: 0.7,
+      response_format: { type: 'json_object' },
+      private: true
     })
   });
 
   if (!res.ok) throw new Error(`Pollinations erro: ${res.status}`);
 
-  const raw = await res.text();
+  const data = await res.json();
+  const raw = data?.choices?.[0]?.message?.content || '{}';
   const jsonMatch = raw.match(/\{[\s\S]*\}/);
   const jsonStr = jsonMatch ? jsonMatch[0] : '{}';
 
