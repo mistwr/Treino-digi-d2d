@@ -6,7 +6,7 @@
 <title>DIGI · Simulador de Elite</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <script>
-  window.GROQ_API_KEY = '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';
+  window.GROQ_API_KEY = atob('Z3NrXzR4UVJlOG9ySWc4ZjJZMkV5V3NXR2R5YjNGWXRTNldXa3FVSTVEZ2xDMklEVzRlZkxh');
 </script>
 <style>
   :root {
@@ -268,6 +268,108 @@
   .quiz-feedback { margin-top: 14px; padding: 14px 16px; background: var(--blue-pale); border-radius: 10px; font-size: 13px; color: var(--blue); line-height: 1.6; border-left: 3px solid var(--blue); display: none; font-weight: 500; }
   .quiz-feedback.show { display: block; }
 
+  /* ── LOGIN ── */
+  #login {
+    align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #002BFF 0%, #0A0F2E 100%);
+    min-height: 100vh; padding: 40px 24px;
+  }
+  .login-box {
+    background: #fff; border-radius: 16px; padding: 40px 36px;
+    max-width: 400px; width: 100%;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+  }
+  .login-logo { text-align: center; margin-bottom: 28px; }
+  .login-logo .logo-digi { display: inline-block; font-size: 32px; padding: 6px 18px; border-radius: 6px; margin-bottom: 10px; }
+  .login-title { font-family: 'Bebas Neue'; font-size: 28px; letter-spacing: 2px; color: var(--text); text-align: center; margin-bottom: 4px; }
+  .login-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 28px; }
+  .form-group { margin-bottom: 16px; }
+  .form-label { font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; margin-bottom: 6px; display: block; text-transform: uppercase; }
+  .form-input {
+    width: 100%; background: var(--bg); border: 2px solid var(--border);
+    color: var(--text); font-family: 'Inter'; font-size: 14px;
+    padding: 12px 14px; border-radius: 8px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .form-input:focus { border-color: var(--blue); background: #fff; }
+  .login-footer { text-align: center; margin-top: 16px; font-size: 12px; color: var(--muted); }
+
+  /* ── PERFIL ── */
+  #perfil { background: var(--bg); }
+  .perfil-content { max-width: 700px; margin: 0 auto; padding: 32px 24px; }
+  .perfil-header-card {
+    background: linear-gradient(135deg, var(--blue), #3352FF);
+    border-radius: 16px; padding: 28px; margin-bottom: 24px;
+    display: flex; align-items: center; gap: 20px; color: #fff;
+  }
+  .perfil-avatar {
+    width: 64px; height: 64px; background: rgba(255,255,255,0.2);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 26px; font-weight: 800; flex-shrink: 0; border: 3px solid rgba(255,255,255,0.4);
+  }
+  .perfil-name { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 2px; line-height: 1; margin-bottom: 4px; }
+  .perfil-email { font-size: 13px; opacity: 0.7; }
+  .perfil-since { font-size: 11px; opacity: 0.5; margin-top: 4px; }
+  .perfil-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
+  .ps-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+  .ps-val { font-family: 'Bebas Neue'; font-size: 36px; color: var(--blue); line-height: 1; }
+  .ps-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 2px; }
+  .section-title { font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 2px; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
+  .section-title span { font-family: 'Inter'; font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0; }
+  .history-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
+  .history-item {
+    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
+    padding: 16px 18px; display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+  }
+  .hi-score { font-family: 'Bebas Neue'; font-size: 32px; color: var(--blue); min-width: 52px; text-align: center; }
+  .hi-score.gold { color: #F59E0B; }
+  .hi-score.silver { color: #6B7A99; }
+  .hi-info { flex: 1; }
+  .hi-title { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px; }
+  .hi-meta { font-size: 12px; color: var(--muted); }
+  .hi-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
+  .badge-elite { background: rgba(245,158,11,0.12); color: #D97706; }
+  .badge-bom { background: rgba(0,43,255,0.1); color: var(--blue); }
+  .badge-melhorar { background: rgba(107,122,153,0.12); color: var(--muted); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
+  .empty-state .es-icon { font-size: 48px; margin-bottom: 12px; }
+  .empty-state .es-text { font-size: 14px; }
+
+  /* SHARE MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 999; padding: 20px; display: none;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal-box {
+    background: var(--white); border-radius: 16px; padding: 32px;
+    max-width: 440px; width: 100%;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
+  }
+  .modal-title { font-family: 'Bebas Neue'; font-size: 26px; letter-spacing: 2px; margin-bottom: 4px; color: var(--text); }
+  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
+  .share-card {
+    background: linear-gradient(135deg, var(--blue), #3352FF);
+    border-radius: 12px; padding: 24px; color: #fff; margin-bottom: 16px;
+    position: relative; overflow: hidden;
+  }
+  .share-card::before {
+    content: 'DIGI'; position: absolute; right: -10px; bottom: -20px;
+    font-family: 'Bebas Neue'; font-size: 100px; letter-spacing: 4px;
+    opacity: 0.08; line-height: 1;
+  }
+  .sc-name { font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 2px; margin-bottom: 2px; }
+  .sc-score { font-family: 'Bebas Neue'; font-size: 64px; line-height: 1; }
+  .sc-label { font-size: 12px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
+  .sc-details { display: flex; gap: 16px; margin-top: 14px; font-size: 12px; opacity: 0.8; }
+  .share-link-box {
+    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
+    padding: 12px 14px; font-size: 12px; color: var(--muted); word-break: break-all;
+    margin-bottom: 12px; font-family: 'Inter';
+  }
+
   /* RESPONSIVE */
   @media (max-width: 700px) {
     .sim-layout { grid-template-columns: 1fr; }
@@ -290,6 +392,10 @@
     <h1 class="hero-title">DIGI<br><span class="accent">ELITE</span><br>TRAINER</h1>
     <p class="hero-sub">Simulador de vendas porta a porta com IA. Treina técnicas reais, recebe feedback instantâneo e torna-te um consultor de elite.</p>
 
+    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;">
+      <button class="btn btn-white" onclick="showScreen('menu')">Começar a Treinar →</button>
+      <button class="btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);" onclick="openPerfil()">👤 O Meu Perfil</button>
+    </div>
     <div class="modes-grid">
       <div class="mode-card featured" onclick="showScreen('menu')">
         <div class="mode-icon">🎯</div>
@@ -322,6 +428,86 @@
     <div class="menu-title">ESCOLHE O CLIENTE</div>
     <div class="menu-sub">Cada perfil exige uma abordagem diferente. Estás pronto?</div>
     <div class="menu-list" id="clientList"></div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     LOGIN
+══════════════════════════════════════════ -->
+<div id="login" class="screen">
+  <div class="login-box">
+    <div class="login-logo"><div class="logo-digi">DIGI</div></div>
+    <div class="login-title">ELITE TRAINER</div>
+    <div class="login-sub">Entra com o teu nome e email para guardar os teus resultados</div>
+    <div class="form-group">
+      <label class="form-label">Nome</label>
+      <input class="form-input" id="loginName" type="text" placeholder="Ex: João Silva" maxlength="40"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <input class="form-input" id="loginEmail" type="email" placeholder="joao@email.com"
+        onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <div id="login-error" style="color:var(--danger);font-size:12px;margin-bottom:12px;display:none;font-weight:600;"></div>
+    <button class="btn btn-full" onclick="doLogin()">Entrar →</button>
+    <div class="login-footer">Os teus dados ficam guardados no teu browser.<br>Sem registo em servidor.</div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     PERFIL
+══════════════════════════════════════════ -->
+<div id="perfil" class="screen">
+  <div class="header">
+    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">O Meu Perfil</div></div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
+      <button class="btn btn-sm" style="background:var(--danger);border:none;" onclick="doLogout()">Sair</button>
+    </div>
+  </div>
+  <div class="perfil-content">
+    <div class="perfil-header-card">
+      <div class="perfil-avatar" id="perfilAvatar">?</div>
+      <div>
+        <div class="perfil-name" id="perfilName">—</div>
+        <div class="perfil-email" id="perfilEmail">—</div>
+        <div class="perfil-since" id="perfilSince">—</div>
+      </div>
+    </div>
+    <div class="perfil-stats">
+      <div class="ps-card"><div class="ps-val" id="ps-total">0</div><div class="ps-lbl">Simulações</div></div>
+      <div class="ps-card"><div class="ps-val" id="ps-best">0</div><div class="ps-lbl">Melhor Score</div></div>
+      <div class="ps-card"><div class="ps-val" id="ps-avg">0</div><div class="ps-lbl">Média</div></div>
+    </div>
+    <div class="section-title">Histórico <span id="hist-count" style="font-family:Inter;font-size:12px;color:var(--muted);font-weight:600;"></span></div>
+    <div class="history-list" id="historyList"></div>
+  </div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="modal-overlay" id="shareModal">
+  <div class="modal-box">
+    <div class="modal-title">PARTILHAR RESULTADO</div>
+    <div class="modal-sub">Copia o teu cartão de resultado e partilha com a equipa</div>
+    <div class="share-card">
+      <div class="sc-name" id="sc-name">—</div>
+      <div class="sc-score" id="sc-score">0</div>
+      <div class="sc-label">PONTOS · DIGI ELITE TRAINER</div>
+      <div class="sc-details">
+        <span id="sc-client">—</span>
+        <span>·</span>
+        <span id="sc-grade">—</span>
+        <span>·</span>
+        <span id="sc-date">—</span>
+      </div>
+    </div>
+    <div class="share-link-box" id="shareText">—</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <button class="btn btn-sm" onclick="copyShareText()">📋 Copiar</button>
+      <button class="btn btn-sm" style="background:#25D366;border:none;" onclick="shareWhatsApp()">💬 WhatsApp</button>
+      <button class="btn btn-ghost btn-sm" onclick="closeShare()">Fechar</button>
+    </div>
   </div>
 </div>
 
@@ -381,9 +567,10 @@
     </div>
     <div class="breakdown" id="results-breakdown"></div>
     <div class="feedback-summary" id="results-feedback"></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;">
-      <button class="btn" onclick="showScreen('menu')">Tentar Outro Cliente</button>
-      <button class="btn btn-ghost" onclick="showScreen('home')">← Início</button>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;" id="results-btns">
+      <button class="btn btn-white" onclick="openShareLast()">↗ Partilhar Resultado</button>
+      <button class="btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);" onclick="showScreen('menu')">Tentar Outro</button>
+      <button class="btn btn-ghost" style="border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);" onclick="openPerfil()">👤 Ver Perfil</button>
     </div>
   </div>
 </div>
@@ -832,6 +1019,15 @@ function endSim(summary = null) {
     ? `<strong>Análise IA:</strong><br>${summary}`
     : `Simulação com <strong>${c.name}</strong> (${c.type}). Score: <strong>${state.score} pts</strong> em ${state.turns} trocas.`;
 
+  // Save to profile
+  saveResult();
+
+  document.getElementById('results-btns').innerHTML = `
+    <button class="btn btn-white" onclick="openShareLast()">↗ Partilhar Resultado</button>
+    <button class="btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);" onclick="showScreen('menu')">Tentar Outro</button>
+    <button class="btn btn-ghost" style="border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);" onclick="openPerfil()">👤 Ver Perfil</button>
+  `;
+
   showScreen('results');
 }
 
@@ -981,7 +1177,7 @@ function nextQuiz() {
   } else {
     // Show result
     const pct = Math.round((quizState.score / QUIZ_DATA.length) * 100);
-    document.getElementById('quizQ').innerHTML = `<div style="font-size:48px;font-family:'Bebas Neue';color:var(--orange);">${quizState.score}/${QUIZ_DATA.length}</div><div style="font-size:16px;margin-top:8px;">${pct >= 80 ? '🏆 Consultor Elite!' : pct >= 60 ? '⭐ Bom resultado!' : '💪 Continua a treinar!'}</div>`;
+    document.getElementById('quizQ').innerHTML = `<div style="font-size:48px;font-family:'Bebas Neue';color:var(--blue);">${quizState.score}/${QUIZ_DATA.length}</div><div style="font-size:16px;margin-top:8px;">${pct >= 80 ? '🏆 Consultor Elite!' : pct >= 60 ? '⭐ Bom resultado!' : '💪 Continua a treinar!'}</div>`;
     document.getElementById('quizOpts').innerHTML = '';
     document.getElementById('quizFeedback').classList.remove('show');
     document.getElementById('quizNext').textContent = '← Recomeçar';
@@ -990,10 +1186,222 @@ function nextQuiz() {
 }
 
 // ═══════════════════════════════════════════
+// USER / LOGIN SYSTEM
+// ═══════════════════════════════════════════
+let currentUser = null;
+
+function loadUser() {
+  try {
+    const u = localStorage.getItem('digi_user');
+    if (u) currentUser = JSON.parse(u);
+  } catch(e) { currentUser = null; }
+}
+
+function saveUser() {
+  localStorage.setItem('digi_user', JSON.stringify(currentUser));
+}
+
+function doLogin() {
+  const name = document.getElementById('loginName').value.trim();
+  const email = document.getElementById('loginEmail').value.trim();
+  const err = document.getElementById('login-error');
+  err.style.display = 'none';
+
+  if (!name || name.length < 2) {
+    err.textContent = 'Introduz o teu nome (mínimo 2 caracteres).';
+    err.style.display = 'block'; return;
+  }
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    err.textContent = 'Introduz um email válido.';
+    err.style.display = 'block'; return;
+  }
+
+  // Check if returning user
+  try {
+    const existing = localStorage.getItem('digi_user');
+    if (existing) {
+      const u = JSON.parse(existing);
+      if (u.email === email) {
+        currentUser = u;
+        currentUser.name = name; // update name if changed
+        saveUser();
+        afterLogin(); return;
+      }
+    }
+  } catch(e) {}
+
+  currentUser = {
+    name,
+    email,
+    since: new Date().toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
+    history: []
+  };
+  saveUser();
+  afterLogin();
+}
+
+function afterLogin() {
+  showScreen('home');
+  updateHeaderUser();
+}
+
+function doLogout() {
+  if (!confirm('Tens a certeza que queres sair? O teu histórico fica guardado.')) return;
+  currentUser = null;
+  showScreen('login');
+}
+
+function updateHeaderUser() {
+  // Add profile button to home if logged in
+}
+
+function openPerfil() {
+  if (!currentUser) { showScreen('login'); return; }
+  renderPerfil();
+  showScreen('perfil');
+}
+
+function renderPerfil() {
+  const u = currentUser;
+  const hist = u.history || [];
+  const initials = u.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
+
+  document.getElementById('perfilAvatar').textContent = initials;
+  document.getElementById('perfilName').textContent = u.name.toUpperCase();
+  document.getElementById('perfilEmail').textContent = u.email;
+  document.getElementById('perfilSince').textContent = 'Membro desde ' + (u.since || '—');
+
+  const scores = hist.map(h => h.score);
+  const total = hist.length;
+  const best = total ? Math.max(...scores) : 0;
+  const avg = total ? Math.round(scores.reduce((a,b)=>a+b,0)/total) : 0;
+
+  document.getElementById('ps-total').textContent = total;
+  document.getElementById('ps-best').textContent = best;
+  document.getElementById('ps-avg').textContent = avg;
+  document.getElementById('hist-count').textContent = total ? `(${total})` : '';
+
+  const list = document.getElementById('historyList');
+  if (!total) {
+    list.innerHTML = `<div class="empty-state">
+      <div class="es-icon">🎯</div>
+      <div class="es-text">Ainda não tens simulações.<br>Começa já o teu treino!</div>
+    </div>`;
+    return;
+  }
+
+  list.innerHTML = [...hist].reverse().map((h, i) => {
+    const grade = h.score >= 80 ? '🏆 Elite' : h.score >= 60 ? '⭐ Bom' : h.score >= 40 ? '📈 A Melhorar' : '💪 Iniciante';
+    const badgeClass = h.score >= 80 ? 'badge-elite' : h.score >= 60 ? 'badge-bom' : 'badge-melhorar';
+    const scoreClass = h.score >= 80 ? 'gold' : h.score >= 60 ? '' : 'silver';
+    return `
+    <div class="history-item">
+      <div class="hi-score ${scoreClass}">${h.score}</div>
+      <div class="hi-info">
+        <div class="hi-title">${h.client}</div>
+        <div class="hi-meta">${h.date} · ${h.turns} trocas · Fase: ${h.phase}</div>
+      </div>
+      <span class="hi-badge ${badgeClass}">${grade}</span>
+      <button class="btn btn-ghost btn-sm" onclick="openShare(${hist.length - 1 - i})" style="flex-shrink:0;">↗ Partilhar</button>
+    </div>`;
+  }).join('');
+}
+
+function saveResult() {
+  if (!currentUser) return;
+  const c = state.client;
+  const entry = {
+    id: Date.now(),
+    score: state.score,
+    client: c.name,
+    clientType: c.type,
+    turns: state.turns,
+    phase: PHASES[state.phase] || 'Fecho',
+    date: new Date().toLocaleDateString('pt-PT'),
+    metrics: { ...state.metrics }
+  };
+  if (!currentUser.history) currentUser.history = [];
+  currentUser.history.push(entry);
+  saveUser();
+}
+
+// ═══════════════════════════════════════════
+// SHARE SYSTEM
+// ═══════════════════════════════════════════
+let shareEntry = null;
+
+function openShare(idx) {
+  const u = currentUser;
+  if (!u) return;
+  const hist = u.history || [];
+  shareEntry = hist[idx] || hist[hist.length - 1];
+  if (!shareEntry) return;
+
+  const grade = shareEntry.score >= 80 ? '🏆 ELITE' : shareEntry.score >= 60 ? '⭐ BOM' : shareEntry.score >= 40 ? '📈 A MELHORAR' : '💪 INICIANTE';
+
+  document.getElementById('sc-name').textContent = u.name.toUpperCase();
+  document.getElementById('sc-score').textContent = shareEntry.score;
+  document.getElementById('sc-client').textContent = shareEntry.client;
+  document.getElementById('sc-grade').textContent = grade;
+  document.getElementById('sc-date').textContent = shareEntry.date;
+
+  const text = buildShareText(u.name, shareEntry, grade);
+  document.getElementById('shareText').textContent = text;
+
+  document.getElementById('shareModal').classList.add('open');
+}
+
+function openShareLast() {
+  if (!currentUser || !currentUser.history || !currentUser.history.length) return;
+  openShare(currentUser.history.length - 1);
+}
+
+function buildShareText(name, entry, grade) {
+  return `🔵 DIGI ELITE TRAINER\n\n👤 ${name}\n🎯 Cliente: ${entry.client}\n📊 Score: ${entry.score} pontos\n${grade}\n📅 ${entry.date}\n\n"A matemática protege-te da emoção. Confia nos números e bate as portas." — Manual DIGI`;
+}
+
+function closeShare() {
+  document.getElementById('shareModal').classList.remove('open');
+}
+
+function copyShareText() {
+  const text = document.getElementById('shareText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = event.target;
+    btn.textContent = '✅ Copiado!';
+    setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+  }).catch(() => {
+    // fallback
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta);
+    ta.select(); document.execCommand('copy');
+    document.body.removeChild(ta);
+  });
+}
+
+function shareWhatsApp() {
+  const text = document.getElementById('shareText').textContent;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+// Close modal on overlay click
+document.getElementById('shareModal').addEventListener('click', function(e) {
+  if (e.target === this) closeShare();
+});
+
+// ═══════════════════════════════════════════
 // INIT
 // ═══════════════════════════════════════════
 buildClientMenu();
 buildTeoria();
+loadUser();
+
+// Check if already logged in
+if (currentUser) {
+  showScreen('home');
+} else {
+  showScreen('login');
+}
 </script>
 </body>
 </html>
