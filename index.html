@@ -466,47 +466,138 @@
 ══════════════════════════════════════════ -->
 <div id="home" class="screen active">
   <div class="home-inner">
-    <div class="hero-badge">Sistema de Alta Performance</div>
-    <h1 class="hero-title">DIGI<br><span class="accent">ELITE</span><br>TRAINER</h1>
-    <p class="hero-sub">Simulador de vendas porta a porta com IA. Treina técnicas reais, recebe feedback instantâneo e torna-te um consultor de elite.</p>
 
-    <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:32px;">
-      <button class="btn btn-white" onclick="showScreen('menu')">Começar a Treinar →</button>
-      <button class="btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);" onclick="openPerfil()">👤 O Meu Perfil</button>
-      <button class="btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);font-size:12px;" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')">🔗 DealerCare</button>
-      <button class="btn" style="background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);font-size:12px;" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')">🔐 Authenticator</button>
+    <!-- Logo + badge -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;">
+      <div style="display:flex;align-items:center;gap:12px;">
+        <div class="logo-digi" style="font-size:22px;padding:4px 12px 2px;">DIGI</div>
+        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;">Elite Trainer</div>
+      </div>
+      <button onclick="openPerfil()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-family:'Inter';font-size:12px;font-weight:600;padding:7px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
+        <span id="homeUserInitials" style="width:22px;height:22px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;">?</span>
+        <span id="homeUserName">Entrar</span>
+      </button>
     </div>
-    <div class="modes-grid">
-      <div class="mode-card featured" onclick="showScreen('menu')">
-        <div class="mode-icon">🎯</div>
-        <div class="mode-title">Simulação Completa</div>
-        <div class="mode-desc">Conversa em tempo real com um cliente simulado por IA. Abordagem → Diagnóstico → Fecho.</div>
+
+    <!-- Hero -->
+    <div style="margin-bottom:36px;">
+      <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;">Sistema de Alta Performance</div>
+      <h1 style="font-family:'Bebas Neue';font-size:clamp(48px,11vw,80px);line-height:0.9;letter-spacing:3px;color:#fff;margin-bottom:14px;">Treina.<br>Mede.<br><span style="-webkit-text-stroke:2px rgba(255,255,255,0.35);-webkit-text-fill-color:transparent;">Fecha.</span></h1>
+      <p style="color:rgba(255,255,255,0.55);font-size:14px;line-height:1.6;max-width:340px;">Simulador porta a porta com IA · feedback real · resultados que ficam guardados.</p>
+    </div>
+
+    <!-- CTA principal -->
+    <button class="btn btn-white" onclick="showScreen('menu')" style="width:100%;justify-content:center;font-size:15px;padding:16px;border-radius:10px;margin-bottom:20px;letter-spacing:1px;">
+      Iniciar Simulação →
+    </button>
+
+    <!-- Links rápidos - row de pills -->
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;">
+      <button onclick="showScreen('quiz');initQuiz()" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">⚡ Teste</button>
+      <button onclick="showScreen('teoria')" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">📖 Manual</button>
+      <button onclick="openNotas()" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">📝 Notas</button>
+      <button onclick="showScreen('comissoes')" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">💶 Comissões</button>
+    </div>
+
+    <!-- Ferramentas externas - linha separadora -->
+    <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;">
+      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;">Ferramentas DIGI</div>
+      <div style="display:flex;gap:8px;">
+        <button onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')"
+          style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-family:'Inter';font-size:11px;font-weight:700;padding:10px 8px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+          <span style="font-size:18px;">🔗</span>
+          <span>DealerCare</span>
+        </button>
+        <button onclick="window.open('https://quero-aderir-digi-pt.vercel.app/','_blank')"
+          style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-family:'Inter';font-size:11px;font-weight:700;padding:10px 8px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+          <span style="font-size:18px;">📊</span>
+          <span>Simulador</span>
+        </button>
+        <button onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')"
+          style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-family:'Inter';font-size:11px;font-weight:700;padding:10px 8px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s;"
+          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
+          <span style="font-size:18px;">🔐</span>
+          <span>Authenticator</span>
+        </button>
       </div>
-      <div class="mode-card" onclick="showScreen('quiz'); initQuiz()">
-        <div class="mode-icon">⚡</div>
-        <div class="mode-title">Teste Rápido</div>
-        <div class="mode-desc">10 perguntas sobre técnicas DIGI</div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     COMISSÕES
+══════════════════════════════════════════ -->
+<div id="comissoes" class="screen">
+  <div class="header">
+    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Tabela de Comissões</div></div>
+    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
+  </div>
+  <div style="max-width:680px;margin:0 auto;padding:28px 16px;">
+
+    <!-- Título -->
+    <div style="margin-bottom:24px;">
+      <div style="font-family:'Bebas Neue';font-size:36px;letter-spacing:2px;color:var(--blue);">Comissões por Adesão</div>
+      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Valores por serviço activado · Tabela Soluções Diferentes / DIGI</div>
+    </div>
+
+    <!-- Tabela principal -->
+    <div style="background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,43,255,0.06);margin-bottom:24px;">
+      <!-- Header tabela -->
+      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;background:var(--blue);color:#fff;">
+        <div style="padding:12px 14px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;">Adesões/Mês</div>
+        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">📺 TV</div>
+        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">🌐 Fibra</div>
+        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">📱 Móvel</div>
+        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">☎️ Fixo</div>
       </div>
-      <div class="mode-card" onclick="showScreen('teoria')">
-        <div class="mode-icon">📖</div>
-        <div class="mode-title">Manual Digital</div>
-        <div class="mode-desc">Consulta técnicas e scripts</div>
+      <!-- Linhas -->
+      <div id="comissoesRows"></div>
+    </div>
+
+    <!-- Calculadora -->
+    <div style="background:var(--white);border-radius:14px;border:1px solid var(--border);padding:20px;box-shadow:0 2px 12px rgba(0,43,255,0.06);margin-bottom:20px;">
+      <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:16px;">💶 Calculadora de Comissão</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Total Adesões</label>
+          <input type="number" id="calc-adesoes" min="0" placeholder="Ex: 20" oninput="calcComissao()"
+            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;font-weight:600;padding:10px 12px;border-radius:8px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">TVs</label>
+          <input type="number" id="calc-tv" min="0" placeholder="0" oninput="calcComissao()"
+            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Fibras</label>
+          <input type="number" id="calc-fibra" min="0" placeholder="0" oninput="calcComissao()"
+            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Móveis</label>
+          <input type="number" id="calc-movel" min="0" placeholder="0" oninput="calcComissao()"
+            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Fixo</label>
+          <input type="number" id="calc-fixo" min="0" placeholder="0" oninput="calcComissao()"
+            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
+        </div>
       </div>
-      <div class="mode-card" onclick="openNotas()">
-        <div class="mode-icon">📝</div>
-        <div class="mode-title">Notas & Relatórios</div>
-        <div class="mode-desc">Guarda notas, relatórios de portas e documentos do dia</div>
+      <!-- Resultado -->
+      <div id="calc-resultado" style="background:linear-gradient(135deg,var(--blue),#3352FF);border-radius:10px;padding:16px 20px;color:#fff;display:none;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Estimativa de Comissão</div>
+        <div style="font-family:'Bebas Neue';font-size:48px;line-height:1;" id="calc-total-val">0 €</div>
+        <div style="font-size:12px;opacity:0.7;margin-top:6px;" id="calc-breakdown">—</div>
       </div>
-      <div class="mode-card" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')">
-        <div class="mode-icon">🔗</div>
-        <div class="mode-title">DealerCare DIGI</div>
-        <div class="mode-desc">Portal oficial de registo de vendas DIGI</div>
-      </div>
-      <div class="mode-card" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')">
-        <div class="mode-icon">🔐</div>
-        <div class="mode-title">Google Authenticator</div>
-        <div class="mode-desc">App de autenticação 2FA para aceder ao DealerCare</div>
-      </div>
+    </div>
+
+    <!-- Nota -->
+    <div style="background:var(--blue-pale);border-radius:10px;padding:14px 16px;border-left:3px solid var(--blue);font-size:12px;color:var(--blue);line-height:1.6;font-weight:500;">
+      ℹ️ Valores de comissão por serviço activado. O escalão é determinado pelo total de adesões do mês. TV inclui qualquer pack de televisão. Fixo refere-se a voz fixa.
     </div>
   </div>
 </div>
@@ -1410,6 +1501,7 @@ function doLogin() {
 function afterLogin() {
   showScreen('home');
   updateHeaderUser();
+  updateHomeUser();
 }
 
 function doLogout() {
@@ -1557,18 +1649,255 @@ document.getElementById('shareModal').addEventListener('click', function(e) {
 });
 
 // ═══════════════════════════════════════════
-// INIT
+// NOTAS SYSTEM
 // ═══════════════════════════════════════════
-buildClientMenu();
-buildTeoria();
-loadUser();
+let notas = [];
+let currentNotaId = null;
+let notaTagFilter = '';
+let saveTimeout = null;
 
-// Check if already logged in
-if (currentUser) {
-  showScreen('home');
-} else {
-  showScreen('login');
+function loadNotas() {
+  try { notas = JSON.parse(localStorage.getItem('digi_notas') || '[]'); } catch(e) { notas = []; }
 }
-</script>
-</body>
-</html>
+
+function saveNotas() {
+  localStorage.setItem('digi_notas', JSON.stringify(notas));
+}
+
+function openNotas() {
+  loadNotas();
+  renderNotasList();
+  showScreen('notas');
+  selectNota(null);
+}
+
+function newNota(tag = 'nota') {
+  const now = new Date();
+  const nota = {
+    id: Date.now(),
+    title: '',
+    body: '',
+    tag,
+    date: now.toLocaleDateString('pt-PT'),
+    ts: now.getTime()
+  };
+  notas.unshift(nota);
+  saveNotas();
+  renderNotasList();
+  selectNota(nota.id);
+  setTimeout(() => document.getElementById('notaTitleInput').focus(), 100);
+}
+
+function selectNota(id) {
+  currentNotaId = id;
+  document.querySelectorAll('.nota-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.id == id);
+  });
+  const empty = document.getElementById('notasEmpty');
+  const inner = document.getElementById('notasEditorInner');
+  if (!id) {
+    empty.style.display = 'flex'; inner.style.display = 'none'; return;
+  }
+  const nota = notas.find(n => n.id == id);
+  if (!nota) return;
+  empty.style.display = 'none'; inner.style.display = 'flex';
+  document.getElementById('notaTitleInput').value = nota.title;
+  document.getElementById('notaBodyInput').value = nota.body;
+  document.getElementById('notaTag').value = nota.tag || 'nota';
+}
+
+function saveCurrentNota() {
+  if (!currentNotaId) return;
+  const nota = notas.find(n => n.id == currentNotaId);
+  if (!nota) return;
+  nota.title = document.getElementById('notaTitleInput').value;
+  nota.body = document.getElementById('notaBodyInput').value;
+  nota.tag = document.getElementById('notaTag').value;
+  nota.ts = Date.now();
+  // Move to top
+  notas = [nota, ...notas.filter(n => n.id !== currentNotaId)];
+  saveNotas();
+  renderNotasList();
+  // Show saved indicator
+  clearTimeout(saveTimeout);
+  const saved = document.getElementById('notaSaved');
+  saved.style.opacity = '1';
+  saveTimeout = setTimeout(() => saved.style.opacity = '0', 1500);
+}
+
+function deleteCurrentNota() {
+  if (!currentNotaId) return;
+  const nota = notas.find(n => n.id == currentNotaId);
+  const title = nota?.title || 'esta nota';
+  if (!confirm(`Apagar "${title}"?`)) return;
+  notas = notas.filter(n => n.id !== currentNotaId);
+  saveNotas();
+  renderNotasList();
+  selectNota(null);
+}
+
+function filterNotas() {
+  renderNotasList();
+}
+
+function filterByTag(tag) {
+  notaTagFilter = tag;
+  renderNotasList();
+}
+
+function renderNotasList() {
+  const search = (document.getElementById('notasSearch')?.value || '').toLowerCase();
+  let filtered = notas.filter(n => {
+    const matchTag = !notaTagFilter || n.tag === notaTagFilter;
+    const matchSearch = !search || n.title.toLowerCase().includes(search) || n.body.toLowerCase().includes(search);
+    return matchTag && matchSearch;
+  });
+
+  const list = document.getElementById('notasList');
+  if (!list) return;
+
+  if (!filtered.length) {
+    list.innerHTML = `<div style="text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;">${notas.length ? 'Sem resultados.' : 'Ainda sem notas.<br>Cria a tua primeira!'}</div>`;
+    return;
+  }
+
+  const tagMap = { nota:'📝', relatorio:'📊', objetivo:'🎯', cliente:'👤' };
+  list.innerHTML = filtered.map(n => `
+    <div class="nota-item ${n.id == currentNotaId ? 'active' : ''}" data-id="${n.id}" onclick="selectNota(${n.id})">
+      <div class="nota-item-title">${n.title || 'Sem título'}</div>
+      <div class="nota-item-preview">${(n.body || '').slice(0, 60) || '...'}</div>
+      <div class="nota-item-meta">
+        <span class="nota-tag tag-${n.tag}">${tagMap[n.tag]||'📝'} ${n.tag}</span>
+        <span>${n.date}</span>
+      </div>
+    </div>
+  `).join('');
+}
+
+function exportNota() {
+  const nota = notas.find(n => n.id == currentNotaId);
+  if (!nota) return;
+  const content = `${nota.title}\n${'─'.repeat(40)}\n${nota.body}\n\n${nota.date} · DIGI Elite Trainer`;
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = (nota.title || 'nota') + '.txt';
+  a.click();
+}
+
+function copyNota() {
+  const nota = notas.find(n => n.id == currentNotaId);
+  if (!nota) return;
+  const text = `${nota.title}\n\n${nota.body}`;
+  navigator.clipboard.writeText(text).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
+  });
+  const btn = event.target; btn.textContent = '✅ Copiado!';
+  setTimeout(() => btn.textContent = '📋 Copiar', 2000);
+}
+
+function shareNotaWA() {
+  const nota = notas.find(n => n.id == currentNotaId);
+  if (!nota) return;
+  const text = `*${nota.title}*\n\n${nota.body}\n\n_${nota.date} · DIGI Elite Trainer_`;
+  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
+}
+
+// ── RELATÓRIO RÁPIDO ──
+function openRelatorioModal() {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('rel-data').value = today;
+  if (currentUser) document.getElementById('rel-vendedor').value = currentUser.name;
+  document.getElementById('relatorioModal').classList.add('open');
+}
+
+function closeRelatorioModal() {
+  document.getElementById('relatorioModal').classList.remove('open');
+}
+
+function gerarRelatorio() {
+  const data   = document.getElementById('rel-data').value;
+  const vend   = document.getElementById('rel-vendedor').value || '—';
+  const portas = document.getElementById('rel-portas').value || '0';
+  const aber   = document.getElementById('rel-aberturas').value || '0';
+  const abord  = document.getElementById('rel-abordagens').value || '0';
+  const cont   = document.getElementById('rel-controlos').value || '0';
+  const ades   = document.getElementById('rel-adesoes').value || '0';
+  const zona   = document.getElementById('rel-zona').value || '—';
+  const obs    = document.getElementById('rel-obs').value || '';
+
+  const taxaAb = portas > 0 ? Math.round((aber/portas)*100) : 0;
+  const taxaAd = aber  > 0 ? Math.round((abord/aber)*100)  : 0;
+  const taxaCo = abord > 0 ? Math.round((cont/abord)*100)  : 0;
+  const taxaFe = cont  > 0 ? Math.round((ades/cont)*100)   : 0;
+
+  const body = `📅 DATA: ${data}
+👤 VENDEDOR: ${vend}
+📍 ZONA: ${zona}
+
+━━━━━━━━━━━━━━━━━━━━
+FUNIL DE CONVERSÃO
+━━━━━━━━━━━━━━━━━━━━
+🚪 Portas Batidas:  ${portas}
+🔓 Aberturas:       ${aber} (${taxaAb}%)
+💬 Abordagens:      ${abord} (${taxaAd}%)
+🎯 Controlos:       ${cont} (${taxaCo}%)
+✅ Adesões:         ${ades} (${taxaFe}%)
+
+Meta: 4 adesões/dia ${parseInt(ades) >= 4 ? '🏆 ATINGIDA!' : `· Faltam ${Math.max(0,4-parseInt(ades))}`}
+${obs ? '\n📋 OBSERVAÇÕES:\n' + obs : ''}`;
+
+  const datePt = new Date(data).toLocaleDateString('pt-PT');
+  newNota('relatorio');
+  setTimeout(() => {
+    document.getElementById('notaTitleInput').value = `Relatório ${datePt} · ${zona}`;
+    document.getElementById('notaBodyInput').value = body;
+    document.getElementById('notaTag').value = 'relatorio';
+    saveCurrentNota();
+  }, 50);
+
+  closeRelatorioModal();
+}
+
+document.getElementById('relatorioModal').addEventListener('click', function(e) {
+  if (e.target === this) closeRelatorioModal();
+});
+
+// ═══════════════════════════════════════════
+// UPDATE HOME USER
+// ═══════════════════════════════════════════
+function updateHomeUser() {
+  if (!currentUser) return;
+  const initials = currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
+  const el = document.getElementById('homeUserInitials');
+  const nm = document.getElementById('homeUserName');
+  if (el) el.textContent = initials;
+  if (nm) nm.textContent = currentUser.name.split(' ')[0];
+}
+
+// ═══════════════════════════════════════════
+// COMISSÕES
+// ═══════════════════════════════════════════
+const COMISSOES = [
+  { label: 'até 5',      tv: 6, fibra: 6,  movel: 2,   fixo: 1, min: 0,  max: 5  },
+  { label: '6 até 10',   tv: 6, fibra: 8,  movel: 2,   fixo: 1, min: 6,  max: 10 },
+  { label: '11 até 15',  tv: 6, fibra: 10, movel: 2,   fixo: 1, min: 11, max: 15 },
+  { label: '16 até 20',  tv: 6, fibra: 15, movel: 2,   fixo: 1, min: 16, max: 20 },
+  { label: '21 até 50',  tv: 6, fibra: 20, movel: 2,   fixo: 1, min: 21, max: 50 },
+  { label: '51 até 75',  tv: 6, fibra: 20, movel: 2.5, fixo: 1, min: 51, max: 75 },
+  { label: 'mais de 75', tv: 6, fibra: 20, movel: 3,   fixo: 1, min: 76, max: 9999 },
+];
+
+function buildComissoesTable() {
+  const container = document.getElementById('comissoesRows');
+  if (!container) return;
+  container.innerHTML = COMISSOES.map((r, i) => {
+    const bg = i % 2 === 0 ? 'var(--white)' : 'var(--bg)';
+    const fmt = v => v % 1 === 0 ? v + ' €' : v.toFixed(1) + ' €';
+    return `
+    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;background:${bg};border-bottom:1px solid var(--border);">
+      <div style="padding:13px 14px;font-size:13px;font-weight:700;color:var(--text);">${r.label}</div>
+      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.tv)}</div>
+      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.fibra)}</div>
+      <div style="padding:13px 10px;font-size:14px;font-
