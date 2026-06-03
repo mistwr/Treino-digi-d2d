@@ -5,8 +5,63 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIGI · Simulador de Elite</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
-<script>
-  window.GROQ_API_KEY = atob('Z3NrXzR4UVJlOG9ySWc4ZjJZMkV5V3NXR2R5YjNGWXRTNldXa3FVSTVEZ2xDMklEVzRlZkxh');
+<!-- Transformers.js via CDN (zero install, zero API key) -->
+<script type="module">
+  import { pipeline } from 'https://cdn.jsdelivr.net/npm/@huggingface/transformers@3/dist/transformers.min.js';
+
+  window._aiReady = false;
+  window._aiPipeline = null;
+
+  const bar   = document.getElementById('load-bar-fill');
+  const pct   = document.getElementById('load-pct');
+  const stat  = document.getElementById('load-status');
+
+  try {
+    window._aiPipeline = await pipeline(
+      'text-generation',
+      'onnx-community/Qwen2.5-0.5B-Instruct',
+      {
+        dtype: 'q4',
+        device: 'webgpu',
+        progress_callback: (p) => {
+          if (p.status === 'progress') {
+            const v = Math.round((p.loaded / p.total) * 100) || 0;
+            if (bar) bar.style.width = v + '%';
+            if (pct) pct.textContent = v + '%';
+          }
+          if (stat) stat.textContent = p.file
+            ? `A carregar: ${p.file.split('/').pop()}`
+            : (p.status || '');
+        }
+      }
+    );
+    window._aiReady = true;
+    document.getElementById('load-overlay').style.display = 'none';
+  } catch (e) {
+    // WebGPU failed → fallback to WASM/CPU
+    try {
+      if (stat) stat.textContent = 'WebGPU indisponível, a usar CPU (mais lento)...';
+      window._aiPipeline = await pipeline(
+        'text-generation',
+        'onnx-community/Qwen2.5-0.5B-Instruct',
+        {
+          dtype: 'q4',
+          device: 'wasm',
+          progress_callback: (p) => {
+            if (p.status === 'progress') {
+              const v = Math.round((p.loaded / p.total) * 100) || 0;
+              if (bar) bar.style.width = v + '%';
+              if (pct) pct.textContent = v + '%';
+            }
+          }
+        }
+      );
+      window._aiReady = true;
+      document.getElementById('load-overlay').style.display = 'none';
+    } catch (e2) {
+      if (stat) stat.textContent = '❌ Erro: ' + e2.message;
+    }
+  }
 </script>
 <style>
   :root {
@@ -268,6 +323,22 @@
   .quiz-feedback { margin-top: 14px; padding: 14px 16px; background: var(--blue-pale); border-radius: 10px; font-size: 13px; color: var(--blue); line-height: 1.6; border-left: 3px solid var(--blue); display: none; font-weight: 500; }
   .quiz-feedback.show { display: block; }
 
+  /* ── LOADING OVERLAY ── */
+  #load-overlay {
+    position: fixed; inset: 0; z-index: 9999;
+    background: linear-gradient(160deg,#002BFF,#0A0F2E);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    gap: 16px; padding: 40px; text-align: center;
+  }
+  #load-overlay .ll-logo { font-family:'Bebas Neue'; font-size:52px; letter-spacing:6px; color:#fff; }
+  #load-overlay .ll-title { font-size:13px; color:rgba(255,255,255,0.6); letter-spacing:2px; text-transform:uppercase; }
+  #load-track { width:100%; max-width:340px; height:4px; background:rgba(255,255,255,0.15); border-radius:4px; overflow:hidden; }
+  #load-bar-fill { height:100%; background:#fff; width:0%; transition:width 0.3s ease; border-radius:4px; }
+  #load-pct { font-family:'Bebas Neue'; font-size:40px; color:#fff; }
+  #load-status { font-size:11px; color:rgba(255,255,255,0.45); max-width:320px; line-height:1.6; }
+  #load-note { font-size:11px; color:rgba(255,255,255,0.25); max-width:320px; line-height:1.6; }
+
   /* ── LOGIN ── */
   #login {
     align-items: center; justify-content: center;
@@ -429,6 +500,16 @@
     <div class="menu-sub">Cada perfil exige uma abordagem diferente. Estás pronto?</div>
     <div class="menu-list" id="clientList"></div>
   </div>
+</div>
+
+<!-- ══ LOADING OVERLAY ══ -->
+<div id="load-overlay">
+  <div class="ll-logo">DIGI</div>
+  <div class="ll-title">A carregar IA local · sem servidor</div>
+  <div id="load-pct">0%</div>
+  <div id="load-track"><div id="load-bar-fill"></div></div>
+  <div id="load-status">A inicializar modelo...</div>
+  <div id="load-note">Primeira visita: ~400MB em cache.<br>Próximas vezes abre instantaneamente.</div>
 </div>
 
 <!-- ══════════════════════════════════════════
@@ -920,10 +1001,8 @@ async function sendMsg() {
 }
 
 async function callClaude(userMsg) {
-  const key = window.GROQ_API_KEY;
-  if (!key || key.includes('COLA_AQUI')) {
-    addSystemMsg('⚠️ Falta a API Key do Groq. Abre o ficheiro HTML e cola a tua key na linha indicada no topo.');
-    throw new Error('API key em falta');
+  if (!window._aiReady || !window._aiPipeline) {
+    throw new Error('Modelo ainda a carregar. Aguarda uns segundos.');
   }
 
   const c = state.client;
@@ -933,69 +1012,51 @@ async function callClaude(userMsg) {
 
   const systemPrompt = `${c.systemPrompt}
 
----
-INSTRUÇÕES DE JOGO:
-O consultor é um formando a treinar técnicas de venda DIGI porta a porta. O teu papel tem DOIS componentes:
+INSTRUÇÕES: Responde APENAS em JSON válido sem texto extra:
+{"clientReply":"resposta do cliente em pt-PT (max 3 frases)","feedback":"análise 1-2 frases da técnica usada","scoreDelta":10,"newPhase":${state.phase},"quickReplies":["sugestão 1","sugestão 2"],"ended":false}
 
-1. CLIENTE: Responde como o cliente descrito, de forma realista e em personagem, em Português de Portugal.
+scoreDelta: 0-5 fraco, 6-15 razoável, 16-25 excelente.
+newPhase: 0=Abordagem 1=Diagnóstico 2=Proposta 3=Objeções 4=Fecho. Só avança quando fizer sentido.
+ended: true só se cliente aceitou definitivamente OU recusou de forma absoluta.
+Fase: ${PHASES[state.phase]} | Trocas: ${state.turns}
+${historyStr ? 'Histórico:\n' + historyStr : '(início)'}`;
 
-2. AVALIADOR: Avalia a mensagem do consultor segundo as técnicas do Manual DIGI:
-- Abertura (apresentação honesta, linguagem corporal)
-- Diagnóstico (perguntas certas, escuta ativa, identificar dor)
-- Proposta (poupança real, matemática clara)
-- Gestão de Objeções (reenquadramento honesto, sem pressão)
-- Fecho (assumido, alternativa dupla, silêncio)
+  const messages = [
+    { role: 'system', content: systemPrompt },
+    { role: 'user', content: `CONSULTOR diz: "${userMsg}". Responde como cliente E avaliador em JSON.` }
+  ];
 
-Responde APENAS com JSON válido, sem texto adicional, sem markdown:
-{"clientReply":"resposta do cliente em pt-PT","feedback":"análise 2-3 frases sobre a técnica usada, menciona técnica específica do Manual DIGI","scoreDelta":10,"newPhase":0,"quickReplies":["sugestão de próxima fala 1","sugestão 2","sugestão 3"],"ended":false,"finalSummary":""}
-
-Regras do scoreDelta: 0-5 = fraco, 6-12 = razoável, 13-20 = bom, 21-25 = excelente.
-newPhase: 0=Abordagem, 1=Diagnóstico, 2=Proposta, 3=Objeções, 4=Fecho. Só avança quando fizer sentido na conversa.
-ended: true apenas se cliente aceitou definitivamente OU recusou de forma absoluta.
-
-Fase atual: ${PHASES[state.phase]}
-Histórico:
-${historyStr || '(início da conversa — porta ainda não foi aberta)'}
-Última fala do consultor: "${userMsg}"
-Score acumulado: ${state.score} | Trocas: ${state.turns}`;
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${key}`
-    },
-    body: JSON.stringify({
-      model: 'llama-3.3-70b-versatile',
-      temperature: 0.7,
-      max_tokens: 700,
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userMsg }
-      ]
-    })
+  const output = await window._aiPipeline(messages, {
+    max_new_tokens: 300,
+    temperature: 0.7,
+    do_sample: true,
+    return_full_text: false
   });
 
-  const data = await res.json();
-  if (data.error) throw new Error(data.error.message);
-
-  const raw = data.choices?.[0]?.message?.content || '{}';
-  const jsonMatch = raw.match(/\{[\s\S]*\}/);
-  const jsonStr = jsonMatch ? jsonMatch[0] : '{}';
+  const raw = output?.[0]?.generated_text ?? '';
+  const lastMsg = Array.isArray(raw) ? raw[raw.length - 1]?.content ?? '' : raw;
+  const jsonMatch = lastMsg.match(/\{[\s\S]*\}/);
+  const jsonStr = jsonMatch ? jsonMatch[0] : '';
 
   try {
     const parsed = JSON.parse(jsonStr);
-    parsed.scoreDelta = Math.max(0, Math.min(25, parseInt(parsed.scoreDelta) || 0));
+    parsed.scoreDelta = Math.max(0, Math.min(25, parseInt(parsed.scoreDelta) || 5));
     parsed.newPhase = Math.max(state.phase, Math.min(4, parseInt(parsed.newPhase) ?? state.phase));
     if (!Array.isArray(parsed.quickReplies)) parsed.quickReplies = [];
+    if (!parsed.clientReply) parsed.clientReply = lastMsg.slice(0, 200);
     // Update metrics
-    if (state.phase === 0) state.metrics.abertura = Math.min(25, state.metrics.abertura + parsed.scoreDelta);
+    if (state.phase === 0) state.metrics.abertura   = Math.min(25, state.metrics.abertura   + parsed.scoreDelta);
     else if (state.phase === 1) state.metrics.diagnostico = Math.min(25, state.metrics.diagnostico + parsed.scoreDelta);
-    else if (state.phase === 3) state.metrics.objections = Math.min(25, state.metrics.objections + parsed.scoreDelta);
-    else if (state.phase === 4) state.metrics.fecho = Math.min(25, state.metrics.fecho + parsed.scoreDelta);
+    else if (state.phase === 3) state.metrics.objections  = Math.min(25, state.metrics.objections  + parsed.scoreDelta);
+    else if (state.phase === 4) state.metrics.fecho       = Math.min(25, state.metrics.fecho       + parsed.scoreDelta);
     return parsed;
   } catch {
-    return { clientReply: raw.slice(0, 400), feedback: null, scoreDelta: 0, newPhase: state.phase, quickReplies: [], ended: false };
+    // JSON parse failed — use raw as client reply
+    return {
+      clientReply: lastMsg.slice(0, 300) || '...',
+      feedback: 'O modelo não devolveu JSON válido. Continua a conversa.',
+      scoreDelta: 5, newPhase: state.phase, quickReplies: [], ended: false
+    };
   }
 }
 
