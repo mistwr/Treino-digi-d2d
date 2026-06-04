@@ -1,0 +1,24 @@
+{
+  "name": "DIGI Elite Trainer",
+  "short_name": "DIGI Trainer",
+  "description": "Simulador de vendas porta a porta DIGI",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#002BFF",
+  "theme_color": "#002BFF",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ]
+}
