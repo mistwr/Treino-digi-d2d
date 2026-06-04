@@ -1643,11 +1643,6 @@ function shareWhatsApp() {
   window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
 }
 
-// Close modal on overlay click
-document.getElementById('shareModal').addEventListener('click', function(e) {
-  if (e.target === this) closeShare();
-});
-
 // ═══════════════════════════════════════════
 // NOTAS SYSTEM
 // ═══════════════════════════════════════════
@@ -1860,10 +1855,6 @@ ${obs ? '\n📋 OBSERVAÇÕES:\n' + obs : ''}`;
   closeRelatorioModal();
 }
 
-document.getElementById('relatorioModal').addEventListener('click', function(e) {
-  if (e.target === this) closeRelatorioModal();
-});
-
 // ═══════════════════════════════════════════
 // UPDATE HOME USER
 // ═══════════════════════════════════════════
@@ -1900,4 +1891,11 @@ function buildComissoesTable() {
       <div style="padding:13px 14px;font-size:13px;font-weight:700;color:var(--text);">${r.label}</div>
       <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.tv)}</div>
       <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.fibra)}</div>
-      <div style="padding:13px 10px;font-size:14px;font-
+      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.movel)}</div>
+      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.fixo)}</div>
+    </div>`;
+  }).join('');
+}
+
+function getEscalao(total) {
+  return COMISSOES.find(r => tot
