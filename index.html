@@ -282,6 +282,18 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 .qopt.wrong{border-color:var(--red);background:rgba(229,57,53,.06);color:var(--red);}
 .qfb{margin-top:12px;padding:12px 14px;background:var(--pale);border-radius:9px;font-size:12px;color:var(--blue);line-height:1.6;border-left:3px solid var(--blue);display:none;font-weight:500;}
 .qfb.show{display:block;}
+
+/* CVP */
+.cvp-card{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:10px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.cvp-op{display:flex;align-items:center;gap:10px;margin-bottom:12px;}
+.cvp-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;font-weight:800;}
+.cvp-name{font-weight:700;font-size:15px;color:var(--text);}
+.cvp-type{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;color:var(--muted);}
+.cvp-step{background:var(--bg);border-radius:8px;padding:10px 12px;font-size:12px;color:var(--text);line-height:1.6;margin-bottom:6px;}
+.cvp-step b{color:var(--blue);}
+.cvp-sms-btn{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Inter;}
+.cvp-sms-btn:hover{background:var(--blue2);}
+.cvp-call-btn{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;margin-left:6px;font-family:Inter;}
 @media(max-width:680px){.sl,.nl{grid-template-columns:1fr;}.sb,.nsb{display:none;}}
 </style>
 </head>
@@ -310,6 +322,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
     <button class="pb" onclick="showScreen('teoria')" id="txt-manual">📖 Manual</button>
     <button class="pb" onclick="openNotas()" id="txt-notas">📝 Notas</button>
     <button class="pb" onclick="showScreen('comissoes')" id="txt-com">💶 Comissões</button>
+    <button class="pb" onclick="showScreen('cvp')" style="min-width:100%;background:rgba(255,200,0,0.15);border-color:rgba(255,200,0,0.4);">📱 Consultar CVP</button>
   </div>
   <div class="tl" id="txt-tools">Ferramentas DIGI</div>
   <div class="tr">
@@ -722,10 +735,105 @@ if("serviceWorker" in navigator){
   });
 }
 
+
+// ══ CVP ══
+const CVP_DATA = [
+  {op:"NOS", emoji:"📡", color:"#000", bg:"#f0f0f0", type:"movel",
+   steps:["Envia SMS para <b>1242</b>","Texto da SMS: <b>CVP 123456789</b> (substitui pelo NIF do cliente)","Liga para <b>1242</b> e segue instruções"],
+   sms:"1242", smsBody:"CVP ", call:"1242"},
+  {op:"Vodafone", emoji:"🔴", color:"#fff", bg:"#e60000", type:"movel",
+   steps:["Envia SMS para <b>12815</b> com a palavra <b>CVP</b>","Liga para <b>12815</b> e segue instruções"],
+   sms:"12815", smsBody:"CVP", call:"12815"},
+  {op:"MEO", emoji:"🔵", color:"#fff", bg:"#0066cc", type:"movel",
+   steps:["Envia SMS para <b>16200</b> com a palavra <b>CVP</b>","Liga para <b>16200</b> e segue instruções"],
+   sms:"16200", smsBody:"CVP", call:"16200"},
+  {op:"WTF / WOO", emoji:"🟢", color:"#fff", bg:"#00b04f", type:"movel",
+   steps:["Envia SMS para <b>1242</b>","Texto: <b>CVP 123456789</b> (NIF do cliente)","Liga para <b>1242</b> e segue instruções"],
+   sms:"1242", smsBody:"CVP ", call:"1242"},
+  {op:"Amigo (NOS)", emoji:"💜", color:"#fff", bg:"#6600cc", type:"movel",
+   steps:["Através da app <b>Amigo</b>","Liga para <b>923171717</b> e segue instruções"],
+   call:"923171717"},
+  {op:"UZO", emoji:"🟡", color:"#000", bg:"#ffdd00", type:"movel",
+   steps:["Liga para <b>707960000</b> e segue instruções"],
+   call:"707960000"},
+  {op:"Lycamobile", emoji:"🌿", color:"#fff", bg:"#00a651", type:"movel",
+   steps:["Envia email para <b>cs@lycamobile.pt</b>","Liga para <b>265001632</b> e segue instruções"],
+   call:"265001632"},
+  {op:"Yorn (Vodafone)", emoji:"🟠", color:"#fff", bg:"#ff6600", type:"movel",
+   steps:["Envia SMS para <b>12815</b> com a palavra <b>CVP</b>","Liga para <b>12715</b> e segue instruções"],
+   sms:"12815", smsBody:"CVP", call:"12715"},
+  {op:"NOWO", emoji:"⚫", color:"#fff", bg:"#222222", type:"movel",
+   steps:["Envia SMS para <b>928190785</b> com a palavra <b>CVP</b>","Liga para <b>210850083</b> e segue instruções"],
+   sms:"928190785", smsBody:"CVP", call:"210850083"},
+  {op:"MEO (Fibra/Fixo)", emoji:"🔵", color:"#fff", bg:"#0066cc", type:"fixo",
+   steps:["Liga para <b>16200</b> (Apoio ao Cliente MEO)","Pede o Código de Portabilidade para a linha fixa","Segue as instruções do assistente"],
+   call:"16200"},
+  {op:"NOS (Fibra/Fixo)", emoji:"📡", color:"#000", bg:"#f0f0f0", type:"fixo",
+   steps:["Liga para <b>1242</b> (Apoio ao Cliente NOS)","Pede o Código de Portabilidade para a linha fixa","Segue as instruções do assistente"],
+   call:"1242"},
+  {op:"Vodafone (Fibra/Fixo)", emoji:"🔴", color:"#fff", bg:"#e60000", type:"fixo",
+   steps:["Liga para <b>12815</b> (Apoio ao Cliente Vodafone)","Pede o Código de Portabilidade para a linha fixa"],
+   call:"12815"},
+];
+
+let cvpFilter = 'all';
+
+function filterCVP(f, btn) {
+  cvpFilter = f;
+  document.querySelectorAll('#cvp .ntb').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderCVP();
+}
+
+function renderCVP() {
+  const list = document.getElementById('cvpList');
+  if (!list) return;
+  const filtered = CVP_DATA.filter(c => cvpFilter === 'all' || c.type === cvpFilter);
+  list.innerHTML = filtered.map(c => {
+    const stepsHtml = c.steps.map(s => `<div class="cvp-step">${s}</div>`).join('');
+    const smsBtn = c.sms ? `<button class="cvp-sms-btn" onclick="window.open('sms:${c.sms}?body=${encodeURIComponent(c.smsBody)}','_blank')">💬 Enviar SMS para ${c.sms}</button>` : '';
+    const callBtn = c.call ? `<button class="cvp-call-btn" onclick="window.open('tel:${c.call}','_blank')">📞 Ligar ${c.call}</button>` : '';
+    return `<div class="cvp-card">
+      <div class="cvp-op">
+        <div class="cvp-logo" style="background:${c.bg};color:${c.color};">${c.emoji}</div>
+        <div><div class="cvp-name">${c.op}</div><div class="cvp-type">${c.type === 'movel' ? '📱 Voz Móvel' : '☎️ Fixo / Fibra'}</div></div>
+      </div>
+      ${stepsHtml}
+      <div style="display:flex;flex-wrap:wrap;gap:0;">${smsBtn}${callBtn}</div>
+    </div>`;
+  }).join('');
+}
+
 // ══ INIT ══
-loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();
+loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();renderCVP();
 applyLang();
 if(currentUser){updateHU();showScreen("home");}else{showScreen("login");}
 </script>
+
+<!-- CVP SCREEN -->
+<div id="cvp" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Consulta de CVP</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
+<div style="max-width:600px;margin:0 auto;padding:20px 16px;">
+
+  <div style="background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:14px;padding:20px;color:#fff;margin-bottom:20px;">
+    <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;margin-bottom:6px;">📱 CONSULTA DE CVP</div>
+    <div style="font-size:13px;opacity:.8;line-height:1.5;">Código de Validação de Portabilidade<br>Usa quando o cliente não tem a fatura em mão</div>
+  </div>
+
+  <!-- COMO FUNCIONA -->
+  <div style="background:var(--pale);border-radius:10px;padding:14px 16px;border-left:3px solid var(--blue);font-size:13px;color:var(--blue);line-height:1.7;margin-bottom:20px;font-weight:500;">
+    💡 O cliente envia um SMS ou liga para o número do seu operador atual para obter o CVP. Depois dás esse código à DIGI para tratar da portabilidade.
+  </div>
+
+  <!-- FILTRO -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+    <button onclick="filterCVP('all',this)" class="ntb active" style="padding:6px 12px;font-size:12px;">Todos</button>
+    <button onclick="filterCVP('movel',this)" class="ntb" style="padding:6px 12px;font-size:12px;">📱 Móvel</button>
+    <button onclick="filterCVP('fixo',this)" class="ntb" style="padding:6px 12px;font-size:12px;">☎️ Fixo/Fibra</button>
+  </div>
+
+  <div id="cvpList"></div>
+</div>
+</div>
 </body>
 </html>
