@@ -4,6 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>DIGI Elite Trainer</title>
+<meta name="theme-color" content="#002BFF">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DIGI Trainer">
+<link rel="manifest" href="data:application/json,{%22name%22:%22DIGI%20Elite%20Trainer%22,%22short_name%22:%22DIGI%20Trainer%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23002BFF%22,%22theme_color%22:%22%23002BFF%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20192%20192%27%3E%3Crect%20width%3D%27192%27%20height%3D%27192%27%20rx%3D%2740%27%20fill%3D%27%23002BFF%27/%3E%3Ctext%20x%3D%2796%27%20y%3D%27130%27%20font-size%3D%2790%27%20text-anchor%3D%27middle%27%20fill%3D%27white%27%20font-family%3D%27Arial%27%20font-weight%3D%27bold%27%3ED%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root{--blue:#002BFF;--blue2:#0022cc;--blue3:#3352FF;--pale:#E8ECFF;--ghost:rgba(0,43,255,0.07);--bg:#F4F6FF;--white:#fff;--border:#D6DCFF;--text:#0A0F2E;--muted:#6B7A99;--green:#00B87A;--red:#E53935;}
@@ -256,6 +262,24 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 .qopt.wrong{border-color:var(--red);background:rgba(229,57,53,.06);color:var(--red);}
 .qfb{margin-top:12px;padding:12px 14px;background:var(--pale);border-radius:9px;font-size:12px;color:var(--blue);line-height:1.6;border-left:3px solid var(--blue);display:none;font-weight:500;}
 .qfb.show{display:block;}
+
+/* PWA INSTALL */
+.pwa-banner{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#fff;border-radius:14px;padding:14px 18px;box-shadow:0 8px 32px rgba(0,43,255,0.25);border:2px solid var(--blue);display:flex;align-items:center;gap:12px;max-width:340px;width:calc(100% - 32px);}
+.pwa-banner.show{display:flex;animation:slideUp .4s ease;}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(20px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.pwa-icon{width:44px;height:44px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;font-family:"Bebas Neue";font-size:20px;color:#fff;letter-spacing:2px;flex-shrink:0;}
+.pwa-text{flex:1;}
+.pwa-text b{font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:2px;}
+.pwa-text span{font-size:11px;color:var(--muted);}
+.pwa-install-btn{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 14px;font-family:Inter;font-size:12px;font-weight:700;cursor:pointer;flex-shrink:0;text-transform:uppercase;}
+.pwa-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;padding:0 0 0 4px;flex-shrink:0;line-height:1;}
+/* iOS install hint */
+.ios-hint{display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9999;background:#fff;border-radius:14px;padding:16px 18px;box-shadow:0 8px 32px rgba(0,43,255,0.25);border:2px solid var(--blue);max-width:320px;width:calc(100% - 32px);text-align:center;}
+.ios-hint.show{display:block;animation:slideUp .4s ease;}
+.ios-hint b{font-size:13px;font-weight:700;color:var(--text);display:block;margin-bottom:6px;}
+.ios-hint p{font-size:12px;color:var(--muted);line-height:1.6;}
+.ios-hint .share-icon{font-size:20px;vertical-align:middle;}
+.ios-hint-close{background:none;border:none;color:var(--muted);font-size:18px;cursor:pointer;position:absolute;top:10px;right:14px;}
 @media(max-width:680px){.sl,.nl{grid-template-columns:1fr;}.sb,.nsb{display:none;}}
 </style>
 </head>
@@ -282,9 +306,13 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
     <button class="tb" onclick="window.open('https://quero-aderir-digi-pt.vercel.app/','_blank')"><span>📊</span><span>Simulador</span></button>
     <button class="tb" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')"><span>🔐</span><span>Authenticator</span></button>
   </div>
+  <div style="margin-top:16px;text-align:center;">
+    <button id="installBtn" onclick="triggerInstall()" style="background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.3);color:#fff;font-family:Inter;font-size:12px;font-weight:700;padding:10px 20px;border-radius:20px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;letter-spacing:.5px;">
+      📲 Instalar App no Telemóvel
+    </button>
+  </div>
 </div>
 </div>
-
 <div id="login" class="screen">
 <div class="lbox">
   <div style="text-align:center;margin-bottom:20px;"><div class="lb" style="font-size:28px;padding:5px 16px 3px;display:inline-block;">DIGI</div></div>
@@ -503,6 +531,82 @@ function ansQ(i){if(qs.ans)return;qs.ans=true;const q=QUIZ[qs.idx];const opts=do
 function nextQuiz(){if(qs.idx<QUIZ.length-1){qs.idx++;renderQuiz();}else{const pct=Math.round(qs.score/QUIZ.length*100);document.getElementById("quizQ").innerHTML=`<div style="font-size:48px;font-family:'Bebas Neue';color:var(--blue);">${qs.score}/${QUIZ.length}</div><div style="font-size:15px;margin-top:8px;">${pct>=80?"🏆 Consultor Elite!":pct>=60?"⭐ Bom resultado!":"💪 Continua a treinar!"}</div>`;document.getElementById("quizOpts").innerHTML="";document.getElementById("quizFb").classList.remove("show");const nx=document.getElementById("quizNext");nx.textContent="← Recomeçar";nx.onclick=initQuiz;}}
 // MODALS close on bg click
 ["shareModal","relModal"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});});
+
+// ══ PWA INSTALL ══
+let deferredPrompt = null;
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  // Show banner after 2 seconds
+  setTimeout(() => {
+    document.getElementById('pwaBanner').classList.add('show');
+  }, 2000);
+});
+
+window.addEventListener('appinstalled', () => {
+  document.getElementById('pwaBanner').classList.remove('show');
+  deferredPrompt = null;
+});
+
+function installPWA() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choice => {
+      deferredPrompt = null;
+      document.getElementById('pwaBanner').classList.remove('show');
+    });
+  }
+}
+
+function triggerInstall() {
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isInStandalone = window.navigator.standalone === true;
+  const isAndroid = /android/i.test(navigator.userAgent);
+  
+  if (isInStandalone) {
+    alert('✅ A app já está instalada!');
+    return;
+  }
+  if (deferredPrompt) {
+    installPWA();
+  } else if (isIOS) {
+    document.getElementById('iosHint').classList.add('show');
+  } else if (isAndroid) {
+    // Show manual instructions for Android
+    document.getElementById('pwaBanner').classList.add('show');
+    alert('Para instalar:\n\n1. Toca nos 3 pontos ⋮ do browser\n2. Seleciona "Adicionar ao ecrã inicial"\n3. Confirma a instalação');
+  } else {
+    alert('Para instalar:\n\nNo Chrome: Menu → "Instalar DIGI Elite Trainer"\nNo Edge: Menu → "Aplicações" → "Instalar"');
+  }
+}
+
+function closePWA() {
+  document.getElementById('pwaBanner').classList.remove('show');
+}
+function closeIOSHint() {
+  document.getElementById('iosHint').classList.remove('show');
+}
+
+// Register service worker for offline support
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    // Inline service worker
+    const swCode = `
+      const CACHE = 'digi-v1';
+      self.addEventListener('install', e => {
+        e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
+      });
+      self.addEventListener('fetch', e => {
+        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
+      });
+    `;
+    const blob = new Blob([swCode], {type: 'application/javascript'});
+    const swUrl = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(swUrl).catch(() => {});
+  });
+}
+
 // INIT
 loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();
 if(currentUser){updateHU();showScreen("home");}else{showScreen("login");}
