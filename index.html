@@ -34,8 +34,8 @@
   }
 
   /* ── SCREEN SYSTEM ── */
-  .screen { display: none; min-height: 100vh; position: relative; z-index: 1; }
-  .screen.active { display: flex; flex-direction: column; }
+  .screen { display: none !important; min-height: 100vh; position: relative; z-index: 1; flex-direction: column; }
+  .screen.active { display: flex !important; flex-direction: column; }
 
   /* ── HEADER ── */
   .header {
@@ -69,6 +69,7 @@
   /* ── HOME SCREEN ── */
   #home {
     align-items: center; justify-content: center;
+    flex-direction: column;
     background: linear-gradient(160deg, #002BFF 0%, #0A0F2E 100%);
     padding: 40px 24px;
     min-height: 100vh;
@@ -464,7 +465,7 @@
 <!-- ══════════════════════════════════════════
      HOME
 ══════════════════════════════════════════ -->
-<div id="home" class="screen active">
+<div id="home" class="screen">
   <div class="home-inner">
 
     <!-- Logo + badge -->
@@ -956,9 +957,13 @@ Comportamento: Dizes muitas vezes "Não sei, vou pensar..." e "Tenho que falar c
 // SCREEN MANAGEMENT
 // ═══════════════════════════════════════════
 function showScreen(id) {
-  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
-  state.screen = id;
+  try {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) target.classList.add('active');
+    state.screen = id;
+    window.scrollTo(0, 0);
+  } catch(e) { console.error('showScreen:', e); }
 }
 
 // ═══════════════════════════════════════════
@@ -1892,10 +1897,4 @@ function buildComissoesTable() {
       <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.tv)}</div>
       <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.fibra)}</div>
       <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.movel)}</div>
-      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.fixo)}</div>
-    </div>`;
-  }).join('');
-}
-
-function getEscalao(total) {
-  return COMISSOES.find(r => tot
+      <div style="pad
