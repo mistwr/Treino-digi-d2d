@@ -3,1898 +3,509 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DIGI · Simulador de Elite</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
-<!-- Pollinations.ai: IA gratuita, sem API key, sem limite, open source -->
+<title>DIGI Elite Trainer</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --blue: #002BFF;
-    --blue-dim: #0022cc;
-    --blue-light: #3352FF;
-    --blue-pale: #E8ECFF;
-    --blue-ghost: rgba(0,43,255,0.07);
-    --dark: #001A99;
-    --bg: #F4F6FF;
-    --white: #FFFFFF;
-    --card: #FFFFFF;
-    --border: #D6DCFF;
-    --text: #0A0F2E;
-    --muted: #6B7A99;
-    --success: #00B87A;
-    --warn: #F59E0B;
-    --danger: #E53935;
-  }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Inter', sans-serif;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
-
-  /* ── SCREEN SYSTEM ── */
-  .screen { display: none !important; min-height: 100vh; position: relative; z-index: 1; flex-direction: column; }
-  .screen.active { display: flex !important; flex-direction: column; }
-
-  /* ── HEADER ── */
-  .header {
-    padding: 0 32px;
-    height: 64px;
-    display: flex; align-items: center; justify-content: space-between;
-    border-bottom: 2px solid var(--blue);
-    background: var(--white);
-    position: sticky; top: 0; z-index: 100;
-    box-shadow: 0 2px 12px rgba(0,43,255,0.08);
-  }
-  .logo {
-    display: flex; align-items: center; gap: 12px;
-  }
-  .logo-digi {
-    background: var(--blue);
-    color: #fff;
-    font-family: 'Bebas Neue'; font-size: 26px; letter-spacing: 3px;
-    padding: 4px 14px 2px; border-radius: 4px;
-  }
-  .logo-subtitle {
-    font-size: 12px; font-weight: 600; color: var(--muted);
-    letter-spacing: 1.5px; text-transform: uppercase;
-    border-left: 2px solid var(--border); padding-left: 12px;
-  }
-  .stats-bar { display: flex; gap: 24px; }
-  .stat { text-align: center; }
-  .stat-val { font-weight: 800; font-size: 20px; color: var(--blue); line-height: 1; }
-  .stat-lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; margin-top: 1px; }
-
-  /* ── HOME SCREEN ── */
-  #home {
-    align-items: center; justify-content: center;
-    flex-direction: column;
-    background: linear-gradient(160deg, #002BFF 0%, #0A0F2E 100%);
-    padding: 40px 24px;
-    min-height: 100vh;
-  }
-  .home-inner { max-width: 620px; width: 100%; text-align: center; }
-  .hero-badge {
-    display: inline-block;
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff;
-    font-size: 11px; letter-spacing: 3px; text-transform: uppercase;
-    padding: 6px 18px; border-radius: 20px; margin-bottom: 28px;
-    font-weight: 600;
-  }
-  .hero-title {
-    font-family: 'Bebas Neue'; font-size: clamp(56px, 12vw, 96px);
-    line-height: 0.9; letter-spacing: 4px; color: #fff;
-    margin-bottom: 20px;
-  }
-  .hero-title .accent {
-    color: #fff;
-    -webkit-text-stroke: 2px rgba(255,255,255,0.4);
-    -webkit-text-fill-color: transparent;
-  }
-  .hero-sub {
-    color: rgba(255,255,255,0.7); font-size: 16px; line-height: 1.6;
-    margin-bottom: 48px; max-width: 460px; margin-left: auto; margin-right: auto;
-  }
-  .modes-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
-  .mode-card {
-    background: rgba(255,255,255,0.1);
-    border: 1px solid rgba(255,255,255,0.2);
-    border-radius: 12px; padding: 22px 18px; cursor: pointer;
-    transition: all 0.2s; text-align: left; color: #fff;
-    backdrop-filter: blur(8px);
-  }
-  .mode-card:hover { background: rgba(255,255,255,0.18); transform: translateY(-3px); border-color: rgba(255,255,255,0.4); }
-  .mode-icon { font-size: 30px; margin-bottom: 12px; }
-  .mode-title { font-size: 15px; font-weight: 700; margin-bottom: 5px; }
-  .mode-desc { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.5; }
-  .mode-card.featured {
-    grid-column: 1/-1;
-    background: rgba(255,255,255,0.95);
-    color: var(--text); border-color: #fff;
-  }
-  .mode-card.featured .mode-desc { color: var(--muted); }
-  .mode-card.featured:hover { background: #fff; }
-
-  /* ── BTN ── */
-  .btn {
-    display: inline-flex; align-items: center; gap: 8px;
-    background: var(--blue); color: #fff;
-    font-family: 'Inter'; font-weight: 700; font-size: 13px; letter-spacing: 0.5px;
-    padding: 12px 24px; border: none; border-radius: 6px; cursor: pointer;
-    transition: all 0.2s; text-transform: uppercase;
-  }
-  .btn:hover { background: var(--blue-dim); transform: translateY(-1px); box-shadow: 0 4px 16px rgba(0,43,255,0.3); }
-  .btn-ghost { background: transparent; border: 2px solid var(--blue); color: var(--blue); }
-  .btn-ghost:hover { background: var(--blue-ghost); box-shadow: none; transform: none; }
-  .btn-white { background: #fff; color: var(--blue); border: 2px solid #fff; }
-  .btn-white:hover { background: var(--blue-pale); box-shadow: none; }
-  .btn-sm { padding: 8px 16px; font-size: 12px; }
-  .btn-full { width: 100%; justify-content: center; }
-
-  /* ── SIMULATION ── */
-  #simulation { flex-direction: column; }
-  .sim-layout { display: grid; grid-template-columns: 280px 1fr; gap: 0; flex: 1; height: calc(100vh - 64px); }
-
-  /* ── SIDEBAR ── */
-  .sidebar { background: var(--white); border-right: 1px solid var(--border); padding: 20px 16px; display: flex; flex-direction: column; gap: 20px; overflow-y: auto; }
-  .sidebar-title { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--blue); font-weight: 700; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
-  .sidebar-title::after { content:''; flex:1; height:1px; background: var(--border); }
-  .client-card { background: var(--blue-ghost); border: 1px solid var(--border); border-radius: 10px; padding: 14px; border-top: 3px solid var(--blue); }
-  .client-name { font-weight: 700; font-size: 15px; margin-bottom: 4px; color: var(--text); }
-  .client-type { display: inline-block; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; padding: 3px 10px; border-radius: 20px; margin-bottom: 10px; font-weight: 600; }
-  .type-desconfiado { background: rgba(229,57,53,0.1); color: #E53935; }
-  .type-apressado { background: rgba(245,158,11,0.12); color: #D97706; }
-  .type-racional { background: rgba(0,43,255,0.1); color: var(--blue); }
-  .type-indeciso { background: rgba(139,92,246,0.1); color: #7C3AED; }
-  .client-info { font-size: 12px; color: var(--muted); line-height: 1.8; }
-  .client-info span { color: var(--text); font-weight: 600; }
-
-  .funnel-steps { display: flex; flex-direction: column; gap: 6px; }
-  .funnel-step { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 8px; font-size: 12px; color: var(--muted); background: var(--bg); border: 1px solid transparent; transition: all 0.3s; font-weight: 500; }
-  .funnel-step.done { border-color: var(--success); color: var(--success); background: rgba(0,184,122,0.06); }
-  .funnel-step.active { border-color: var(--blue); color: var(--blue); background: var(--blue-ghost); font-weight: 700; }
-  .funnel-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); flex-shrink: 0; transition: all 0.3s; }
-  .funnel-step.done .funnel-dot { background: var(--success); }
-  .funnel-step.active .funnel-dot { background: var(--blue); box-shadow: 0 0 8px rgba(0,43,255,0.5); }
-
-  .score-label { display: flex; justify-content: space-between; font-size: 11px; color: var(--muted); margin-bottom: 5px; font-weight: 500; }
-  .score-label span:last-child { color: var(--blue); font-weight: 700; }
-  .score-track { background: var(--border); border-radius: 4px; height: 6px; overflow: hidden; margin-bottom: 10px; }
-  .score-fill { height: 100%; background: linear-gradient(90deg, var(--blue), var(--blue-light)); border-radius: 4px; transition: width 0.5s ease; }
-
-  /* ── CHAT ── */
-  .chat-area { display: flex; flex-direction: column; background: var(--bg); }
-  .chat-messages { flex: 1; overflow-y: auto; padding: 24px 28px; display: flex; flex-direction: column; gap: 16px; }
-  .chat-messages::-webkit-scrollbar { width: 4px; }
-  .chat-messages::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
-
-  .msg { display: flex; gap: 12px; max-width: 78%; animation: fadeUp 0.3s ease; }
-  @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
-  .msg.user { align-self: flex-end; flex-direction: row-reverse; }
-  .msg-avatar { width: 38px; height: 38px; border-radius: 50%; flex-shrink: 0; display: flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 700; border: 2px solid var(--border); }
-  .msg.client .msg-avatar { background: var(--white); }
-  .msg.user .msg-avatar { background: var(--blue); color: #fff; border-color: var(--blue); font-size: 13px; }
-  .msg.system .msg-avatar { background: var(--blue-pale); border-color: var(--blue); }
-  .msg-bubble { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 12px 16px; font-size: 14px; line-height: 1.6; color: var(--text); box-shadow: 0 1px 4px rgba(0,0,0,0.05); }
-  .msg.user .msg-bubble { background: var(--blue); border-color: var(--blue); color: #fff; border-radius: 12px 12px 2px 12px; }
-  .msg.client .msg-bubble { border-radius: 12px 12px 12px 2px; }
-  .msg.system .msg-bubble { background: var(--blue-pale); border-color: var(--border); font-size: 13px; color: var(--blue); width: 100%; max-width: 100%; }
-  .msg.system { max-width: 100%; }
-  .msg-name { font-size: 11px; color: var(--muted); margin-bottom: 4px; font-weight: 600; }
-  .feedback-block { margin-top: 10px; padding: 10px 12px; background: var(--blue-ghost); border-radius: 8px; border-left: 3px solid var(--blue); font-size: 12px; color: var(--muted); line-height: 1.5; }
-  .feedback-block .fb-title { color: var(--blue); font-weight: 700; font-size: 10px; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-  .score-pill { display: inline-flex; align-items: center; gap: 4px; background: var(--blue); color: #fff; font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; margin-top: 6px; }
-
-  /* ── INPUT ── */
-  .chat-input-area { border-top: 1px solid var(--border); padding: 16px 24px; background: var(--white); }
-  .quick-replies { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
-  .qr-btn { background: var(--blue-ghost); border: 1px solid var(--blue); color: var(--blue); font-size: 12px; padding: 6px 14px; border-radius: 20px; cursor: pointer; transition: all 0.15s; font-family: 'Inter'; font-weight: 500; }
-  .qr-btn:hover { background: var(--blue); color: #fff; }
-  .input-row { display: flex; gap: 10px; }
-  .chat-input { flex: 1; background: var(--bg); border: 2px solid var(--border); color: var(--text); font-family: 'Inter'; font-size: 14px; padding: 12px 16px; border-radius: 8px; outline: none; transition: border-color 0.2s; resize: none; height: 50px; }
-  .chat-input:focus { border-color: var(--blue); background: var(--white); }
-  .chat-input::placeholder { color: var(--muted); }
-  .send-btn { background: var(--blue); border: none; color: #fff; width: 50px; height: 50px; border-radius: 8px; cursor: pointer; font-size: 18px; transition: all 0.2s; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-  .send-btn:hover { background: var(--blue-dim); box-shadow: 0 4px 12px rgba(0,43,255,0.3); }
-  .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-  /* ── THINKING ── */
-  .thinking { display: flex; align-items: center; gap: 6px; padding: 4px 0; }
-  .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--blue); animation: pulse 1.2s ease-in-out infinite; opacity: 0.5; }
-  .dot:nth-child(2) { animation-delay: 0.2s; }
-  .dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes pulse { 0%,60%,100% { transform: scale(1); opacity: 0.4; } 30% { transform: scale(1.3); opacity: 1; } }
-
-  /* ── RESULTS ── */
-  #results { align-items: center; justify-content: center; background: linear-gradient(160deg, #002BFF 0%, #0A0F2E 100%); padding: 40px 24px; }
-  .results-inner { max-width: 560px; width: 100%; }
-  .results-title { font-family: 'Bebas Neue'; font-size: 56px; letter-spacing: 3px; color: #fff; line-height: 1; margin-bottom: 6px; }
-  .results-sub { color: rgba(255,255,255,0.6); font-size: 14px; margin-bottom: 28px; }
-  .big-score { background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2); border-radius: 16px; padding: 32px; text-align: center; margin-bottom: 14px; }
-  .big-score-num { font-family: 'Bebas Neue'; font-size: 96px; color: #fff; line-height: 1; }
-  .big-score-lbl { font-size: 13px; color: rgba(255,255,255,0.6); letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
-  .breakdown { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
-  .breakdown-item { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 16px; }
-  .breakdown-item .bi-val { font-family: 'Bebas Neue'; font-size: 36px; color: #fff; }
-  .breakdown-item .bi-lbl { font-size: 10px; color: rgba(255,255,255,0.5); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-  .feedback-summary { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15); border-radius: 10px; padding: 18px; margin-bottom: 24px; font-size: 13px; line-height: 1.7; color: rgba(255,255,255,0.7); }
-  .feedback-summary strong { color: #fff; }
-
-  /* ── MENU ── */
-  #menu { align-items: center; justify-content: center; padding: 40px 24px; background: var(--bg); }
-  .menu-inner { max-width: 500px; width: 100%; }
-  .menu-title { font-family: 'Bebas Neue'; font-size: 44px; letter-spacing: 3px; color: var(--text); margin-bottom: 4px; }
-  .menu-sub { color: var(--muted); font-size: 14px; margin-bottom: 28px; }
-  .menu-list { display: flex; flex-direction: column; gap: 10px; }
-  .menu-item { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; cursor: pointer; display: flex; align-items: center; gap: 16px; transition: all 0.2s; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  .menu-item:hover { border-color: var(--blue); transform: translateX(4px); box-shadow: 0 4px 16px rgba(0,43,255,0.1); }
-  .menu-item-icon { font-size: 24px; width: 48px; height: 48px; background: var(--blue-ghost); border-radius: 10px; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
-  .menu-item-title { font-weight: 700; font-size: 15px; color: var(--text); }
-  .menu-item-desc { font-size: 12px; color: var(--muted); margin-top: 2px; }
-  .menu-item-arrow { margin-left: auto; color: var(--blue); font-size: 20px; font-weight: 700; }
-
-  /* ── TEORIA ── */
-  #teoria { padding: 0; background: var(--bg); }
-  .teoria-content { max-width: 700px; margin: 0 auto; padding: 36px 24px; }
-  .teoria-nav { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 28px; }
-  .teoria-tab { background: var(--white); border: 1px solid var(--border); color: var(--muted); font-size: 12px; padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: all 0.15s; font-family: 'Inter'; font-weight: 600; }
-  .teoria-tab.active { background: var(--blue); border-color: var(--blue); color: #fff; }
-  .teoria-card { display: none; }
-  .teoria-card.active { display: block; animation: fadeUp 0.3s ease; }
-  .t-title { font-family: 'Bebas Neue'; font-size: 38px; letter-spacing: 2px; margin-bottom: 4px; color: var(--blue); }
-  .t-sub { color: var(--muted); font-size: 13px; margin-bottom: 20px; font-weight: 500; }
-  .t-block { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; margin-bottom: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  .t-block-title { font-weight: 700; font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 8px; color: var(--text); }
-  .t-block p, .t-block div { font-size: 13px; color: var(--muted); line-height: 1.7; }
-  .t-block ul { font-size: 13px; color: var(--muted); line-height: 1.8; padding-left: 16px; }
-  .t-highlight { background: var(--blue); color: #fff; padding: 16px 20px; border-radius: 10px; margin-top: 20px; font-style: italic; font-size: 14px; font-weight: 500; line-height: 1.5; }
-
-  /* ── QUIZ ── */
-  #quiz { align-items: center; justify-content: center; padding: 40px 24px; background: var(--bg); }
-  .quiz-inner { max-width: 580px; width: 100%; }
-  .quiz-progress { display: flex; gap: 5px; margin-bottom: 28px; }
-  .qp-dot { flex: 1; height: 4px; background: var(--border); border-radius: 4px; transition: background 0.3s; }
-  .qp-dot.done { background: var(--blue); }
-  .quiz-q { font-size: 17px; font-weight: 700; line-height: 1.5; margin-bottom: 20px; color: var(--text); }
-  .quiz-options { display: flex; flex-direction: column; gap: 10px; }
-  .quiz-opt { background: var(--white); border: 2px solid var(--border); border-radius: 10px; padding: 14px 18px; cursor: pointer; font-size: 14px; transition: all 0.15s; text-align: left; font-family: 'Inter'; font-weight: 500; color: var(--text); }
-  .quiz-opt:hover { border-color: var(--blue); background: var(--blue-ghost); }
-  .quiz-opt.correct { border-color: var(--success); background: rgba(0,184,122,0.08); color: var(--success); }
-  .quiz-opt.wrong { border-color: var(--danger); background: rgba(229,57,53,0.06); color: var(--danger); }
-  .quiz-feedback { margin-top: 14px; padding: 14px 16px; background: var(--blue-pale); border-radius: 10px; font-size: 13px; color: var(--blue); line-height: 1.6; border-left: 3px solid var(--blue); display: none; font-weight: 500; }
-  .quiz-feedback.show { display: block; }
-
-  /* ── LOGIN ── */
-  #login {
-    align-items: center; justify-content: center;
-    background: linear-gradient(160deg, #002BFF 0%, #0A0F2E 100%);
-    min-height: 100vh; padding: 40px 24px;
-  }
-  .login-box {
-    background: #fff; border-radius: 16px; padding: 40px 36px;
-    max-width: 400px; width: 100%;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
-  }
-  .login-logo { text-align: center; margin-bottom: 28px; }
-  .login-logo .logo-digi { display: inline-block; font-size: 32px; padding: 6px 18px; border-radius: 6px; margin-bottom: 10px; }
-  .login-title { font-family: 'Bebas Neue'; font-size: 28px; letter-spacing: 2px; color: var(--text); text-align: center; margin-bottom: 4px; }
-  .login-sub { font-size: 13px; color: var(--muted); text-align: center; margin-bottom: 28px; }
-  .form-group { margin-bottom: 16px; }
-  .form-label { font-size: 12px; font-weight: 700; color: var(--text); letter-spacing: 0.5px; margin-bottom: 6px; display: block; text-transform: uppercase; }
-  .form-input {
-    width: 100%; background: var(--bg); border: 2px solid var(--border);
-    color: var(--text); font-family: 'Inter'; font-size: 14px;
-    padding: 12px 14px; border-radius: 8px; outline: none;
-    transition: border-color 0.2s;
-  }
-  .form-input:focus { border-color: var(--blue); background: #fff; }
-  .login-footer { text-align: center; margin-top: 16px; font-size: 12px; color: var(--muted); }
-
-  /* ── PERFIL ── */
-  #perfil { background: var(--bg); }
-  .perfil-content { max-width: 700px; margin: 0 auto; padding: 32px 24px; }
-  .perfil-header-card {
-    background: linear-gradient(135deg, var(--blue), #3352FF);
-    border-radius: 16px; padding: 28px; margin-bottom: 24px;
-    display: flex; align-items: center; gap: 20px; color: #fff;
-  }
-  .perfil-avatar {
-    width: 64px; height: 64px; background: rgba(255,255,255,0.2);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    font-size: 26px; font-weight: 800; flex-shrink: 0; border: 3px solid rgba(255,255,255,0.4);
-  }
-  .perfil-name { font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 2px; line-height: 1; margin-bottom: 4px; }
-  .perfil-email { font-size: 13px; opacity: 0.7; }
-  .perfil-since { font-size: 11px; opacity: 0.5; margin-top: 4px; }
-  .perfil-stats { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; margin-bottom: 24px; }
-  .ps-card { background: var(--white); border: 1px solid var(--border); border-radius: 12px; padding: 16px; text-align: center; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
-  .ps-val { font-family: 'Bebas Neue'; font-size: 36px; color: var(--blue); line-height: 1; }
-  .ps-lbl { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; font-weight: 600; margin-top: 2px; }
-  .section-title { font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 2px; color: var(--text); margin-bottom: 12px; display: flex; align-items: center; gap: 10px; }
-  .section-title span { font-family: 'Inter'; font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0; }
-  .history-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; }
-  .history-item {
-    background: var(--white); border: 1px solid var(--border); border-radius: 12px;
-    padding: 16px 18px; display: flex; align-items: center; gap: 14px;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-  }
-  .hi-score { font-family: 'Bebas Neue'; font-size: 32px; color: var(--blue); min-width: 52px; text-align: center; }
-  .hi-score.gold { color: #F59E0B; }
-  .hi-score.silver { color: #6B7A99; }
-  .hi-info { flex: 1; }
-  .hi-title { font-weight: 700; font-size: 14px; color: var(--text); margin-bottom: 2px; }
-  .hi-meta { font-size: 12px; color: var(--muted); }
-  .hi-badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 20px; }
-  .badge-elite { background: rgba(245,158,11,0.12); color: #D97706; }
-  .badge-bom { background: rgba(0,43,255,0.1); color: var(--blue); }
-  .badge-melhorar { background: rgba(107,122,153,0.12); color: var(--muted); }
-  .empty-state { text-align: center; padding: 40px 20px; color: var(--muted); }
-  .empty-state .es-icon { font-size: 48px; margin-bottom: 12px; }
-  .empty-state .es-text { font-size: 14px; }
-
-  /* SHARE MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.5);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 999; padding: 20px; display: none;
-  }
-  .modal-overlay.open { display: flex; }
-  .modal-box {
-    background: var(--white); border-radius: 16px; padding: 32px;
-    max-width: 440px; width: 100%;
-    box-shadow: 0 24px 64px rgba(0,0,0,0.2);
-  }
-  .modal-title { font-family: 'Bebas Neue'; font-size: 26px; letter-spacing: 2px; margin-bottom: 4px; color: var(--text); }
-  .modal-sub { font-size: 13px; color: var(--muted); margin-bottom: 20px; }
-  .share-card {
-    background: linear-gradient(135deg, var(--blue), #3352FF);
-    border-radius: 12px; padding: 24px; color: #fff; margin-bottom: 16px;
-    position: relative; overflow: hidden;
-  }
-  .share-card::before {
-    content: 'DIGI'; position: absolute; right: -10px; bottom: -20px;
-    font-family: 'Bebas Neue'; font-size: 100px; letter-spacing: 4px;
-    opacity: 0.08; line-height: 1;
-  }
-  .sc-name { font-family: 'Bebas Neue'; font-size: 22px; letter-spacing: 2px; margin-bottom: 2px; }
-  .sc-score { font-family: 'Bebas Neue'; font-size: 64px; line-height: 1; }
-  .sc-label { font-size: 12px; opacity: 0.7; text-transform: uppercase; letter-spacing: 1px; font-weight: 600; }
-  .sc-details { display: flex; gap: 16px; margin-top: 14px; font-size: 12px; opacity: 0.8; }
-  .share-link-box {
-    background: var(--bg); border: 1px solid var(--border); border-radius: 8px;
-    padding: 12px 14px; font-size: 12px; color: var(--muted); word-break: break-all;
-    margin-bottom: 12px; font-family: 'Inter';
-  }
-
-  /* ── NOTAS ── */
-  #notas { background: var(--bg); }
-  .notas-layout { display: grid; grid-template-columns: 300px 1fr; height: calc(100vh - 64px); }
-  .notas-sidebar {
-    background: var(--white); border-right: 1px solid var(--border);
-    display: flex; flex-direction: column; overflow: hidden;
-  }
-  .notas-sidebar-top {
-    padding: 16px; border-bottom: 1px solid var(--border);
-    display: flex; flex-direction: column; gap: 10px;
-  }
-  .notas-search {
-    width: 100%; background: var(--bg); border: 1px solid var(--border);
-    color: var(--text); font-family: 'Inter'; font-size: 13px;
-    padding: 9px 12px; border-radius: 8px; outline: none;
-    transition: border-color 0.2s;
-  }
-  .notas-search:focus { border-color: var(--blue); }
-  .notas-list { flex: 1; overflow-y: auto; padding: 8px; }
-  .nota-item {
-    padding: 12px 14px; border-radius: 10px; cursor: pointer;
-    transition: all 0.15s; margin-bottom: 4px; border: 1px solid transparent;
-  }
-  .nota-item:hover { background: var(--bg); }
-  .nota-item.active { background: var(--blue-ghost); border-color: var(--blue); }
-  .nota-item-title { font-weight: 600; font-size: 13px; color: var(--text); margin-bottom: 3px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .nota-item-preview { font-size: 11px; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .nota-item-meta { font-size: 10px; color: var(--muted); margin-top: 4px; display: flex; align-items: center; gap: 6px; }
-  .nota-tag { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 10px; }
-  .tag-relatorio { background: rgba(0,43,255,0.1); color: var(--blue); }
-  .tag-nota { background: rgba(0,184,122,0.1); color: var(--success); }
-  .tag-objetivo { background: rgba(245,158,11,0.12); color: #D97706; }
-  .tag-cliente { background: rgba(139,92,246,0.1); color: #7C3AED; }
-  .notas-editor { display: flex; flex-direction: column; }
-  .notas-toolbar {
-    padding: 12px 20px; border-bottom: 1px solid var(--border);
-    display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
-    background: var(--white);
-  }
-  .tb-btn {
-    background: var(--bg); border: 1px solid var(--border); color: var(--text);
-    font-size: 12px; padding: 6px 12px; border-radius: 6px; cursor: pointer;
-    font-family: 'Inter'; font-weight: 600; transition: all 0.15s;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .tb-btn:hover { border-color: var(--blue); color: var(--blue); background: var(--blue-ghost); }
-  .tb-btn.danger:hover { border-color: var(--danger); color: var(--danger); background: rgba(229,57,53,0.06); }
-  .tb-sep { width: 1px; height: 24px; background: var(--border); }
-  .nota-title-input {
-    width: 100%; border: none; outline: none; background: transparent;
-    font-family: 'Bebas Neue'; font-size: 32px; letter-spacing: 2px;
-    color: var(--text); padding: 20px 24px 8px;
-  }
-  .nota-title-input::placeholder { color: var(--border); }
-  .nota-body-input {
-    flex: 1; border: none; outline: none; background: transparent;
-    font-family: 'Inter'; font-size: 14px; line-height: 1.8;
-    color: var(--text); padding: 8px 24px 24px; resize: none;
-  }
-  .nota-body-input::placeholder { color: var(--muted); }
-  .notas-empty {
-    flex: 1; display: flex; flex-direction: column;
-    align-items: center; justify-content: center;
-    color: var(--muted); text-align: center; padding: 40px;
-  }
-  .notas-empty .ne-icon { font-size: 56px; margin-bottom: 16px; }
-  .notas-empty .ne-title { font-family: 'Bebas Neue'; font-size: 24px; letter-spacing: 2px; margin-bottom: 6px; color: var(--text); }
-  .notas-empty .ne-sub { font-size: 13px; line-height: 1.6; }
-
-  /* Relatório rápido */
-  .relatorio-modal .modal-box { max-width: 520px; }
-  .rel-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 16px; }
-  .rel-field label { font-size: 11px; font-weight: 700; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 5px; }
-  .rel-field input, .rel-field select {
-    width: 100%; background: var(--bg); border: 2px solid var(--border);
-    color: var(--text); font-family: 'Inter'; font-size: 13px;
-    padding: 9px 12px; border-radius: 8px; outline: none; transition: border-color 0.2s;
-  }
-  .rel-field input:focus, .rel-field select:focus { border-color: var(--blue); }
-
-  /* RESPONSIVE */
-  @media (max-width: 700px) {
-    .sim-layout { grid-template-columns: 1fr; }
-    .sidebar { display: none; }
-    .modes-grid { grid-template-columns: 1fr; }
-    .breakdown { grid-template-columns: 1fr; }
-    .stats-bar { gap: 12px; }
-  }
+:root{--blue:#002BFF;--blue2:#0022cc;--blue3:#3352FF;--pale:#E8ECFF;--ghost:rgba(0,43,255,0.07);--bg:#F4F6FF;--white:#fff;--border:#D6DCFF;--text:#0A0F2E;--muted:#6B7A99;--green:#00B87A;--red:#E53935;}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+.screen{display:none;min-height:100vh;flex-direction:column;}
+.screen.active{display:flex;}
+.hdr{height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:var(--white);border-bottom:2px solid var(--blue);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,43,255,.08);}
+.lb{background:var(--blue);color:#fff;font-family:"Bebas Neue";font-size:22px;letter-spacing:3px;padding:4px 12px 2px;border-radius:4px;}
+.ls{font-size:11px;font-weight:700;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;border-left:2px solid var(--border);padding-left:12px;margin-left:10px;}
+.btn{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;font-family:Inter;font-weight:700;font-size:13px;padding:10px 20px;border:none;border-radius:6px;cursor:pointer;transition:all .2s;text-transform:uppercase;}
+.btn:hover{background:var(--blue2);transform:translateY(-1px);}
+.btn-g{background:transparent;border:2px solid var(--blue);color:var(--blue);}
+.btn-g:hover{background:var(--ghost);transform:none;}
+.btn-sm{padding:7px 14px;font-size:12px;}
+.btn-w{background:#fff;color:var(--blue);}
+.btn-w:hover{background:var(--pale);}
+.btn-f{width:100%;justify-content:center;}
+.btn-r{background:var(--red);border:none;}
+/* HOME */
+#home{align-items:center;justify-content:center;background:linear-gradient(160deg,#002BFF 0%,#0A0F2E 100%);padding:32px 20px;}
+.hw{max-width:420px;width:100%;}
+.htop{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;}
+.hpill{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;font-family:Inter;font-size:12px;font-weight:600;padding:7px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:7px;}
+.hav{width:24px;height:24px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;color:#fff;}
+.hh1{font-family:"Bebas Neue";font-size:clamp(52px,13vw,80px);line-height:.92;letter-spacing:3px;color:#fff;margin-bottom:14px;}
+.hh1 span{-webkit-text-stroke:2px rgba(255,255,255,.3);-webkit-text-fill-color:transparent;}
+.hp{color:rgba(255,255,255,.55);font-size:13px;line-height:1.6;margin-bottom:28px;}
+.hcta{width:100%;justify-content:center;font-size:15px;padding:16px;border-radius:10px;margin-bottom:16px;}
+.pr{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;}
+.pb{flex:1;min-width:calc(50% - 4px);background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:rgba(255,255,255,.85);font-family:Inter;font-size:11px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;text-align:center;}
+.pb:hover{background:rgba(255,255,255,.16);}
+.tl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:10px;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);}
+.tr{display:flex;gap:8px;}
+.tb{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:Inter;font-size:10px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.tb:hover{background:rgba(255,255,255,.12);}
+.tb span:first-child{font-size:18px;}
+/* LOGIN */
+#login{align-items:center;justify-content:center;background:linear-gradient(160deg,#002BFF 0%,#0A0F2E 100%);padding:40px 20px;}
+.lbox{background:#fff;border-radius:16px;padding:36px;max-width:380px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.2);}
+.ltit{font-family:"Bebas Neue";font-size:26px;letter-spacing:2px;text-align:center;margin-bottom:4px;}
+.lsub{font-size:12px;color:var(--muted);text-align:center;margin-bottom:24px;line-height:1.5;}
+.fg{margin-bottom:14px;}
+.fl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:5px;}
+.fi{width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:Inter;font-size:14px;padding:11px 13px;border-radius:8px;outline:none;transition:border-color .2s;}
+.fi:focus{border-color:var(--blue);}
+/* MENU */
+#menu{background:var(--bg);}
+.mwrap{max-width:480px;margin:auto;padding:32px 20px;}
+.pt{font-family:"Bebas Neue";font-size:38px;letter-spacing:2px;margin-bottom:4px;}
+.ps{color:var(--muted);font-size:13px;margin-bottom:24px;}
+.cl{display:flex;flex-direction:column;gap:10px;}
+.ci{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:16px 18px;cursor:pointer;display:flex;align-items:center;gap:14px;transition:all .2s;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.ci:hover{border-color:var(--blue);transform:translateX(3px);}
+.cii{font-size:24px;width:46px;height:46px;background:var(--ghost);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.cin{font-weight:700;font-size:14px;}
+.cim{font-size:12px;color:var(--muted);margin-top:2px;}
+.cia{margin-left:auto;color:var(--blue);font-size:18px;font-weight:700;}
+/* SIM */
+#simulation{background:var(--bg);}
+.sl{display:grid;grid-template-columns:260px 1fr;flex:1;height:calc(100vh - 64px);overflow:hidden;}
+.sb{background:var(--white);border-right:1px solid var(--border);padding:16px;display:flex;flex-direction:column;gap:16px;overflow-y:auto;}
+.sbt{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--blue);font-weight:700;margin-bottom:8px;display:flex;align-items:center;gap:6px;}
+.sbt::after{content:"";flex:1;height:1px;background:var(--border);}
+.cc{background:var(--ghost);border:1px solid var(--border);border-radius:10px;padding:12px;border-top:3px solid var(--blue);}
+.ccn{font-weight:700;font-size:14px;margin-bottom:3px;}
+.cct{display:inline-block;font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:2px 8px;border-radius:20px;margin-bottom:8px;}
+.td{background:rgba(229,57,53,.1);color:#E53935;}
+.ta{background:rgba(245,158,11,.12);color:#D97706;}
+.tr2{background:rgba(0,43,255,.1);color:var(--blue);}
+.ti{background:rgba(139,92,246,.1);color:#7C3AED;}
+.cci{font-size:11px;color:var(--muted);line-height:1.8;}
+.cci b{color:var(--text);}
+.fn{display:flex;flex-direction:column;gap:5px;}
+.fs{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;font-size:12px;color:var(--muted);background:var(--bg);border:1px solid transparent;transition:all .3s;font-weight:500;}
+.fs.done{border-color:var(--green);color:var(--green);background:rgba(0,184,122,.06);}
+.fs.active{border-color:var(--blue);color:var(--blue);background:var(--ghost);font-weight:700;}
+.fd{width:7px;height:7px;border-radius:50%;background:var(--border);flex-shrink:0;transition:all .3s;}
+.fs.done .fd{background:var(--green);}
+.fs.active .fd{background:var(--blue);box-shadow:0 0 6px rgba(0,43,255,.5);}
+.sl2{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;font-weight:500;}
+.sl2 b{color:var(--blue);}
+.st{background:var(--border);border-radius:4px;height:5px;overflow:hidden;margin-bottom:8px;}
+.sf{height:100%;background:linear-gradient(90deg,var(--blue),var(--blue3));border-radius:4px;transition:width .5s;}
+.ca{display:flex;flex-direction:column;background:var(--bg);overflow:hidden;}
+.cm{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:14px;}
+.msg{display:flex;gap:10px;max-width:80%;animation:fu .3s ease;}
+@keyframes fu{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.msg.user{align-self:flex-end;flex-direction:row-reverse;}
+.msg.system{max-width:100%;}
+.mav{width:36px;height:36px;border-radius:50%;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:15px;border:2px solid var(--border);background:var(--white);}
+.msg.user .mav{background:var(--blue);border-color:var(--blue);color:#fff;font-size:12px;font-weight:700;}
+.msg.system .mav{background:var(--pale);border-color:var(--blue);}
+.mb{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:11px 14px;font-size:13px;line-height:1.6;color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.04);}
+.msg.user .mb{background:var(--blue);border-color:var(--blue);color:#fff;border-radius:12px 12px 2px 12px;}
+.msg.client .mb{border-radius:12px 12px 12px 2px;}
+.msg.system .mb{background:var(--pale);border-color:var(--border);font-size:12px;color:var(--blue);width:100%;}
+.mn{font-size:10px;color:var(--muted);margin-bottom:3px;font-weight:600;}
+.fb{margin-top:8px;padding:9px 11px;background:var(--ghost);border-radius:7px;border-left:3px solid var(--blue);font-size:11px;color:var(--muted);line-height:1.5;}
+.fbt{color:var(--blue);font-weight:700;font-size:10px;letter-spacing:1px;text-transform:uppercase;margin-bottom:3px;}
+.sp{display:inline-flex;align-items:center;background:var(--blue);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;margin-top:4px;}
+.th{display:flex;align-items:center;gap:5px;padding:2px 0;}
+.dot{width:6px;height:6px;border-radius:50%;background:var(--blue);opacity:.5;animation:pu 1.2s ease-in-out infinite;}
+.dot:nth-child(2){animation-delay:.2s;}
+.dot:nth-child(3){animation-delay:.4s;}
+@keyframes pu{0%,60%,100%{transform:scale(1);opacity:.4}30%{transform:scale(1.3);opacity:1}}
+.cia2{border-top:1px solid var(--border);padding:12px 16px;background:var(--white);}
+.qw{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.qb{background:var(--ghost);border:1px solid var(--blue);color:var(--blue);font-size:11px;padding:5px 11px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:500;}
+.qb:hover{background:var(--blue);color:#fff;}
+.ir{display:flex;gap:8px;}
+.ci2{flex:1;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:Inter;font-size:13px;padding:11px 13px;border-radius:8px;outline:none;resize:none;height:48px;transition:border-color .2s;}
+.ci2:focus{border-color:var(--blue);background:#fff;}
+.ci2::placeholder{color:var(--muted);}
+.sb2{background:var(--blue);border:none;color:#fff;width:48px;height:48px;border-radius:8px;cursor:pointer;font-size:16px;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.sb2:hover{background:var(--blue2);}
+.sb2:disabled{opacity:.4;cursor:not-allowed;}
+.sv{display:flex;gap:20px;}
+.svv{font-weight:800;font-size:18px;color:var(--blue);line-height:1;}
+.svl{font-size:9px;color:var(--muted);letter-spacing:1px;text-transform:uppercase;}
+/* RESULTS */
+#results{align-items:center;justify-content:center;background:linear-gradient(160deg,#002BFF 0%,#0A0F2E 100%);padding:36px 20px;}
+.rw{max-width:520px;width:100%;}
+.rt{font-family:"Bebas Neue";font-size:52px;letter-spacing:3px;color:#fff;line-height:1;margin-bottom:4px;}
+.rs{color:rgba(255,255,255,.55);font-size:13px;margin-bottom:24px;}
+.bs{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);border-radius:14px;padding:28px;text-align:center;margin-bottom:12px;}
+.bsn{font-family:"Bebas Neue";font-size:88px;color:#fff;line-height:1;}
+.bsl{font-size:11px;color:rgba(255,255,255,.5);letter-spacing:1px;text-transform:uppercase;font-weight:600;}
+.brd{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+.bdi{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:14px;}
+.bdv{font-family:"Bebas Neue";font-size:32px;color:#fff;}
+.bdl{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+.rf{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:16px;margin-bottom:20px;font-size:12px;line-height:1.7;color:rgba(255,255,255,.65);}
+.rf strong{color:#fff;}
+.rb{display:flex;gap:8px;flex-wrap:wrap;}
+/* PERFIL */
+#perfil{background:var(--bg);}
+.pw{max-width:640px;margin:auto;padding:28px 20px;}
+.ph{background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:14px;padding:24px;margin-bottom:20px;display:flex;align-items:center;gap:16px;color:#fff;}
+.pav{width:60px;height:60px;background:rgba(255,255,255,.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;border:3px solid rgba(255,255,255,.35);flex-shrink:0;}
+.pn{font-family:"Bebas Neue";font-size:28px;letter-spacing:2px;line-height:1;margin-bottom:3px;}
+.pe{font-size:12px;opacity:.65;}
+.pc{font-size:10px;opacity:.4;margin-top:2px;}
+.pst{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px;}
+.psc{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:14px;text-align:center;}
+.psv{font-family:"Bebas Neue";font-size:34px;color:var(--blue);line-height:1;}
+.psl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-top:2px;}
+.stit{font-family:"Bebas Neue";font-size:20px;letter-spacing:2px;margin-bottom:10px;}
+.hl{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;}
+.hi{background:var(--white);border:1px solid var(--border);border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.his{font-family:"Bebas Neue";font-size:30px;color:var(--blue);min-width:48px;text-align:center;}
+.his.gold{color:#F59E0B;}
+.hii{flex:1;}
+.hin{font-weight:700;font-size:13px;margin-bottom:2px;}
+.him{font-size:11px;color:var(--muted);}
+.hib{font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;flex-shrink:0;}
+.be{background:rgba(245,158,11,.12);color:#D97706;}
+.bb{background:var(--ghost);color:var(--blue);}
+.bo{background:rgba(107,122,153,.1);color:var(--muted);}
+/* MODAL */
+.mo{position:fixed;inset:0;background:rgba(0,0,0,.5);display:none;align-items:center;justify-content:center;z-index:999;padding:20px;}
+.mo.open{display:flex;}
+.mbox{background:#fff;border-radius:14px;padding:28px;max-width:420px;width:100%;box-shadow:0 24px 64px rgba(0,0,0,.2);}
+.mtit{font-family:"Bebas Neue";font-size:24px;letter-spacing:2px;margin-bottom:3px;}
+.msub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.shc{background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:10px;padding:20px;color:#fff;margin-bottom:14px;position:relative;overflow:hidden;}
+.shc::after{content:"DIGI";position:absolute;right:-8px;bottom:-16px;font-family:"Bebas Neue";font-size:80px;opacity:.08;line-height:1;}
+.shn{font-family:"Bebas Neue";font-size:20px;letter-spacing:2px;margin-bottom:2px;}
+.shs{font-family:"Bebas Neue";font-size:56px;line-height:1;}
+.shl{font-size:10px;opacity:.6;text-transform:uppercase;letter-spacing:1px;font-weight:600;}
+.shd{display:flex;gap:10px;margin-top:10px;font-size:11px;opacity:.7;flex-wrap:wrap;}
+.stxt{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:10px 12px;font-size:11px;color:var(--muted);word-break:break-all;margin-bottom:10px;}
+.mbt{display:flex;gap:8px;flex-wrap:wrap;}
+/* NOTAS */
+#notas{background:var(--bg);}
+.nl{display:grid;grid-template-columns:280px 1fr;flex:1;height:calc(100vh - 64px);overflow:hidden;}
+.nsb{background:var(--white);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;}
+.nsbt{padding:12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:8px;}
+.nsr{width:100%;background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:Inter;font-size:13px;padding:8px 11px;border-radius:7px;outline:none;}
+.nsr:focus{border-color:var(--blue);}
+.ntr{display:flex;gap:4px;flex-wrap:wrap;}
+.ntb{background:var(--bg);border:1px solid var(--border);color:var(--muted);font-size:10px;font-weight:600;padding:4px 9px;border-radius:20px;cursor:pointer;font-family:Inter;}
+.ntb.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.nlist{flex:1;overflow-y:auto;padding:6px;}
+.nitem{padding:11px 12px;border-radius:9px;cursor:pointer;margin-bottom:3px;border:1px solid transparent;transition:all .15s;}
+.nitem:hover{background:var(--bg);}
+.nitem.active{background:var(--ghost);border-color:var(--blue);}
+.nit{font-weight:600;font-size:13px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nip{font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.nim{font-size:10px;color:var(--muted);margin-top:3px;display:flex;align-items:center;gap:6px;}
+.ntag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;}
+.ntag-relatorio{background:rgba(0,43,255,.1);color:var(--blue);}
+.ntag-nota{background:rgba(0,184,122,.1);color:var(--green);}
+.ntag-objetivo{background:rgba(245,158,11,.12);color:#D97706;}
+.ntag-cliente{background:rgba(139,92,246,.1);color:#7C3AED;}
+.ned{display:flex;flex-direction:column;overflow:hidden;}
+.ntb2{padding:10px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:6px;flex-wrap:wrap;background:var(--white);}
+.tbb{background:var(--bg);border:1px solid var(--border);color:var(--text);font-size:11px;padding:5px 10px;border-radius:6px;cursor:pointer;font-family:Inter;font-weight:600;transition:all .15s;}
+.tbb:hover{border-color:var(--blue);color:var(--blue);background:var(--ghost);}
+.tbb.red:hover{border-color:var(--red);color:var(--red);}
+.tbs{width:1px;height:20px;background:var(--border);}
+.nti{width:100%;border:none;outline:none;background:transparent;font-family:"Bebas Neue";font-size:28px;letter-spacing:2px;color:var(--text);padding:18px 20px 6px;}
+.nti::placeholder{color:var(--border);}
+.nbi{flex:1;border:none;outline:none;background:transparent;font-family:Inter;font-size:14px;line-height:1.8;color:var(--text);padding:6px 20px 20px;resize:none;}
+.nbi::placeholder{color:var(--muted);}
+.nem{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;color:var(--muted);text-align:center;padding:40px;}
+/* COMISSOES */
+#comissoes{background:var(--bg);}
+.cw{max-width:660px;margin:auto;padding:28px 16px;}
+.ctab{background:var(--white);border-radius:12px;overflow:hidden;border:1px solid var(--border);margin-bottom:20px;}
+.cth2{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;background:var(--blue);color:#fff;}
+.ctd2{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;border-bottom:1px solid var(--border);}
+.cthc{padding:11px 10px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;}
+.ctdc{padding:12px 10px;font-size:13px;font-weight:800;color:var(--blue);text-align:center;}
+.calb{background:var(--white);border-radius:12px;border:1px solid var(--border);padding:18px;margin-bottom:16px;}
+.calg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;}
+.calf label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;display:block;margin-bottom:4px;}
+.calf input{width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:Inter;font-size:14px;font-weight:600;padding:9px 11px;border-radius:7px;outline:none;}
+.calf input:focus{border-color:var(--blue);}
+.calr{background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:10px;padding:14px 18px;color:#fff;display:none;}
+.calrl{font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:.65;margin-bottom:3px;}
+.calrv{font-family:"Bebas Neue";font-size:44px;line-height:1;}
+.calrd{font-size:11px;opacity:.6;margin-top:5px;}
+.cnote{background:var(--pale);border-radius:9px;padding:12px 14px;border-left:3px solid var(--blue);font-size:12px;color:var(--blue);line-height:1.6;font-weight:500;}
+/* TEORIA */
+#teoria{background:var(--bg);}
+.tw{max-width:660px;margin:auto;padding:28px 16px;}
+.ttabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:22px;}
+.ttab{background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;}
+.ttab.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.tcard{display:none;}
+.tcard.active{display:block;animation:fu .3s ease;}
+.tcti{font-family:"Bebas Neue";font-size:34px;letter-spacing:2px;color:var(--blue);margin-bottom:3px;}
+.tcsu{color:var(--muted);font-size:13px;margin-bottom:18px;font-weight:500;}
+.tcbl{background:var(--white);border:1px solid var(--border);border-radius:11px;padding:16px 18px;margin-bottom:9px;}
+.tcblt{font-weight:700;font-size:14px;margin-bottom:7px;display:flex;align-items:center;gap:7px;}
+.tcbl p{font-size:13px;color:var(--muted);line-height:1.7;}
+.tcq{background:var(--blue);color:#fff;padding:14px 18px;border-radius:9px;margin-top:18px;font-style:italic;font-size:13px;font-weight:500;line-height:1.5;}
+/* QUIZ */
+#quiz{background:var(--bg);}
+.qw2{max-width:560px;margin:auto;padding:28px 16px;}
+.qprog{display:flex;gap:4px;margin-bottom:22px;}
+.qp{flex:1;height:4px;background:var(--border);border-radius:4px;transition:background .3s;}
+.qp.done{background:var(--blue);}
+.qq{font-size:16px;font-weight:700;line-height:1.5;margin-bottom:18px;}
+.qopts{display:flex;flex-direction:column;gap:8px;}
+.qopt{background:var(--white);border:2px solid var(--border);border-radius:9px;padding:13px 16px;cursor:pointer;font-size:13px;text-align:left;font-family:Inter;font-weight:500;color:var(--text);}
+.qopt:hover{border-color:var(--blue);background:var(--ghost);}
+.qopt.correct{border-color:var(--green);background:rgba(0,184,122,.08);color:var(--green);}
+.qopt.wrong{border-color:var(--red);background:rgba(229,57,53,.06);color:var(--red);}
+.qfb{margin-top:12px;padding:12px 14px;background:var(--pale);border-radius:9px;font-size:12px;color:var(--blue);line-height:1.6;border-left:3px solid var(--blue);display:none;font-weight:500;}
+.qfb.show{display:block;}
+@media(max-width:680px){.sl,.nl{grid-template-columns:1fr;}.sb,.nsb{display:none;}}
 </style>
 </head>
 <body>
-
-
-<!-- ══════════════════════════════════════════
-     HOME
-══════════════════════════════════════════ -->
 <div id="home" class="screen">
-  <div class="home-inner">
-
-    <!-- Logo + badge -->
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:32px;">
-      <div style="display:flex;align-items:center;gap:12px;">
-        <div class="logo-digi" style="font-size:22px;padding:4px 12px 2px;">DIGI</div>
-        <div style="font-size:11px;font-weight:700;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;">Elite Trainer</div>
-      </div>
-      <button onclick="openPerfil()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-family:'Inter';font-size:12px;font-weight:600;padding:7px 14px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.18)'" onmouseout="this.style.background='rgba(255,255,255,0.1)'">
-        <span id="homeUserInitials" style="width:22px;height:22px;background:rgba(255,255,255,0.2);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:800;">?</span>
-        <span id="homeUserName">Entrar</span>
-      </button>
-    </div>
-
-    <!-- Hero -->
-    <div style="margin-bottom:36px;">
-      <div style="font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.45);margin-bottom:12px;">Sistema de Alta Performance</div>
-      <h1 style="font-family:'Bebas Neue';font-size:clamp(48px,11vw,80px);line-height:0.9;letter-spacing:3px;color:#fff;margin-bottom:14px;">Treina.<br>Mede.<br><span style="-webkit-text-stroke:2px rgba(255,255,255,0.35);-webkit-text-fill-color:transparent;">Fecha.</span></h1>
-      <p style="color:rgba(255,255,255,0.55);font-size:14px;line-height:1.6;max-width:340px;">Simulador porta a porta com IA · feedback real · resultados que ficam guardados.</p>
-    </div>
-
-    <!-- CTA principal -->
-    <button class="btn btn-white" onclick="showScreen('menu')" style="width:100%;justify-content:center;font-size:15px;padding:16px;border-radius:10px;margin-bottom:20px;letter-spacing:1px;">
-      Iniciar Simulação →
-    </button>
-
-    <!-- Links rápidos - row de pills -->
-    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:28px;">
-      <button onclick="showScreen('quiz');initQuiz()" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">⚡ Teste</button>
-      <button onclick="showScreen('teoria')" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">📖 Manual</button>
-      <button onclick="openNotas()" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">📝 Notas</button>
-      <button onclick="showScreen('comissoes')" style="flex:1;min-width:80px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.85);font-family:'Inter';font-size:12px;font-weight:600;padding:10px 12px;border-radius:8px;cursor:pointer;text-align:center;transition:all 0.2s;" onmouseover="this.style.background='rgba(255,255,255,0.15)'" onmouseout="this.style.background='rgba(255,255,255,0.08)'">💶 Comissões</button>
-    </div>
-
-    <!-- Ferramentas externas - linha separadora -->
-    <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:20px;">
-      <div style="font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:12px;">Ferramentas DIGI</div>
-      <div style="display:flex;gap:8px;">
-        <button onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')"
-          style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-family:'Inter';font-size:11px;font-weight:700;padding:10px 8px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s;"
-          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
-          <span style="font-size:18px;">🔗</span>
-          <span>DealerCare</span>
-        </button>
-        <button onclick="window.open('https://quero-aderir-digi-pt.vercel.app/','_blank')"
-          style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-family:'Inter';font-size:11px;font-weight:700;padding:10px 8px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s;"
-          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
-          <span style="font-size:18px;">📊</span>
-          <span>Simulador</span>
-        </button>
-        <button onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')"
-          style="flex:1;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.7);font-family:'Inter';font-size:11px;font-weight:700;padding:10px 8px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all 0.2s;"
-          onmouseover="this.style.background='rgba(255,255,255,0.12)'" onmouseout="this.style.background='rgba(255,255,255,0.06)'">
-          <span style="font-size:18px;">🔐</span>
-          <span>Authenticator</span>
-        </button>
-      </div>
-    </div>
-
+<div class="hw">
+  <div class="htop">
+    <div style="display:flex;align-items:center;gap:10px;"><div class="lb">DIGI</div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;">Elite Trainer</div></div>
+    <button class="hpill" onclick="openPerfil()"><div class="hav" id="hav">?</div><span id="hnm">Entrar</span></button>
+  </div>
+  <div style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:12px;">Sistema de Alta Performance</div>
+  <h1 class="hh1">Treina.<br>Mede.<br><span>Fecha.</span></h1>
+  <p class="hp">Simulador porta a porta com IA · feedback real · resultados guardados.</p>
+  <button class="btn btn-w hcta" onclick="showScreen('menu')">Iniciar Simulação →</button>
+  <div class="pr">
+    <button class="pb" onclick="showScreen('quiz');initQuiz()">⚡ Teste</button>
+    <button class="pb" onclick="showScreen('teoria')">📖 Manual</button>
+    <button class="pb" onclick="openNotas()">📝 Notas</button>
+    <button class="pb" onclick="showScreen('comissoes')">💶 Comissões</button>
+  </div>
+  <div class="tl">Ferramentas DIGI</div>
+  <div class="tr">
+    <button class="tb" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')"><span>🔗</span><span>DealerCare</span></button>
+    <button class="tb" onclick="window.open('https://quero-aderir-digi-pt.vercel.app/','_blank')"><span>📊</span><span>Simulador</span></button>
+    <button class="tb" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')"><span>🔐</span><span>Authenticator</span></button>
   </div>
 </div>
-
-<!-- ══════════════════════════════════════════
-     COMISSÕES
-══════════════════════════════════════════ -->
-<div id="comissoes" class="screen">
-  <div class="header">
-    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Tabela de Comissões</div></div>
-    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
-  </div>
-  <div style="max-width:680px;margin:0 auto;padding:28px 16px;">
-
-    <!-- Título -->
-    <div style="margin-bottom:24px;">
-      <div style="font-family:'Bebas Neue';font-size:36px;letter-spacing:2px;color:var(--blue);">Comissões por Adesão</div>
-      <div style="font-size:13px;color:var(--muted);margin-top:4px;">Valores por serviço activado · Tabela Soluções Diferentes / DIGI</div>
-    </div>
-
-    <!-- Tabela principal -->
-    <div style="background:var(--white);border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 2px 12px rgba(0,43,255,0.06);margin-bottom:24px;">
-      <!-- Header tabela -->
-      <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;background:var(--blue);color:#fff;">
-        <div style="padding:12px 14px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;">Adesões/Mês</div>
-        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">📺 TV</div>
-        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">🌐 Fibra</div>
-        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">📱 Móvel</div>
-        <div style="padding:12px 10px;font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;text-align:center;">☎️ Fixo</div>
-      </div>
-      <!-- Linhas -->
-      <div id="comissoesRows"></div>
-    </div>
-
-    <!-- Calculadora -->
-    <div style="background:var(--white);border-radius:14px;border:1px solid var(--border);padding:20px;box-shadow:0 2px 12px rgba(0,43,255,0.06);margin-bottom:20px;">
-      <div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:16px;">💶 Calculadora de Comissão</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Total Adesões</label>
-          <input type="number" id="calc-adesoes" min="0" placeholder="Ex: 20" oninput="calcComissao()"
-            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;font-weight:600;padding:10px 12px;border-radius:8px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">TVs</label>
-          <input type="number" id="calc-tv" min="0" placeholder="0" oninput="calcComissao()"
-            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Fibras</label>
-          <input type="number" id="calc-fibra" min="0" placeholder="0" oninput="calcComissao()"
-            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Móveis</label>
-          <input type="number" id="calc-movel" min="0" placeholder="0" oninput="calcComissao()"
-            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
-        </div>
-        <div>
-          <label style="font-size:11px;font-weight:700;color:var(--text);text-transform:uppercase;letter-spacing:0.5px;display:block;margin-bottom:6px;">Fixo</label>
-          <input type="number" id="calc-fixo" min="0" placeholder="0" oninput="calcComissao()"
-            style="width:100%;background:var(--bg);border:2px solid var(--border);color:var(--text);font-family:'Inter';font-size:14px;padding:10px 12px;border-radius:8px;outline:none;">
-        </div>
-      </div>
-      <!-- Resultado -->
-      <div id="calc-resultado" style="background:linear-gradient(135deg,var(--blue),#3352FF);border-radius:10px;padding:16px 20px;color:#fff;display:none;">
-        <div style="font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;opacity:0.7;margin-bottom:4px;">Estimativa de Comissão</div>
-        <div style="font-family:'Bebas Neue';font-size:48px;line-height:1;" id="calc-total-val">0 €</div>
-        <div style="font-size:12px;opacity:0.7;margin-top:6px;" id="calc-breakdown">—</div>
-      </div>
-    </div>
-
-    <!-- Nota -->
-    <div style="background:var(--blue-pale);border-radius:10px;padding:14px 16px;border-left:3px solid var(--blue);font-size:12px;color:var(--blue);line-height:1.6;font-weight:500;">
-      ℹ️ Valores de comissão por serviço activado. O escalão é determinado pelo total de adesões do mês. TV inclui qualquer pack de televisão. Fixo refere-se a voz fixa.
-    </div>
-  </div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     MENU (escolha de cliente)
-══════════════════════════════════════════ -->
-<div id="menu" class="screen">
-  <div class="header">
-    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Simulador de Elite</div></div>
-    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
-  </div>
-  <div class="menu-inner" style="margin:auto;">
-    <div class="menu-title">ESCOLHE O CLIENTE</div>
-    <div class="menu-sub">Cada perfil exige uma abordagem diferente. Estás pronto?</div>
-    <div class="menu-list" id="clientList"></div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     LOGIN
-══════════════════════════════════════════ -->
 <div id="login" class="screen">
-  <div class="login-box">
-    <div class="login-logo"><div class="logo-digi">DIGI</div></div>
-    <div class="login-title">ELITE TRAINER</div>
-    <div class="login-sub">Entra com o teu nome e email para guardar os teus resultados</div>
-    <div class="form-group">
-      <label class="form-label">Nome</label>
-      <input class="form-input" id="loginName" type="text" placeholder="Ex: João Silva" maxlength="40"
-        onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Email</label>
-      <input class="form-input" id="loginEmail" type="email" placeholder="joao@email.com"
-        onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <div id="login-error" style="color:var(--danger);font-size:12px;margin-bottom:12px;display:none;font-weight:600;"></div>
-    <button class="btn btn-full" onclick="doLogin()">Entrar →</button>
-    <div class="login-footer">Os teus dados ficam guardados no teu browser.<br>Sem registo em servidor.</div>
-  </div>
+<div class="lbox">
+  <div style="text-align:center;margin-bottom:20px;"><div class="lb" style="font-size:28px;padding:5px 16px 3px;display:inline-block;">DIGI</div></div>
+  <div class="ltit">ELITE TRAINER</div>
+  <div class="lsub">Entra com o teu nome e email para guardar os teus resultados</div>
+  <div class="fg"><label class="fl">Nome</label><input class="fi" id="lname" type="text" placeholder="Ex: João Silva" maxlength="40" onkeydown="if(event.key==='Enter')doLogin()"></div>
+  <div class="fg"><label class="fl">Email</label><input class="fi" id="lemail" type="email" placeholder="joao@email.com" onkeydown="if(event.key==='Enter')doLogin()"></div>
+  <div id="lerr" style="color:var(--red);font-size:12px;margin-bottom:10px;display:none;font-weight:600;"></div>
+  <button class="btn btn-f" onclick="doLogin()">Entrar →</button>
+  <div style="text-align:center;margin-top:12px;font-size:11px;color:var(--muted);">Dados guardados no browser · Sem registo em servidor</div>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     PERFIL
-══════════════════════════════════════════ -->
-<div id="perfil" class="screen">
-  <div class="header">
-    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">O Meu Perfil</div></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
-      <button class="btn btn-sm" style="background:var(--danger);border:none;" onclick="doLogout()">Sair</button>
-    </div>
-  </div>
-  <div class="perfil-content">
-    <div class="perfil-header-card">
-      <div class="perfil-avatar" id="perfilAvatar">?</div>
-      <div>
-        <div class="perfil-name" id="perfilName">—</div>
-        <div class="perfil-email" id="perfilEmail">—</div>
-        <div class="perfil-since" id="perfilSince">—</div>
-      </div>
-    </div>
-    <div class="perfil-stats">
-      <div class="ps-card"><div class="ps-val" id="ps-total">0</div><div class="ps-lbl">Simulações</div></div>
-      <div class="ps-card"><div class="ps-val" id="ps-best">0</div><div class="ps-lbl">Melhor Score</div></div>
-      <div class="ps-card"><div class="ps-val" id="ps-avg">0</div><div class="ps-lbl">Média</div></div>
-    </div>
-    <div class="section-title">Histórico <span id="hist-count" style="font-family:Inter;font-size:12px;color:var(--muted);font-weight:600;"></span></div>
-    <div class="history-list" id="historyList"></div>
-  </div>
+<div id="menu" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Escolhe o Cliente</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
+<div class="mwrap"><div class="pt">ESCOLHE O CLIENTE</div><div class="ps">Cada perfil exige uma abordagem diferente.</div><div class="cl" id="clientList"></div></div>
 </div>
 
-<!-- SHARE MODAL -->
-<div class="modal-overlay" id="shareModal">
-  <div class="modal-box">
-    <div class="modal-title">PARTILHAR RESULTADO</div>
-    <div class="modal-sub">Copia o teu cartão de resultado e partilha com a equipa</div>
-    <div class="share-card">
-      <div class="sc-name" id="sc-name">—</div>
-      <div class="sc-score" id="sc-score">0</div>
-      <div class="sc-label">PONTOS · DIGI ELITE TRAINER</div>
-      <div class="sc-details">
-        <span id="sc-client">—</span>
-        <span>·</span>
-        <span id="sc-grade">—</span>
-        <span>·</span>
-        <span id="sc-date">—</span>
-      </div>
-    </div>
-    <div class="share-link-box" id="shareText">—</div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-sm" onclick="copyShareText()">📋 Copiar</button>
-      <button class="btn btn-sm" style="background:#25D366;border:none;" onclick="shareWhatsApp()">💬 WhatsApp</button>
-      <button class="btn btn-ghost btn-sm" onclick="closeShare()">Fechar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     SIMULATION
-══════════════════════════════════════════ -->
 <div id="simulation" class="screen">
-  <div class="header">
-    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Elite Trainer</div></div>
-    <div class="stats-bar">
-      <div class="stat"><div class="stat-val" id="st-score">0</div><div class="stat-lbl">Score</div></div>
-      <div class="stat"><div class="stat-val" id="st-turns">0</div><div class="stat-lbl">Trocas</div></div>
-      <div class="stat"><div class="stat-val" id="st-phase">—</div><div class="stat-lbl">Fase</div></div>
-    </div>
-    <button class="btn btn-ghost btn-sm" onclick="endSim()">Terminar</button>
+<div class="hdr">
+  <div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Elite Trainer</span></div>
+  <div class="sv"><div><div class="svv" id="st-score">0</div><div class="svl">Score</div></div><div><div class="svv" id="st-turns">0</div><div class="svl">Trocas</div></div><div><div class="svv" id="st-phase">—</div><div class="svl">Fase</div></div></div>
+  <button class="btn btn-g btn-sm" onclick="endSim()">Terminar</button>
+</div>
+<div class="sl">
+  <div class="sb">
+    <div><div class="sbt">Perfil</div><div class="cc" id="clientCard"></div></div>
+    <div><div class="sbt">Funil</div><div class="fn" id="funnelSteps"></div></div>
+    <div><div class="sbt">Performance</div><div id="scoreMetrics"></div></div>
   </div>
-
-  <div class="sim-layout">
-    <div class="sidebar">
-      <div class="sidebar-section">
-        <div class="sidebar-title">Perfil do Cliente</div>
-        <div class="client-card" id="clientCard"></div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-title">Funil de Conversão</div>
-        <div class="funnel-steps" id="funnelSteps"></div>
-      </div>
-      <div class="sidebar-section">
-        <div class="sidebar-title">Performance</div>
-        <div id="scoreMetrics"></div>
-      </div>
-    </div>
-    <div class="chat-area">
-      <div class="chat-messages" id="chatMessages"></div>
-      <div class="chat-input-area">
-        <div class="quick-replies" id="quickReplies"></div>
-        <div class="input-row">
-          <textarea class="chat-input" id="chatInput" placeholder="O que dizes ao cliente?" rows="1"
-            onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea>
-          <button class="send-btn" id="sendBtn" onclick="sendMsg()">➤</button>
-        </div>
-      </div>
+  <div class="ca">
+    <div class="cm" id="chatMessages"></div>
+    <div class="cia2">
+      <div class="qw" id="quickReplies"></div>
+      <div class="ir"><textarea class="ci2" id="chatInput" placeholder="O que dizes ao cliente?" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendMsg();}"></textarea><button class="sb2" id="sendBtn" onclick="sendMsg()">➤</button></div>
     </div>
   </div>
 </div>
+</div>
 
-<!-- ══════════════════════════════════════════
-     RESULTS
-══════════════════════════════════════════ -->
 <div id="results" class="screen">
-  <div class="results-inner">
-    <div class="results-title">RESULTADO</div>
-    <div class="results-sub" id="results-sub">Simulação concluída</div>
-    <div class="big-score">
-      <div class="big-score-num" id="final-score">—</div>
-      <div class="big-score-lbl">Pontuação Final</div>
-    </div>
-    <div class="breakdown" id="results-breakdown"></div>
-    <div class="feedback-summary" id="results-feedback"></div>
-    <div style="display:flex;gap:10px;flex-wrap:wrap;" id="results-btns">
-      <button class="btn btn-white" onclick="openShareLast()">↗ Partilhar Resultado</button>
-      <button class="btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);" onclick="showScreen('menu')">Tentar Outro</button>
-      <button class="btn btn-ghost" style="border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);" onclick="openPerfil()">👤 Ver Perfil</button>
-    </div>
-  </div>
+<div class="rw" style="margin:auto;">
+  <div class="rt">RESULTADO</div><div class="rs" id="res-sub">—</div>
+  <div class="bs"><div class="bsn" id="final-score">—</div><div class="bsl">Pontuação Final</div></div>
+  <div class="brd" id="res-breakdown"></div>
+  <div class="rf" id="res-feedback"></div>
+  <div class="rb" id="res-btns"></div>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     TEORIA
-══════════════════════════════════════════ -->
-<div id="teoria" class="screen">
-  <div class="header">
-    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Manual Digital</div></div>
-    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
-  </div>
-  <div class="teoria-content">
-    <div class="teoria-nav">
-      <button class="teoria-tab active" onclick="showTeoria(0,this)">Filosofia</button>
-      <button class="teoria-tab" onclick="showTeoria(1,this)">Abordagem</button>
-      <button class="teoria-tab" onclick="showTeoria(2,this)">Diagnóstico</button>
-      <button class="teoria-tab" onclick="showTeoria(3,this)">Objeções</button>
-      <button class="teoria-tab" onclick="showTeoria(4,this)">Fecho</button>
-      <button class="teoria-tab" onclick="showTeoria(5,this)">Perfis</button>
-    </div>
-    <div id="teoriaCards"></div>
-  </div>
+<div id="perfil" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">O Meu Perfil</span></div><div style="display:flex;gap:8px;"><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button><button class="btn btn-r btn-sm" onclick="doLogout()">Sair</button></div></div>
+<div class="pw">
+  <div class="ph"><div class="pav" id="perfilAvatar">?</div><div><div class="pn" id="perfilName">—</div><div class="pe" id="perfilEmail">—</div><div class="pc" id="perfilSince">—</div></div></div>
+  <div class="pst"><div class="psc"><div class="psv" id="ps-total">0</div><div class="psl">Simulações</div></div><div class="psc"><div class="psv" id="ps-best">0</div><div class="psl">Melhor</div></div><div class="psc"><div class="psv" id="ps-avg">0</div><div class="psl">Média</div></div></div>
+  <div class="stit">Histórico</div>
+  <div class="hl" id="historyList"></div>
+</div>
 </div>
 
-<!-- ══════════════════════════════════════════
-     QUIZ
-══════════════════════════════════════════ -->
-<div id="quiz" class="screen">
-  <div class="header">
-    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Teste Rápido</div></div>
-    <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
-  </div>
-  <div class="quiz-inner" style="margin:auto;">
-    <div class="quiz-progress" id="quizProgress"></div>
-    <div class="quiz-q" id="quizQ"></div>
-    <div class="quiz-options" id="quizOpts"></div>
-    <div class="quiz-feedback" id="quizFeedback"></div>
-    <button class="btn btn-full" id="quizNext" style="display:none;margin-top:16px;" onclick="nextQuiz()">Próxima →</button>
-  </div>
-</div>
-
-<!-- ══════════════════════════════════════════
-     NOTAS & RELATÓRIOS
-══════════════════════════════════════════ -->
 <div id="notas" class="screen">
-  <div class="header">
-    <div class="logo"><div class="logo-digi">DIGI</div><div class="logo-subtitle">Notas & Relatórios</div></div>
-    <div style="display:flex;gap:8px;">
-      <button class="btn btn-sm" onclick="openRelatorioModal()">📊 Relatório Rápido</button>
-      <button class="btn btn-ghost btn-sm" onclick="showScreen('home')">← Início</button>
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Notas & Relatórios</span></div><div style="display:flex;gap:8px;"><button class="btn btn-sm" onclick="openRelModal()">📊 Relatório</button><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div></div>
+<div class="nl">
+  <div class="nsb">
+    <div class="nsbt">
+      <input class="nsr" id="notasSearch" placeholder="🔍 Pesquisar..." oninput="renderNL()">
+      <div style="display:flex;gap:6px;"><button class="btn btn-sm" style="flex:1;justify-content:center;" onclick="newNota('nota')">+ Nota</button><button class="btn btn-sm" style="flex:1;justify-content:center;" onclick="newNota('relatorio')">+ Relatório</button></div>
+      <div class="ntr"><button class="ntb active" onclick="setNF('',this)">Todas</button><button class="ntb" onclick="setNF('relatorio',this)">📊</button><button class="ntb" onclick="setNF('nota',this)">📝</button><button class="ntb" onclick="setNF('objetivo',this)">🎯</button><button class="ntb" onclick="setNF('cliente',this)">👤</button></div>
     </div>
+    <div class="nlist" id="notasList"></div>
   </div>
-  <div class="notas-layout">
-    <!-- SIDEBAR lista de notas -->
-    <div class="notas-sidebar">
-      <div class="notas-sidebar-top">
-        <input class="notas-search" id="notasSearch" placeholder="🔍 Pesquisar notas..." oninput="filterNotas()">
-        <div style="display:flex;gap:6px;flex-wrap:wrap;">
-          <button class="tb-btn" style="flex:1;justify-content:center;" onclick="newNota('nota')">+ Nota</button>
-          <button class="tb-btn" style="flex:1;justify-content:center;" onclick="newNota('relatorio')">+ Relatório</button>
-        </div>
-        <div style="display:flex;gap:4px;flex-wrap:wrap;" id="tagFilter">
-          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('')">Todas</button>
-          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('relatorio')">📊 Relatórios</button>
-          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('nota')">📝 Notas</button>
-          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('objetivo')">🎯 Objetivos</button>
-          <button class="tb-btn" style="font-size:10px;padding:4px 8px;" onclick="filterByTag('cliente')">👤 Clientes</button>
-        </div>
+  <div class="ned">
+    <div class="nem" id="notasEmpty"><div style="font-size:48px;margin-bottom:14px;">📝</div><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--text);margin-bottom:5px;">SEM NOTA</div><div style="font-size:13px;">Cria ou seleciona uma nota</div></div>
+    <div id="notasInner" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+      <div class="ntb2">
+        <select id="notaTag" onchange="saveNota()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:Inter;font-size:11px;font-weight:600;padding:5px 8px;border-radius:6px;outline:none;cursor:pointer;"><option value="nota">📝 Nota</option><option value="relatorio">📊 Relatório</option><option value="objetivo">🎯 Objetivo</option><option value="cliente">👤 Cliente</option></select>
+        <div class="tbs"></div>
+        <button class="tbb" onclick="exportNota()">⬇ Exportar</button>
+        <button class="tbb" onclick="copyNota()">📋 Copiar</button>
+        <button class="tbb" onclick="shareNotaWA()">💬 WA</button>
+        <div class="tbs"></div>
+        <button class="tbb red" onclick="deleteNota()">🗑 Apagar</button>
+        <span id="notaSaved" style="margin-left:auto;font-size:10px;color:var(--green);font-weight:700;opacity:0;transition:opacity .3s;">✓ Guardado</span>
       </div>
-      <div class="notas-list" id="notasList"></div>
-    </div>
-
-    <!-- EDITOR -->
-    <div class="notas-editor" id="notasEditor">
-      <div class="notas-empty" id="notasEmpty">
-        <div class="ne-icon">📝</div>
-        <div class="ne-title">SEM NOTA SELECIONADA</div>
-        <div class="ne-sub">Cria uma nova nota ou relatório<br>e começa a escrever.</div>
-      </div>
-      <div id="notasEditorInner" style="display:none;flex-direction:column;flex:1;">
-        <div class="notas-toolbar">
-          <select id="notaTag" onchange="saveCurrentNota()" style="background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:'Inter';font-size:12px;font-weight:600;padding:6px 10px;border-radius:6px;outline:none;cursor:pointer;">
-            <option value="nota">📝 Nota</option>
-            <option value="relatorio">📊 Relatório</option>
-            <option value="objetivo">🎯 Objetivo</option>
-            <option value="cliente">👤 Cliente</option>
-          </select>
-          <div class="tb-sep"></div>
-          <button class="tb-btn" onclick="exportNota()">⬇ Exportar</button>
-          <button class="tb-btn" onclick="copyNota()">📋 Copiar</button>
-          <button class="tb-btn" onclick="shareNotaWA()">💬 WhatsApp</button>
-          <div class="tb-sep"></div>
-          <button class="tb-btn danger" onclick="deleteCurrentNota()">🗑 Apagar</button>
-          <span id="notaSaved" style="margin-left:auto;font-size:11px;color:var(--success);font-weight:600;opacity:0;transition:opacity 0.3s;">✓ Guardado</span>
-        </div>
-        <input class="nota-title-input" id="notaTitleInput" placeholder="TÍTULO DA NOTA" oninput="saveCurrentNota()">
-        <textarea class="nota-body-input" id="notaBodyInput" placeholder="Começa a escrever aqui...&#10;&#10;Usa esta nota para:&#10;• Relatório de portas do dia&#10;• Notas de cliente&#10;• Objetivos da semana&#10;• Qualquer documento que precises guardar" oninput="saveCurrentNota()"></textarea>
-      </div>
+      <input class="nti" id="notaTitleInput" placeholder="TÍTULO DA NOTA" oninput="saveNota()">
+      <textarea class="nbi" id="notaBodyInput" placeholder="Escreve aqui..." oninput="saveNota()"></textarea>
     </div>
   </div>
 </div>
+</div>
 
-<!-- MODAL RELATÓRIO RÁPIDO -->
-<div class="modal-overlay relatorio-modal" id="relatorioModal">
-  <div class="modal-box">
-    <div class="modal-title">📊 RELATÓRIO DE PORTAS</div>
-    <div class="modal-sub">Preenche os dados do dia para gerar o relatório automaticamente</div>
-    <div class="rel-grid">
-      <div class="rel-field"><label>Data</label><input type="date" id="rel-data"></div>
-      <div class="rel-field"><label>Vendedor</label><input type="text" id="rel-vendedor" placeholder="Nome"></div>
-      <div class="rel-field"><label>Portas Batidas</label><input type="number" id="rel-portas" placeholder="80" min="0"></div>
-      <div class="rel-field"><label>Aberturas</label><input type="number" id="rel-aberturas" placeholder="40" min="0"></div>
-      <div class="rel-field"><label>Abordagens</label><input type="number" id="rel-abordagens" placeholder="20" min="0"></div>
-      <div class="rel-field"><label>Controlos</label><input type="number" id="rel-controlos" placeholder="10" min="0"></div>
-      <div class="rel-field"><label>Adesões</label><input type="number" id="rel-adesoes" placeholder="4" min="0"></div>
-      <div class="rel-field"><label>Zona</label><input type="text" id="rel-zona" placeholder="Ex: Matosinhos"></div>
-    </div>
-    <div class="rel-field" style="margin-bottom:16px;"><label>Observações</label><input type="text" id="rel-obs" placeholder="Notas adicionais do dia..."></div>
-    <div style="display:flex;gap:8px;flex-wrap:wrap;">
-      <button class="btn btn-sm" onclick="gerarRelatorio()">✅ Gerar & Guardar</button>
-      <button class="btn btn-ghost btn-sm" onclick="closeRelatorioModal()">Cancelar</button>
-    </div>
+<div class="mo" id="relModal">
+<div class="mbox">
+  <div class="mtit">📊 RELATÓRIO DE PORTAS</div><div class="msub">Preenche os dados do dia</div>
+  <div class="calg" style="margin-bottom:10px;">
+    <div class="calf"><label>Data</label><input type="date" id="rd"></div>
+    <div class="calf"><label>Vendedor</label><input type="text" id="rv" placeholder="Nome"></div>
+    <div class="calf"><label>Portas</label><input type="number" id="rp" placeholder="80" min="0"></div>
+    <div class="calf"><label>Aberturas</label><input type="number" id="ra" placeholder="40" min="0"></div>
+    <div class="calf"><label>Abordagens</label><input type="number" id="rao" placeholder="20" min="0"></div>
+    <div class="calf"><label>Controlos</label><input type="number" id="rc" placeholder="10" min="0"></div>
+    <div class="calf"><label>Adesões</label><input type="number" id="rads" placeholder="4" min="0"></div>
+    <div class="calf"><label>Zona</label><input type="text" id="rz" placeholder="Ex: Porto"></div>
   </div>
+  <div class="calf" style="margin-bottom:14px;"><label>Observações</label><input type="text" id="ro" placeholder="Notas do dia..."></div>
+  <div class="mbt"><button class="btn btn-sm" onclick="gerarRel()">✅ Gerar & Guardar</button><button class="btn btn-g btn-sm" onclick="closeRelModal()">Cancelar</button></div>
+</div>
+</div>
+
+<div class="mo" id="shareModal">
+<div class="mbox">
+  <div class="mtit">PARTILHAR RESULTADO</div><div class="msub">Partilha com a equipa</div>
+  <div class="shc"><div class="shn" id="sc-name">—</div><div class="shs" id="sc-score">0</div><div class="shl">PONTOS · DIGI ELITE TRAINER</div><div class="shd"><span id="sc-client">—</span><span>·</span><span id="sc-grade">—</span><span>·</span><span id="sc-date">—</span></div></div>
+  <div class="stxt" id="shareText">—</div>
+  <div class="mbt"><button class="btn btn-sm" onclick="copyShare()">📋 Copiar</button><button class="btn btn-sm" style="background:#25D366;" onclick="shareWA()">💬 WhatsApp</button><button class="btn btn-g btn-sm" onclick="closeShare()">Fechar</button></div>
+</div>
+</div>
+
+<div id="comissoes" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Comissões</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
+<div class="cw">
+  <div style="margin-bottom:20px;"><div style="font-family:'Bebas Neue';font-size:34px;letter-spacing:2px;color:var(--blue);">Tabela de Comissões</div><div style="font-size:13px;color:var(--muted);margin-top:3px;">Por serviço activado · Soluções Diferentes / DIGI</div></div>
+  <div class="ctab"><div class="cth2"><div class="cthc" style="text-align:left;padding-left:14px;">Adesões/Mês</div><div class="cthc">📺 TV</div><div class="cthc">🌐 Fibra</div><div class="cthc">📱 Móvel</div><div class="cthc">☎️ Fixo</div></div><div id="comRows"></div></div>
+  <div class="calb">
+    <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:var(--blue);margin-bottom:14px;">💶 Calculadora</div>
+    <div class="calg"><div class="calf"><label>Total Adesões</label><input type="number" id="c-ades" min="0" placeholder="Ex: 20" oninput="calcCom()"></div><div class="calf"><label>TVs</label><input type="number" id="c-tv" min="0" placeholder="0" oninput="calcCom()"></div><div class="calf"><label>Fibras</label><input type="number" id="c-fib" min="0" placeholder="0" oninput="calcCom()"></div><div class="calf"><label>Móveis</label><input type="number" id="c-mov" min="0" placeholder="0" oninput="calcCom()"></div><div class="calf"><label>Fixo</label><input type="number" id="c-fix" min="0" placeholder="0" oninput="calcCom()"></div></div>
+    <div class="calr" id="calcResult"><div class="calrl">Estimativa de Comissão</div><div class="calrv" id="cr-val">0 €</div><div class="calrd" id="cr-det">—</div></div>
+  </div>
+  <div class="cnote">ℹ️ Valores por serviço activado. Escalão definido pelo total de adesões do mês.</div>
+</div>
+</div>
+
+<div id="teoria" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Manual Digital</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
+<div class="tw"><div class="ttabs" id="teoriaTabs"></div><div id="teoriaCards"></div></div>
+</div>
+
+<div id="quiz" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Teste Rápido</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
+<div class="qw2"><div class="qprog" id="quizProg"></div><div class="qq" id="quizQ"></div><div class="qopts" id="quizOpts"></div><div class="qfb" id="quizFb"></div><button class="btn btn-f" id="quizNext" style="display:none;margin-top:14px;" onclick="nextQuiz()">Próxima →</button></div>
 </div>
 
 <script>
-// ═══════════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════════
-let state = {
-  screen: 'home',
-  client: null,
-  messages: [],
-  score: 0,
-  turns: 0,
-  phase: 0,
-  metrics: { abertura: 0, diagnostico: 0, objections: 0, fecho: 0 },
-  isThinking: false,
-  conversationHistory: []
-};
-
-const PHASES = ['Abordagem', 'Diagnóstico', 'Proposta', 'Objeções', 'Fecho'];
-
-const CLIENTS = [
-  {
-    id: 'desconfiado',
-    name: 'Sr. António Ferreira',
-    age: 58, type: 'desconfiado',
-    operator: 'MEO', bill: 72, services: 'Fibra 500Mbps + 3 telemóveis',
-    loyalty: 'Termina em Março 2026',
-    pain: 'Nunca soube o que pagava extra',
-    icon: '🧔',
-    hint: 'Usa dados e factos técnicos. Posiciona-te como técnico.',
-    systemPrompt: `És o Sr. António Ferreira, 58 anos, cliente MEO há 12 anos, desconfiado de vendedores. Pagas 72€/mês por fibra + 3 telemóveis. A fidelização termina em Março 2026. A tua maior frustração é não perceber as cobranças extras. 
-Comportamento: começas muito reservado e cético. Usas frases como "Já me vieram vender muita coisa..." e "Isso é publicidade...". Só abres quando o consultor usa factos concretos e dados técnicos. Se ele/ela mencionar o prémio nPerf ou mostrar comparação de velocidade, ficas mais interessado. Perguntas muito sobre cobertura, velocidade real e o que acontece se o serviço falhar. Se o consultor for honesto e usar dados reais, no final podes concordar em ver uma simulação. NUNCA aceitas imediatamente. Respondes em Português de Portugal. Respostas curtas e secas no início.`
-  },
-  {
-    id: 'apressado',
-    name: 'Dra. Sofia Martins',
-    age: 34, type: 'apressado',
-    operator: 'NOS', bill: 65, services: 'Fibra + TV + 2 móveis',
-    loyalty: 'Termina em Junho 2026',
-    pain: 'Não tem tempo para nada',
-    icon: '👩‍💼',
-    hint: 'Ultra-direto. Mostra o preço em 2 minutos.',
-    systemPrompt: `És a Dra. Sofia Martins, 34 anos, advogada ocupada, cliente NOS, pagas 65€/mês. Estás sempre com pressa, o telemóvel toca constantemente. A fidelização termina em Junho 2026. 
-Comportamento: Abres a porta já a dizer que tens pouco tempo. Se o consultor for lento ou vago, dizes "Ok, obrigada" e fechas a porta. Se for direto e mostrar o preço em menos de 2 min, ouves. Perguntas diretas: "Quanto custa exactamente?", "Quanto demora a instalação?", "Há fidelização?". Se a resposta for clara e rápida, consideras. Respondes em Português de Portugal. Muito breve.`
-  },
-  {
-    id: 'racional',
-    name: 'Eng. Manuel Costa',
-    age: 46, type: 'racional',
-    operator: 'Vodafone', bill: 80, services: 'Fibra 1Gbps + TV + 4 móveis',
-    loyalty: 'Termina em Setembro 2026',
-    pain: 'Os preços sobem todos os anos',
-    icon: '👨‍💻',
-    hint: 'Mostra ROI claro. Adora dados e simuladores.',
-    systemPrompt: `És o Eng. Manuel Costa, 46 anos, engenheiro informático, cliente Vodafone há 8 anos, pagas 80€/mês por pacote completo. Fidelização em Setembro 2026. Detestas que os preços subam todos os anos — este ano subiram 7%.
-Comportamento: Analítico e metódico. Fazes perguntas sobre velocidade real vs contratada, uptime garantido, SLA de suporte. Só te convences com números: poupança anual, ROI, prova de preços congelados. Se o consultor mencionar que a DIGI comprometeu-se a não subir preços em 2026, ficas muito interessado. Pedes comparações de velocidade, detalhes do contrato. Com bom diagnóstico e ROI claro, avanças para simulação. Respondes em Português de Portugal.`
-  },
-  {
-    id: 'indeciso',
-    name: 'Sra. Lurdes Pereira',
-    age: 62, type: 'indeciso',
-    operator: 'MEO', bill: 58, services: 'Fibra + TV',
-    loyalty: 'Já expirou',
-    pain: 'Medo de mudar e dar errado',
-    icon: '👵',
-    hint: 'Simplifica. Duas opções apenas. Baixo risco.',
-    systemPrompt: `És a Sra. Lurdes Pereira, 62 anos, reformada, cliente MEO há 15 anos, pagas 58€/mês. A fidelização já expirou. Tens medo de mudar porque "já sei o que tenho" e temes complicações.
-Comportamento: Dizes muitas vezes "Não sei, vou pensar..." e "Tenho que falar com o meu filho". Tens muitas dúvidas pequenas: o número muda? Ficam dias sem Internet? E se não gostar? O consultor precisa de simplificar tudo e oferecer apenas 2 opções claras (não mais). Se mencionar que não há fidelização longa e pode sair ao fim de 3 meses, ficas mais tranquila. Valorizas muito a simpatia e paciência. Com abordagem calma e 2 opções simples, podes aceitar ver a simulação. Respondes em Português de Portugal. Falas em frases longas, cheias de hesitações.`
-  }
+function showScreen(id){document.querySelectorAll(".screen").forEach(s=>s.classList.remove("active"));const t=document.getElementById(id);if(t)t.classList.add("active");window.scrollTo(0,0);}
+let state={client:null,score:0,turns:0,phase:0,metrics:{abertura:0,diagnostico:0,objections:0,fecho:0},isThinking:false,conversationHistory:[]};
+const PHASES=["Abordagem","Diagnóstico","Proposta","Objeções","Fecho"];
+const CLIENTS=[
+  {id:"desconfiado",name:"Sr. António Ferreira",type:"desconfiado",operator:"MEO",bill:72,services:"Fibra 500Mbps + 3 telemóveis",loyalty:"Março 2026",icon:"🧔",hint:"Usa dados técnicos. Posiciona-te como técnico.",
+  sp:"És o Sr. António Ferreira, 58 anos, cliente MEO há 12 anos, desconfiado de vendedores. Pagas 72€/mês. A tua maior frustração é cobranças extras incompreensíveis. Começas muito reservado e cético. Só abres quando o consultor usa factos concretos. Se mencionar nPerf ou velocidade, ficas mais interessado. NUNCA aceitas imediatamente. Respondes em Português de Portugal. Respostas curtas no início."},
+  {id:"apressado",name:"Dra. Sofia Martins",type:"apressado",operator:"NOS",bill:65,services:"Fibra + TV + 2 móveis",loyalty:"Junho 2026",icon:"👩‍💼",hint:"Ultra-direto. Mostra o preço em 2 minutos.",
+  sp:"És a Dra. Sofia Martins, 34 anos, advogada, cliente NOS, pagas 65€/mês. Estás sempre com pressa. Se o consultor for lento, dizes OK obrigada e fechas. Se for direto e mostrar preço em 2 min, ouves. Respondes em Português de Portugal. Muito breve."},
+  {id:"racional",name:"Eng. Manuel Costa",type:"racional",operator:"Vodafone",bill:80,services:"Fibra 1Gbps + TV + 4 móveis",loyalty:"Setembro 2026",icon:"👨‍💻",hint:"Mostra ROI claro. Adora números.",
+  sp:"És o Eng. Manuel Costa, 46 anos, engenheiro, cliente Vodafone, pagas 80€/mês. Detestas preços a subir. Analítico e metódico. Só te convences com números: poupança anual, ROI, preços congelados. Respondes em Português de Portugal."},
+  {id:"indeciso",name:"Sra. Lurdes Pereira",type:"indeciso",operator:"MEO",bill:58,services:"Fibra + TV",loyalty:"Já expirou",icon:"👵",hint:"Simplifica. Duas opções. Baixo risco.",
+  sp:"És a Sra. Lurdes Pereira, 62 anos, reformada, cliente MEO, pagas 58€/mês. Tens medo de mudar. Dizes muitas vezes Não sei vou pensar e Tenho que falar com o meu filho. O consultor precisa de simplificar e dar 2 opções claras. Se mencionar que podes sair em 3 meses, ficas mais tranquila. Respondes em Português de Portugal."}
 ];
-
-// ═══════════════════════════════════════════
-// SCREEN MANAGEMENT
-// ═══════════════════════════════════════════
-function showScreen(id) {
-  try {
-    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-    const target = document.getElementById(id);
-    if (target) target.classList.add('active');
-    state.screen = id;
-    window.scrollTo(0, 0);
-  } catch(e) { console.error('showScreen:', e); }
-}
-
-// ═══════════════════════════════════════════
-// CLIENT MENU
-// ═══════════════════════════════════════════
-function buildClientMenu() {
-  const list = document.getElementById('clientList');
-  list.innerHTML = CLIENTS.map(c => `
-    <div class="menu-item" onclick="startSim('${c.id}')">
-      <div class="menu-item-icon">${c.icon}</div>
-      <div>
-        <div class="menu-item-title">${c.name}</div>
-        <div class="menu-item-desc">Operador: ${c.operator} · ${c.bill}€/mês · Perfil: ${c.type}</div>
-      </div>
-      <div class="menu-item-arrow">›</div>
-    </div>
-  `).join('');
-}
-
-// ═══════════════════════════════════════════
-// SIMULATION
-// ═══════════════════════════════════════════
-function startSim(clientId) {
-  state.client = CLIENTS.find(c => c.id === clientId);
-  state.messages = [];
-  state.score = 0;
-  state.turns = 0;
-  state.phase = 0;
-  state.metrics = { abertura: 0, diagnostico: 0, objections: 0, fecho: 0 };
-  state.conversationHistory = [];
-
-  showScreen('simulation');
-  buildSidebar();
-  buildFunnel();
-  renderScoreMetrics();
-  updateStats();
-
-  document.getElementById('chatMessages').innerHTML = '';
-
-  // System welcome message
-  addSystemMsg(`🏠 Acabas de chegar à porta de <strong>${state.client.name}</strong>. ${state.client.operator}, ${state.client.bill}€/mês. Tens 20 segundos para causar uma boa impressão.<br><br>💡 <em>Dica: ${state.client.hint}</em>`);
-
-  setQuickReplies([
-    'Bom dia, sou da DIGI. Posso mostrar-lhe quanto poupa em 2 minutos?',
-    'Olá! Estamos aqui na zona a apresentar as nossas combinações. Tem 2 minutos?',
-    'Boa tarde! Sou consultor da DIGI — veio apresentar uma alternativa que pode poupar ' + (state.client.bill - 30) + '€/mês.'
-  ]);
-}
-
-function buildSidebar() {
-  const c = state.client;
-  document.getElementById('clientCard').innerHTML = `
-    <div class="client-name">${c.icon} ${c.name}</div>
-    <span class="client-type type-${c.type}">${c.type}</span>
-    <div class="client-info">
-      Operador: <span>${c.operator}</span><br>
-      Fatura: <span>${c.bill}€/mês</span><br>
-      Serviços: <span>${c.services}</span><br>
-      Fidelização: <span>${c.loyalty}</span><br>
-      Dor: <span>${c.pain}</span>
-    </div>
-  `;
-}
-
-function buildFunnel() {
-  document.getElementById('funnelSteps').innerHTML = PHASES.map((p, i) => `
-    <div class="funnel-step ${i === 0 ? 'active' : ''}" id="funnel-${i}">
-      <div class="funnel-dot"></div> ${p}
-    </div>
-  `).join('');
-}
-
-function updateFunnel(phase) {
-  PHASES.forEach((_, i) => {
-    const el = document.getElementById(`funnel-${i}`);
-    el.classList.remove('active', 'done');
-    if (i < phase) el.classList.add('done');
-    if (i === phase) el.classList.add('active');
-  });
-  state.phase = phase;
-  document.getElementById('st-phase').textContent = PHASES[phase] || '✓';
-}
-
-function renderScoreMetrics() {
-  const m = state.metrics;
-  const items = [
-    { lbl: 'Abertura', val: m.abertura },
-    { lbl: 'Diagnóstico', val: m.diagnostico },
-    { lbl: 'Objeções', val: m.objections },
-    { lbl: 'Fecho', val: m.fecho }
-  ];
-  document.getElementById('scoreMetrics').innerHTML = items.map(i => `
-    <div class="score-bar" style="margin-bottom:10px;">
-      <div class="score-label"><span>${i.lbl}</span><span>${i.val}/25</span></div>
-      <div class="score-track"><div class="score-fill" style="width:${(i.val/25)*100}%"></div></div>
-    </div>
-  `).join('');
-}
-
-function updateStats() {
-  document.getElementById('st-score').textContent = state.score;
-  document.getElementById('st-turns').textContent = state.turns;
-}
-
-function addMsg(role, text, feedback = null, scoreDelta = 0) {
-  const msgs = document.getElementById('chatMessages');
-  const isUser = role === 'user';
-  const isSystem = role === 'system';
-  const c = state.client;
-
-  const avatar = isUser ? '🧑' : isSystem ? '💡' : c.icon;
-  const name = isUser ? 'Tu (Consultor)' : isSystem ? 'Sistema' : c.name;
-
-  let feedbackHtml = '';
-  if (feedback) {
-    feedbackHtml = `<div class="feedback-block">
-      <div class="fb-title">📊 Análise</div>
-      ${feedback}
-      ${scoreDelta > 0 ? `<div class="score-pill">+${scoreDelta} pts</div>` : ''}
-    </div>`;
-  }
-
-  const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  div.innerHTML = `
-    <div class="msg-avatar">${avatar}</div>
-    <div>
-      <div class="msg-name">${name}</div>
-      <div class="msg-bubble">${text}${feedbackHtml}</div>
-    </div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function addSystemMsg(html) {
-  const msgs = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'msg system';
-  div.innerHTML = `
-    <div class="msg-avatar">💡</div>
-    <div style="flex:1;">
-      <div class="msg-bubble">${html}</div>
-    </div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function showThinking() {
-  const msgs = document.getElementById('chatMessages');
-  const div = document.createElement('div');
-  div.className = 'msg client'; div.id = 'thinking-msg';
-  div.innerHTML = `
-    <div class="msg-avatar">${state.client.icon}</div>
-    <div><div class="msg-bubble"><div class="thinking"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>
-  `;
-  msgs.appendChild(div);
-  msgs.scrollTop = msgs.scrollHeight;
-}
-
-function hideThinking() {
-  const el = document.getElementById('thinking-msg');
-  if (el) el.remove();
-}
-
-function setQuickReplies(options) {
-  document.getElementById('quickReplies').innerHTML = options.map(o =>
-    `<button class="qr-btn" onclick="useQR(this)">${o}</button>`
-  ).join('');
-}
-
-function useQR(btn) {
-  document.getElementById('chatInput').value = btn.textContent;
-  sendMsg();
-}
-
-async function sendMsg() {
-  if (state.isThinking) return;
-  const input = document.getElementById('chatInput');
-  const text = input.value.trim();
-  if (!text) return;
-
-  input.value = '';
-  state.turns++;
-  state.isThinking = true;
-  document.getElementById('sendBtn').disabled = true;
-  document.getElementById('quickReplies').innerHTML = '';
-
-  addMsg('user', text);
-  updateStats();
-  showThinking();
-
-  // Build conversation history
-  state.conversationHistory.push({ role: 'user', content: text });
-
-  try {
-    const response = await callClaude(text);
-    hideThinking();
-
-    const { clientReply, feedback, scoreDelta, newPhase, quickReplies } = response;
-
-    // Update score & metrics
-    state.score += scoreDelta;
-    updateStats();
-
-    if (newPhase !== undefined && newPhase > state.phase) updateFunnel(newPhase);
-
-    addMsg('client', clientReply, feedback, scoreDelta);
-
-    state.conversationHistory.push({ role: 'assistant', content: clientReply });
-
-    if (quickReplies && quickReplies.length) setQuickReplies(quickReplies);
-    renderScoreMetrics();
-
-    // Check for end
-    if (response.ended) {
-      setTimeout(() => endSim(response.finalSummary), 1200);
-    }
-
-  } catch (e) {
-    hideThinking();
-    addSystemMsg(`⚠️ ${e.message || 'Erro de ligação'}. Tenta novamente.`);
-    console.error('callClaude error:', e);
-  }
-
-  state.isThinking = false;
-  document.getElementById('sendBtn').disabled = false;
-}
-
-async function callClaude(userMsg) {
-  const c = state.client;
-  const historyStr = state.conversationHistory.slice(0, -1)
-    .map(m => `${m.role === 'user' ? 'CONSULTOR' : 'CLIENTE'}: ${m.content}`)
-    .join('\n');
-
-  const systemPrompt = `${c.systemPrompt}
-
-INSTRUÇÕES DE JOGO:
-És simultaneamente CLIENTE (em personagem) e AVALIADOR das técnicas do consultor DIGI.
-Responde APENAS com JSON válido, sem texto extra, sem markdown:
-{"clientReply":"resposta do cliente em Português de Portugal (max 3 frases, totalmente em personagem)","feedback":"análise 1-2 frases da técnica usada referindo o Manual DIGI","scoreDelta":10,"newPhase":${state.phase},"quickReplies":["sugestão de próxima fala 1","sugestão 2","sugestão 3"],"ended":false,"finalSummary":""}
-
-scoreDelta: 0-5 fraco, 6-12 razoável, 13-20 bom, 21-25 excelente.
-newPhase: 0=Abordagem 1=Diagnóstico 2=Proposta 3=Objeções 4=Fecho. Só avança quando fizer sentido.
-ended: true só se cliente aceitou definitivamente OU recusou de forma absoluta.
-Fase atual: ${PHASES[state.phase]} | Score: ${state.score} | Trocas: ${state.turns}
-${historyStr ? 'Histórico:\n' + historyStr : '(início da conversa — porta ainda não foi aberta)'}`;
-
-  const messages = [
-    { role: 'system', content: systemPrompt },
-    { role: 'user', content: userMsg }
-  ];
-
-  // key em partes para não aparecer em texto simples
-  const _k = ['gsk_tJ3vG71Yez9w','yW5ipxgkWGdyb3FY','rSu1lIezoqMOFUrBtDcWGiZV'].join('');
-
-  const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${_k}`
-    },
-    body: JSON.stringify({
-      model: 'meta-llama/llama-4-scout-17b-16e-instruct',
-      messages,
-      temperature: 0.7,
-      max_tokens: 600,
-      response_format: { type: 'json_object' }
-    })
-  });
-
-  if (!res.ok) {
-    const errText = await res.text().catch(() => res.status);
-    throw new Error(`Groq ${res.status}: ${errText}`);
-  }
-
-  const data = await res.json();
-  const raw = data?.choices?.[0]?.message?.content || '{}';
-  const jsonMatch = raw.match(/\{[\s\S]*\}/);
-  const jsonStr = jsonMatch ? jsonMatch[0] : '{}';
-
-  try {
-    const parsed = JSON.parse(jsonStr);
-    parsed.scoreDelta = Math.max(0, Math.min(25, parseInt(parsed.scoreDelta) || 5));
-    parsed.newPhase = Math.max(state.phase, Math.min(4, parseInt(parsed.newPhase) ?? state.phase));
-    if (!Array.isArray(parsed.quickReplies)) parsed.quickReplies = [];
-    if (!parsed.clientReply) parsed.clientReply = raw.slice(0, 300);
-    if (state.phase === 0) state.metrics.abertura    = Math.min(25, state.metrics.abertura    + parsed.scoreDelta);
-    else if (state.phase === 1) state.metrics.diagnostico = Math.min(25, state.metrics.diagnostico + parsed.scoreDelta);
-    else if (state.phase === 3) state.metrics.objections  = Math.min(25, state.metrics.objections  + parsed.scoreDelta);
-    else if (state.phase === 4) state.metrics.fecho       = Math.min(25, state.metrics.fecho       + parsed.scoreDelta);
-    return parsed;
-  } catch {
-    return { clientReply: raw.slice(0, 300) || '...', feedback: null, scoreDelta: 5, newPhase: state.phase, quickReplies: [], ended: false };
-  }
-}
-
-function endSim(summary = null) {
-  const c = state.client;
-  const pct = Math.min(100, Math.round((state.score / 100) * 100));
-  const grade = pct >= 80 ? '🏆 ELITE' : pct >= 60 ? '⭐ BOM' : pct >= 40 ? '📈 A MELHORAR' : '💪 INICIANTE';
-
-  document.getElementById('final-score').textContent = state.score;
-  document.getElementById('results-sub').textContent = `${grade} · Cliente: ${c.name} · ${state.turns} trocas`;
-
-  const m = state.metrics;
-  document.getElementById('results-breakdown').innerHTML = `
-    <div class="breakdown-item"><div class="bi-val">${m.abertura}</div><div class="bi-lbl">Abertura</div></div>
-    <div class="breakdown-item"><div class="bi-val">${m.diagnostico}</div><div class="bi-lbl">Diagnóstico</div></div>
-    <div class="breakdown-item"><div class="bi-val">${m.objections}</div><div class="bi-lbl">Objeções</div></div>
-    <div class="breakdown-item"><div class="bi-val">${m.fecho}</div><div class="bi-lbl">Fecho</div></div>
-  `;
-
-  document.getElementById('results-feedback').innerHTML = summary
-    ? `<strong>Análise IA:</strong><br>${summary}`
-    : `Simulação com <strong>${c.name}</strong> (${c.type}). Score: <strong>${state.score} pts</strong> em ${state.turns} trocas.`;
-
-  // Save to profile
-  saveResult();
-
-  document.getElementById('results-btns').innerHTML = `
-    <button class="btn btn-white" onclick="openShareLast()">↗ Partilhar Resultado</button>
-    <button class="btn" style="background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.3);" onclick="showScreen('menu')">Tentar Outro</button>
-    <button class="btn btn-ghost" style="border-color:rgba(255,255,255,0.3);color:rgba(255,255,255,0.7);" onclick="openPerfil()">👤 Ver Perfil</button>
-  `;
-
-  showScreen('results');
-}
-
-// ═══════════════════════════════════════════
-// TEORIA
-// ═══════════════════════════════════════════
-const TEORIA_DATA = [
-  {
-    title: 'FILOSOFIA DO CONSULTOR', sub: 'A diferença entre vendedor e consultor de elite',
-    blocks: [
-      { icon: '🎯', title: 'Objetivo', body: 'O vendedor procura aprovação. O consultor diagnostica e resolve um problema real de custo. A conversa é guiada por perguntas, não reativa.' },
-      { icon: '📊', title: 'Padrão de Performance', body: '80 portas/dia → 40 aberturas → 20 abordagens → 10 com controlo → 4 adesões. A matemática protege-te da emoção.' },
-      { icon: '💎', title: 'Responsabilidade Total', body: 'O resultado depende da tua execução: preparação, escuta e clareza. Sem desculpas. O mercado é o mesmo para todos.' }
-    ],
-    quote: '"Quem ouve melhor, vende melhor. O controlo nasce da clareza, não da pressão."'
-  },
-  {
-    title: 'ABORDAGEM', sub: 'Os primeiros 20 segundos definem a venda',
-    blocks: [
-      { icon: '🧍', title: 'Linguagem Corporal', body: 'Postura aberta, ombros para trás. Mãos visíveis. Passo atrás após bater a porta — dá espaço, elimina ameaça.' },
-      { icon: '🗣️', title: 'Tom e Ritmo', body: 'Fala mais devagar que o normal. Tom firme e tranquilo. Usa pausas — a informação precisa de assentar.' },
-      { icon: '✅', title: 'Script de Abertura', body: '"Bom dia, sou da DIGI e estamos a apresentar as combinações de fibra e móvel aqui na zona. Posso mostrar-lhe em 2 min quanto pode poupar face ao que paga hoje?"' }
-    ],
-    quote: '"Objetivo: passar de desconhecido a consultor de confiança — com transparência total."'
-  },
-  {
-    title: 'DIAGNÓSTICO ESTRATÉGICO', sub: 'Escuta ativa: perceber a dor real',
-    blocks: [
-      { icon: '❓', title: 'Sequência de Perguntas', body: '<ol style="padding-left:16px;font-size:13px;color:#9CA3AF;line-height:2;"><li>Qual é o seu operador atual?</li><li>Quanto paga por mês na fatura?</li><li>O que menos o satisfaz: velocidade, preço ou apoio?</li><li>Quando termina a fidelização?</li><li>Quantos telemóveis tem associados?</li><li>É o(a) decisor(a) do contrato?</li></ol>' },
-      { icon: '🤫', title: 'O Uso do Silêncio', body: 'Após uma pergunta-chave, faz uma pausa. Dá espaço ao cliente para pensar e responder com sinceridade. Silêncio = controlo.' },
-      { icon: '👤', title: 'Identificar o Decisor', body: 'Confirma cedo quem assina. Se não está, agenda o regresso — respeitando o tempo de todos.' }
-    ],
-    quote: '"O diagnóstico é escuta ativa: percebes a dor real e mostras como a DIGI a resolve."'
-  },
-  {
-    title: 'REENQUADRAMENTO DE OBJEÇÕES', sub: 'Nunca distorcer factos. A confiança é o teu maior ativo.',
-    blocks: [
-      { icon: '🆕', title: '"A DIGI é nova, não conheço..."', body: 'É verdade que somos recentes em Portugal — mas com rede própria, premiada como a fibra mais rápida pela nPerf 2025. Posso mostrar-lhe os testes independentes.' },
-      { icon: '📋', title: '"Mudar dá muito trabalho..."', body: 'Tratamos da portabilidade por si: o seu número mantém-se e nós coordenamos a mudança. O passo que dá é só dizer "sim".' },
-      { icon: '🔒', title: '"Ainda tenho fidelização."', body: 'Sem problema — vemos quando termina e agendamos. Entretanto deixo-lhe a simulação para comparar com calma. Sem compromisso.' }
-    ],
-    quote: '"Reenquadrar é dar contexto verdadeiro — nunca distorcer factos."'
-  },
-  {
-    title: 'O FECHO NATURAL', sub: 'Consequência de um bom diagnóstico, não uma armadilha',
-    blocks: [
-      { icon: '✅', title: 'Fecho Assumido', body: 'Quando os sinais de "sim" aparecem, avança para a logística: "Perfeito. Para registar a adesão preciso só do seu Cartão de Cidadão e IBAN. Tem aí consigo?"' },
-      { icon: '🅰️🅱️', title: 'Alternativa Dupla', body: 'Oferece duas opções positivas: "Para a instalação, prefere quinta de manhã ou sexta à tarde?"' },
-      { icon: '🤐', title: 'Fecho com Pausa', body: '"Então avançamos com a combinação que lhe poupa 34€/mês?" (pausa). O silêncio respeita o tempo de decisão.' }
-    ],
-    quote: '"O fecho é a consequência natural de um bom diagnóstico."'
-  },
-  {
-    title: 'PERFIS DE CLIENTE', sub: 'Cada perfil exige uma abordagem diferente',
-    blocks: [
-      { icon: '🧔', title: 'O Desconfiado', body: 'Usa factos e dados técnicos. A DIGI é a fibra mais rápida (nPerf 2025). Posiciona-te como técnico, não vendedor. Dados · Transparência.' },
-      { icon: '👩‍💼', title: 'O Apressado', body: 'Ultra-direto: "Em 2 min mostro-lhe o preço. Adere quando quiser, sem fidelização longa." Simplicidade · Rapidez.' },
-      { icon: '👨‍💻', title: 'O Racional', body: 'Mostra a poupança anual no simulador. ROI claro e preços congelados em 2026. Ganho Financeiro · ROI.' },
-      { icon: '👵', title: 'O Indeciso', body: 'Simplifica para 2 opções (A ou B). Reforça: sem fidelização, pode sair ao fim de 3 meses, risco baixo. Decisão Binária · Baixo Risco.' }
-    ],
-    quote: '"Adapta a linguagem ao cliente, não o produto."'
-  }
-];
-
-function buildTeoria() {
-  const container = document.getElementById('teoriaCards');
-  container.innerHTML = TEORIA_DATA.map((t, i) => `
-    <div class="teoria-card ${i === 0 ? 'active' : ''}" id="tc-${i}">
-      <div class="t-title">${t.title}</div>
-      <div class="t-sub">${t.sub}</div>
-      ${t.blocks.map(b => `
-        <div class="t-block">
-          <div class="t-block-title">${b.icon} ${b.title}</div>
-          <div>${b.body}</div>
-        </div>
-      `).join('')}
-      <div class="t-highlight">${t.quote}</div>
-    </div>
-  `).join('');
-}
-
-function showTeoria(idx, btn) {
-  document.querySelectorAll('.teoria-card').forEach(c => c.classList.remove('active'));
-  document.querySelectorAll('.teoria-tab').forEach(t => t.classList.remove('active'));
-  document.getElementById(`tc-${idx}`).classList.add('active');
-  btn.classList.add('active');
-}
-
-// ═══════════════════════════════════════════
-// QUIZ
-// ═══════════════════════════════════════════
-const QUIZ_DATA = [
-  { q: 'Qual é o objetivo do funil de conversão DIGI com 80 portas/dia?', opts: ['10 adesões', '4 adesões', '20 adesões', '8 adesões'], correct: 1, fb: 'O modelo matemático: 80 portas → 40 aberturas → 20 abordagens → 10 controlos → 4 adesões/dia.' },
-  { q: 'Qual é a técnica correta para fechar com um cliente indeciso?', opts: ['Pressionar para decidir agora', 'Oferecer 5 opções diferentes', 'Simplificar para 2 opções e reforçar baixo risco', 'Dizer que a oferta acaba hoje'], correct: 2, fb: 'O Indeciso precisa de "Decisão Binária · Baixo Risco" — 2 opções claras e garantia de que pode sair ao fim de 3 meses.' },
-  { q: 'O que significa "Taxa de Abertura < 50%"?', opts: ['O produto é mau', 'Presença ou apresentação fraca', 'O preço é alto', 'Falta de fidelização'], correct: 1, fb: 'Diagnóstico de falhas: Taxa Abertura < 50% indica problema na presença/apresentação — os primeiros 20 segundos.' },
-  { q: 'Como responder à objeção "Ainda tenho fidelização"?', opts: ['Dizer que a DIGI paga a fidelização', 'Insistir em fechar mesmo assim', 'Agendar para quando terminar e deixar simulação', 'Ignorar a objeção'], correct: 2, fb: 'Reenquadramento honesto: "Sem problema — vemos quando termina e agendamos. Entretanto deixo a simulação para comparar." Sem pressão.' },
-  { q: 'Qual é o script de fecho por "Alternativa Dupla"?', opts: ['"Então quer ou não quer?"', '"Para a instalação, prefere quinta de manhã ou sexta à tarde?"', '"Posso voltar amanhã se precisar?"', '"Assine aqui por favor"'], correct: 1, fb: 'Alternativa Dupla: ofereces dois momentos positivos — ambos assumem que o cliente avança. Eliminas um "sim/não".' },
-  { q: 'Qual prémio distingue a DIGI para o cliente Desconfiado?', opts: ['Premio SAPO', 'nPerf 2025 — fibra mais rápida', 'ANACOM 2024', 'Top Marca Portugal'], correct: 1, fb: 'Com o Desconfiado usas dados técnicos: "Rede própria, premiada como a fibra mais rápida pela nPerf 2025."' },
-  { q: 'No diagnóstico, qual é o objetivo de "usar o silêncio"?', opts: ['Criar tensão para fechar mais rápido', 'Dar espaço ao cliente para pensar e responder com sinceridade', 'Mostrar que tens experiência', 'Esperar que o cliente faça perguntas'], correct: 1, fb: 'Silêncio após pergunta-chave = controlo. O cliente preenche o vazio e revela a sua dor real.' },
-  { q: 'Qual é a poupança ilustrativa que o Manual DIGI apresenta?', opts: ['≈ 200€/ano', '≈ 300€/ano', '≈ 408€/ano', '≈ 600€/ano'], correct: 2, fb: '64€ (MEO/NOS/VDF) - 30€ (DIGI) = 34€/mês × 12 = 408€/ano — sem subida ao 13.º mês.' },
-  { q: 'Qual é o comportamento correto ao bater à porta?', opts: ['Ficar encostado à porta para mostrar confiança', 'Dar um passo atrás após bater para dar espaço', 'Tocar a campainha 2x para mostrar urgência', 'Começar a falar imediatamente quando abrem'], correct: 1, fb: 'Passo atrás = elimina sensação de ameaça, transmite respeito pelo espaço do cliente.' },
-  { q: 'O que distingue o "Consultor de Elite" do "Vendedor" segundo o Manual?', opts: ['O consultor tem mais produtos para vender', 'O consultor espera reação do cliente', 'O consultor vende features do produto', 'O consultor resolve o problema real e guia com perguntas'], correct: 3, fb: 'Consultor: resolve o problema, guia com perguntas, constrói confiança com factos, vende a poupança real. Não a feature.' }
-];
-
-let quizState = { idx: 0, score: 0, answered: false };
-
-function initQuiz() {
-  quizState = { idx: 0, score: 0, answered: false };
-  renderQuiz();
-}
-
-function renderQuiz() {
-  const q = QUIZ_DATA[quizState.idx];
-  // Progress
-  document.getElementById('quizProgress').innerHTML = QUIZ_DATA.map((_, i) =>
-    `<div class="qp-dot ${i < quizState.idx ? 'done' : ''}"></div>`
-  ).join('');
-  document.getElementById('quizQ').textContent = `${quizState.idx + 1}. ${q.q}`;
-  document.getElementById('quizOpts').innerHTML = q.opts.map((o, i) =>
-    `<button class="quiz-opt" onclick="answerQuiz(${i})">${o}</button>`
-  ).join('');
-  document.getElementById('quizFeedback').classList.remove('show');
-  document.getElementById('quizFeedback').textContent = '';
-  document.getElementById('quizNext').style.display = 'none';
-  quizState.answered = false;
-}
-
-function answerQuiz(idx) {
-  if (quizState.answered) return;
-  quizState.answered = true;
-  const q = QUIZ_DATA[quizState.idx];
-  const opts = document.querySelectorAll('.quiz-opt');
-  opts[idx].classList.add(idx === q.correct ? 'correct' : 'wrong');
-  opts[q.correct].classList.add('correct');
-  if (idx === q.correct) quizState.score++;
-  const fb = document.getElementById('quizFeedback');
-  fb.textContent = q.fb;
-  fb.classList.add('show');
-  document.getElementById('quizNext').style.display = 'block';
-  document.getElementById('quizNext').textContent = quizState.idx < QUIZ_DATA.length - 1 ? 'Próxima →' : `Ver Resultado (${quizState.score}/${QUIZ_DATA.length})`;
-}
-
-function nextQuiz() {
-  if (quizState.idx < QUIZ_DATA.length - 1) {
-    quizState.idx++;
-    renderQuiz();
-  } else {
-    // Show result
-    const pct = Math.round((quizState.score / QUIZ_DATA.length) * 100);
-    document.getElementById('quizQ').innerHTML = `<div style="font-size:48px;font-family:'Bebas Neue';color:var(--blue);">${quizState.score}/${QUIZ_DATA.length}</div><div style="font-size:16px;margin-top:8px;">${pct >= 80 ? '🏆 Consultor Elite!' : pct >= 60 ? '⭐ Bom resultado!' : '💪 Continua a treinar!'}</div>`;
-    document.getElementById('quizOpts').innerHTML = '';
-    document.getElementById('quizFeedback').classList.remove('show');
-    document.getElementById('quizNext').textContent = '← Recomeçar';
-    document.getElementById('quizNext').onclick = () => { initQuiz(); };
-  }
-}
-
-// ═══════════════════════════════════════════
-// USER / LOGIN SYSTEM
-// ═══════════════════════════════════════════
-let currentUser = null;
-
-function loadUser() {
-  try {
-    const u = localStorage.getItem('digi_user');
-    if (u) currentUser = JSON.parse(u);
-  } catch(e) { currentUser = null; }
-}
-
-function saveUser() {
-  localStorage.setItem('digi_user', JSON.stringify(currentUser));
-}
-
-function doLogin() {
-  const name = document.getElementById('loginName').value.trim();
-  const email = document.getElementById('loginEmail').value.trim();
-  const err = document.getElementById('login-error');
-  err.style.display = 'none';
-
-  if (!name || name.length < 2) {
-    err.textContent = 'Introduz o teu nome (mínimo 2 caracteres).';
-    err.style.display = 'block'; return;
-  }
-  if (!email || !email.includes('@') || !email.includes('.')) {
-    err.textContent = 'Introduz um email válido.';
-    err.style.display = 'block'; return;
-  }
-
-  // Check if returning user
-  try {
-    const existing = localStorage.getItem('digi_user');
-    if (existing) {
-      const u = JSON.parse(existing);
-      if (u.email === email) {
-        currentUser = u;
-        currentUser.name = name; // update name if changed
-        saveUser();
-        afterLogin(); return;
-      }
-    }
-  } catch(e) {}
-
-  currentUser = {
-    name,
-    email,
-    since: new Date().toLocaleDateString('pt-PT', { month: 'long', year: 'numeric' }),
-    history: []
-  };
-  saveUser();
-  afterLogin();
-}
-
-function afterLogin() {
-  showScreen('home');
-  updateHeaderUser();
-  updateHomeUser();
-}
-
-function doLogout() {
-  if (!confirm('Tens a certeza que queres sair? O teu histórico fica guardado.')) return;
-  currentUser = null;
-  showScreen('login');
-}
-
-function updateHeaderUser() {
-  // Add profile button to home if logged in
-}
-
-function openPerfil() {
-  if (!currentUser) { showScreen('login'); return; }
-  renderPerfil();
-  showScreen('perfil');
-}
-
-function renderPerfil() {
-  const u = currentUser;
-  const hist = u.history || [];
-  const initials = u.name.split(' ').map(w => w[0]).join('').toUpperCase().slice(0,2);
-
-  document.getElementById('perfilAvatar').textContent = initials;
-  document.getElementById('perfilName').textContent = u.name.toUpperCase();
-  document.getElementById('perfilEmail').textContent = u.email;
-  document.getElementById('perfilSince').textContent = 'Membro desde ' + (u.since || '—');
-
-  const scores = hist.map(h => h.score);
-  const total = hist.length;
-  const best = total ? Math.max(...scores) : 0;
-  const avg = total ? Math.round(scores.reduce((a,b)=>a+b,0)/total) : 0;
-
-  document.getElementById('ps-total').textContent = total;
-  document.getElementById('ps-best').textContent = best;
-  document.getElementById('ps-avg').textContent = avg;
-  document.getElementById('hist-count').textContent = total ? `(${total})` : '';
-
-  const list = document.getElementById('historyList');
-  if (!total) {
-    list.innerHTML = `<div class="empty-state">
-      <div class="es-icon">🎯</div>
-      <div class="es-text">Ainda não tens simulações.<br>Começa já o teu treino!</div>
-    </div>`;
-    return;
-  }
-
-  list.innerHTML = [...hist].reverse().map((h, i) => {
-    const grade = h.score >= 80 ? '🏆 Elite' : h.score >= 60 ? '⭐ Bom' : h.score >= 40 ? '📈 A Melhorar' : '💪 Iniciante';
-    const badgeClass = h.score >= 80 ? 'badge-elite' : h.score >= 60 ? 'badge-bom' : 'badge-melhorar';
-    const scoreClass = h.score >= 80 ? 'gold' : h.score >= 60 ? '' : 'silver';
-    return `
-    <div class="history-item">
-      <div class="hi-score ${scoreClass}">${h.score}</div>
-      <div class="hi-info">
-        <div class="hi-title">${h.client}</div>
-        <div class="hi-meta">${h.date} · ${h.turns} trocas · Fase: ${h.phase}</div>
-      </div>
-      <span class="hi-badge ${badgeClass}">${grade}</span>
-      <button class="btn btn-ghost btn-sm" onclick="openShare(${hist.length - 1 - i})" style="flex-shrink:0;">↗ Partilhar</button>
-    </div>`;
-  }).join('');
-}
-
-function saveResult() {
-  if (!currentUser) return;
-  const c = state.client;
-  const entry = {
-    id: Date.now(),
-    score: state.score,
-    client: c.name,
-    clientType: c.type,
-    turns: state.turns,
-    phase: PHASES[state.phase] || 'Fecho',
-    date: new Date().toLocaleDateString('pt-PT'),
-    metrics: { ...state.metrics }
-  };
-  if (!currentUser.history) currentUser.history = [];
-  currentUser.history.push(entry);
-  saveUser();
-}
-
-// ═══════════════════════════════════════════
-// SHARE SYSTEM
-// ═══════════════════════════════════════════
-let shareEntry = null;
-
-function openShare(idx) {
-  const u = currentUser;
-  if (!u) return;
-  const hist = u.history || [];
-  shareEntry = hist[idx] || hist[hist.length - 1];
-  if (!shareEntry) return;
-
-  const grade = shareEntry.score >= 80 ? '🏆 ELITE' : shareEntry.score >= 60 ? '⭐ BOM' : shareEntry.score >= 40 ? '📈 A MELHORAR' : '💪 INICIANTE';
-
-  document.getElementById('sc-name').textContent = u.name.toUpperCase();
-  document.getElementById('sc-score').textContent = shareEntry.score;
-  document.getElementById('sc-client').textContent = shareEntry.client;
-  document.getElementById('sc-grade').textContent = grade;
-  document.getElementById('sc-date').textContent = shareEntry.date;
-
-  const text = buildShareText(u.name, shareEntry, grade);
-  document.getElementById('shareText').textContent = text;
-
-  document.getElementById('shareModal').classList.add('open');
-}
-
-function openShareLast() {
-  if (!currentUser || !currentUser.history || !currentUser.history.length) return;
-  openShare(currentUser.history.length - 1);
-}
-
-function buildShareText(name, entry, grade) {
-  return `🔵 DIGI ELITE TRAINER\n\n👤 ${name}\n🎯 Cliente: ${entry.client}\n📊 Score: ${entry.score} pontos\n${grade}\n📅 ${entry.date}\n\n"A matemática protege-te da emoção. Confia nos números e bate as portas." — Manual DIGI`;
-}
-
-function closeShare() {
-  document.getElementById('shareModal').classList.remove('open');
-}
-
-function copyShareText() {
-  const text = document.getElementById('shareText').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    const btn = event.target;
-    btn.textContent = '✅ Copiado!';
-    setTimeout(() => btn.textContent = '📋 Copiar', 2000);
-  }).catch(() => {
-    // fallback
-    const ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta);
-    ta.select(); document.execCommand('copy');
-    document.body.removeChild(ta);
-  });
-}
-
-function shareWhatsApp() {
-  const text = document.getElementById('shareText').textContent;
-  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
-}
-
-// ═══════════════════════════════════════════
-// NOTAS SYSTEM
-// ═══════════════════════════════════════════
-let notas = [];
-let currentNotaId = null;
-let notaTagFilter = '';
-let saveTimeout = null;
-
-function loadNotas() {
-  try { notas = JSON.parse(localStorage.getItem('digi_notas') || '[]'); } catch(e) { notas = []; }
-}
-
-function saveNotas() {
-  localStorage.setItem('digi_notas', JSON.stringify(notas));
-}
-
-function openNotas() {
-  loadNotas();
-  renderNotasList();
-  showScreen('notas');
-  selectNota(null);
-}
-
-function newNota(tag = 'nota') {
-  const now = new Date();
-  const nota = {
-    id: Date.now(),
-    title: '',
-    body: '',
-    tag,
-    date: now.toLocaleDateString('pt-PT'),
-    ts: now.getTime()
-  };
-  notas.unshift(nota);
-  saveNotas();
-  renderNotasList();
-  selectNota(nota.id);
-  setTimeout(() => document.getElementById('notaTitleInput').focus(), 100);
-}
-
-function selectNota(id) {
-  currentNotaId = id;
-  document.querySelectorAll('.nota-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.id == id);
-  });
-  const empty = document.getElementById('notasEmpty');
-  const inner = document.getElementById('notasEditorInner');
-  if (!id) {
-    empty.style.display = 'flex'; inner.style.display = 'none'; return;
-  }
-  const nota = notas.find(n => n.id == id);
-  if (!nota) return;
-  empty.style.display = 'none'; inner.style.display = 'flex';
-  document.getElementById('notaTitleInput').value = nota.title;
-  document.getElementById('notaBodyInput').value = nota.body;
-  document.getElementById('notaTag').value = nota.tag || 'nota';
-}
-
-function saveCurrentNota() {
-  if (!currentNotaId) return;
-  const nota = notas.find(n => n.id == currentNotaId);
-  if (!nota) return;
-  nota.title = document.getElementById('notaTitleInput').value;
-  nota.body = document.getElementById('notaBodyInput').value;
-  nota.tag = document.getElementById('notaTag').value;
-  nota.ts = Date.now();
-  // Move to top
-  notas = [nota, ...notas.filter(n => n.id !== currentNotaId)];
-  saveNotas();
-  renderNotasList();
-  // Show saved indicator
-  clearTimeout(saveTimeout);
-  const saved = document.getElementById('notaSaved');
-  saved.style.opacity = '1';
-  saveTimeout = setTimeout(() => saved.style.opacity = '0', 1500);
-}
-
-function deleteCurrentNota() {
-  if (!currentNotaId) return;
-  const nota = notas.find(n => n.id == currentNotaId);
-  const title = nota?.title || 'esta nota';
-  if (!confirm(`Apagar "${title}"?`)) return;
-  notas = notas.filter(n => n.id !== currentNotaId);
-  saveNotas();
-  renderNotasList();
-  selectNota(null);
-}
-
-function filterNotas() {
-  renderNotasList();
-}
-
-function filterByTag(tag) {
-  notaTagFilter = tag;
-  renderNotasList();
-}
-
-function renderNotasList() {
-  const search = (document.getElementById('notasSearch')?.value || '').toLowerCase();
-  let filtered = notas.filter(n => {
-    const matchTag = !notaTagFilter || n.tag === notaTagFilter;
-    const matchSearch = !search || n.title.toLowerCase().includes(search) || n.body.toLowerCase().includes(search);
-    return matchTag && matchSearch;
-  });
-
-  const list = document.getElementById('notasList');
-  if (!list) return;
-
-  if (!filtered.length) {
-    list.innerHTML = `<div style="text-align:center;padding:32px 16px;color:var(--muted);font-size:13px;">${notas.length ? 'Sem resultados.' : 'Ainda sem notas.<br>Cria a tua primeira!'}</div>`;
-    return;
-  }
-
-  const tagMap = { nota:'📝', relatorio:'📊', objetivo:'🎯', cliente:'👤' };
-  list.innerHTML = filtered.map(n => `
-    <div class="nota-item ${n.id == currentNotaId ? 'active' : ''}" data-id="${n.id}" onclick="selectNota(${n.id})">
-      <div class="nota-item-title">${n.title || 'Sem título'}</div>
-      <div class="nota-item-preview">${(n.body || '').slice(0, 60) || '...'}</div>
-      <div class="nota-item-meta">
-        <span class="nota-tag tag-${n.tag}">${tagMap[n.tag]||'📝'} ${n.tag}</span>
-        <span>${n.date}</span>
-      </div>
-    </div>
-  `).join('');
-}
-
-function exportNota() {
-  const nota = notas.find(n => n.id == currentNotaId);
-  if (!nota) return;
-  const content = `${nota.title}\n${'─'.repeat(40)}\n${nota.body}\n\n${nota.date} · DIGI Elite Trainer`;
-  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = (nota.title || 'nota') + '.txt';
-  a.click();
-}
-
-function copyNota() {
-  const nota = notas.find(n => n.id == currentNotaId);
-  if (!nota) return;
-  const text = `${nota.title}\n\n${nota.body}`;
-  navigator.clipboard.writeText(text).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta);
-  });
-  const btn = event.target; btn.textContent = '✅ Copiado!';
-  setTimeout(() => btn.textContent = '📋 Copiar', 2000);
-}
-
-function shareNotaWA() {
-  const nota = notas.find(n => n.id == currentNotaId);
-  if (!nota) return;
-  const text = `*${nota.title}*\n\n${nota.body}\n\n_${nota.date} · DIGI Elite Trainer_`;
-  window.open('https://wa.me/?text=' + encodeURIComponent(text), '_blank');
-}
-
-// ── RELATÓRIO RÁPIDO ──
-function openRelatorioModal() {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('rel-data').value = today;
-  if (currentUser) document.getElementById('rel-vendedor').value = currentUser.name;
-  document.getElementById('relatorioModal').classList.add('open');
-}
-
-function closeRelatorioModal() {
-  document.getElementById('relatorioModal').classList.remove('open');
-}
-
-function gerarRelatorio() {
-  const data   = document.getElementById('rel-data').value;
-  const vend   = document.getElementById('rel-vendedor').value || '—';
-  const portas = document.getElementById('rel-portas').value || '0';
-  const aber   = document.getElementById('rel-aberturas').value || '0';
-  const abord  = document.getElementById('rel-abordagens').value || '0';
-  const cont   = document.getElementById('rel-controlos').value || '0';
-  const ades   = document.getElementById('rel-adesoes').value || '0';
-  const zona   = document.getElementById('rel-zona').value || '—';
-  const obs    = document.getElementById('rel-obs').value || '';
-
-  const taxaAb = portas > 0 ? Math.round((aber/portas)*100) : 0;
-  const taxaAd = aber  > 0 ? Math.round((abord/aber)*100)  : 0;
-  const taxaCo = abord > 0 ? Math.round((cont/abord)*100)  : 0;
-  const taxaFe = cont  > 0 ? Math.round((ades/cont)*100)   : 0;
-
-  const body = `📅 DATA: ${data}
-👤 VENDEDOR: ${vend}
-📍 ZONA: ${zona}
-
-━━━━━━━━━━━━━━━━━━━━
-FUNIL DE CONVERSÃO
-━━━━━━━━━━━━━━━━━━━━
-🚪 Portas Batidas:  ${portas}
-🔓 Aberturas:       ${aber} (${taxaAb}%)
-💬 Abordagens:      ${abord} (${taxaAd}%)
-🎯 Controlos:       ${cont} (${taxaCo}%)
-✅ Adesões:         ${ades} (${taxaFe}%)
-
-Meta: 4 adesões/dia ${parseInt(ades) >= 4 ? '🏆 ATINGIDA!' : `· Faltam ${Math.max(0,4-parseInt(ades))}`}
-${obs ? '\n📋 OBSERVAÇÕES:\n' + obs : ''}`;
-
-  const datePt = new Date(data).toLocaleDateString('pt-PT');
-  newNota('relatorio');
-  setTimeout(() => {
-    document.getElementById('notaTitleInput').value = `Relatório ${datePt} · ${zona}`;
-    document.getElementById('notaBodyInput').value = body;
-    document.getElementById('notaTag').value = 'relatorio';
-    saveCurrentNota();
-  }, 50);
-
-  closeRelatorioModal();
-}
-
-// ═══════════════════════════════════════════
-// UPDATE HOME USER
-// ═══════════════════════════════════════════
-function updateHomeUser() {
-  if (!currentUser) return;
-  const initials = currentUser.name.split(' ').map(w=>w[0]).join('').toUpperCase().slice(0,2);
-  const el = document.getElementById('homeUserInitials');
-  const nm = document.getElementById('homeUserName');
-  if (el) el.textContent = initials;
-  if (nm) nm.textContent = currentUser.name.split(' ')[0];
-}
-
-// ═══════════════════════════════════════════
-// COMISSÕES
-// ═══════════════════════════════════════════
-const COMISSOES = [
-  { label: 'até 5',      tv: 6, fibra: 6,  movel: 2,   fixo: 1, min: 0,  max: 5  },
-  { label: '6 até 10',   tv: 6, fibra: 8,  movel: 2,   fixo: 1, min: 6,  max: 10 },
-  { label: '11 até 15',  tv: 6, fibra: 10, movel: 2,   fixo: 1, min: 11, max: 15 },
-  { label: '16 até 20',  tv: 6, fibra: 15, movel: 2,   fixo: 1, min: 16, max: 20 },
-  { label: '21 até 50',  tv: 6, fibra: 20, movel: 2,   fixo: 1, min: 21, max: 50 },
-  { label: '51 até 75',  tv: 6, fibra: 20, movel: 2.5, fixo: 1, min: 51, max: 75 },
-  { label: 'mais de 75', tv: 6, fibra: 20, movel: 3,   fixo: 1, min: 76, max: 9999 },
-];
-
-function buildComissoesTable() {
-  const container = document.getElementById('comissoesRows');
-  if (!container) return;
-  container.innerHTML = COMISSOES.map((r, i) => {
-    const bg = i % 2 === 0 ? 'var(--white)' : 'var(--bg)';
-    const fmt = v => v % 1 === 0 ? v + ' €' : v.toFixed(1) + ' €';
-    return `
-    <div style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1fr;background:${bg};border-bottom:1px solid var(--border);">
-      <div style="padding:13px 14px;font-size:13px;font-weight:700;color:var(--text);">${r.label}</div>
-      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.tv)}</div>
-      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.fibra)}</div>
-      <div style="padding:13px 10px;font-size:14px;font-weight:800;color:var(--blue);text-align:center;">${fmt(r.movel)}</div>
-      <div style="pad
+function buildClientMenu(){const el=document.getElementById("clientList");if(!el)return;el.innerHTML=CLIENTS.map(c=>`<div class="ci" onclick="startSim('${c.id}')"><div class="cii">${c.icon}</div><div><div class="cin">${c.name}</div><div class="cim">${c.operator} · ${c.bill}€/mês · ${c.type}</div></div><div class="cia">›</div></div>`).join("");}
+function startSim(id){state.client=CLIENTS.find(c=>c.id===id);state.score=0;state.turns=0;state.phase=0;state.metrics={abertura:0,diagnostico:0,objections:0,fecho:0};state.conversationHistory=[];showScreen("simulation");buildSidebar();buildFunnel();renderMetrics();updateStats();document.getElementById("chatMessages").innerHTML="";addSysMsg(`🏠 Acabas de chegar à porta de <strong>${state.client.name}</strong>. ${state.client.operator}, ${state.client.bill}€/mês.<br><br>💡 <em>${state.client.hint}</em>`);setQR(["Bom dia, sou da DIGI. Posso mostrar-lhe quanto poupa em 2 minutos?","Olá! Estamos aqui na zona. Tem 2 minutos?","Boa tarde! Sou consultor DIGI — poupa "+(state.client.bill-30)+"€/mês com a DIGI."]);}
+function buildSidebar(){const c=state.client;document.getElementById("clientCard").innerHTML=`<div class="ccn">${c.icon} ${c.name}</div><span class="cct ${c.type==="desconfiado"?"td":c.type==="apressado"?"ta":c.type==="racional"?"tr2":"ti"}">${c.type}</span><div class="cci">Operador: <b>${c.operator}</b><br>Fatura: <b>${c.bill}€/mês</b><br>Serviços: <b>${c.services}</b><br>Fidelização: <b>${c.loyalty}</b></div>`;}
+function buildFunnel(){document.getElementById("funnelSteps").innerHTML=PHASES.map((p,i)=>`<div class="fs ${i===0?"active":""}" id="fs-${i}"><div class="fd"></div>${p}</div>`).join("");}
+function updateFunnel(ph){PHASES.forEach((_,i)=>{const el=document.getElementById("fs-"+i);if(!el)return;el.classList.remove("active","done");if(i<ph)el.classList.add("done");if(i===ph)el.classList.add("active");});state.phase=ph;document.getElementById("st-phase").textContent=PHASES[ph]||"✓";}
+function renderMetrics(){const m=state.metrics;document.getElementById("scoreMetrics").innerHTML=[{l:"Abertura",v:m.abertura},{l:"Diagnóstico",v:m.diagnostico},{l:"Objeções",v:m.objections},{l:"Fecho",v:m.fecho}].map(i=>`<div style="margin-bottom:8px;"><div class="sl2"><span>${i.l}</span><b>${i.v}/25</b></div><div class="st"><div class="sf" style="width:${(i.v/25)*100}%"></div></div></div>`).join("");}
+function updateStats(){document.getElementById("st-score").textContent=state.score;document.getElementById("st-turns").textContent=state.turns;}
+function addMsg(role,text,fb,sd){const msgs=document.getElementById("chatMessages");const c=state.client;const av=role==="user"?"🧑":role==="system"?"💡":c.icon;const nm=role==="user"?"Tu (Consultor)":role==="system"?"Sistema":c.name;let fh="";if(fb)fh=`<div class="fb"><div class="fbt">📊 Análise</div>${fb}${sd>0?`<div class="sp">+${sd} pts</div>`:""}</div>`;const d=document.createElement("div");d.className=`msg ${role}`;d.innerHTML=`<div class="mav">${av}</div><div><div class="mn">${nm}</div><div class="mb">${text}${fh}</div></div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
+function addSysMsg(html){const msgs=document.getElementById("chatMessages");const d=document.createElement("div");d.className="msg system";d.innerHTML=`<div class="mav">💡</div><div style="flex:1;"><div class="mb">${html}</div></div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
+function setQR(opts){document.getElementById("quickReplies").innerHTML=opts.map(o=>`<button class="qb" onclick="useQR(this)">${o}</button>`).join("");}
+function useQR(btn){document.getElementById("chatInput").value=btn.textContent;sendMsg();}
+function showThink(){const msgs=document.getElementById("chatMessages");const d=document.createElement("div");d.className="msg client";d.id="tmsg";d.innerHTML=`<div class="mav">${state.client.icon}</div><div><div class="mb"><div class="th"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
+function hideThink(){const el=document.getElementById("tmsg");if(el)el.remove();}
+async function sendMsg(){if(state.isThinking)return;const inp=document.getElementById("chatInput");const txt=inp.value.trim();if(!txt)return;inp.value="";state.turns++;state.isThinking=true;document.getElementById("sendBtn").disabled=true;document.getElementById("quickReplies").innerHTML="";addMsg("user",txt);updateStats();showThink();state.conversationHistory.push({role:"user",content:txt});try{const r=await callAI(txt);hideThink();state.score+=r.scoreDelta;updateStats();if(r.newPhase>state.phase)updateFunnel(r.newPhase);addMsg("client",r.clientReply,r.feedback,r.scoreDelta);state.conversationHistory.push({role:"assistant",content:r.clientReply});if(r.quickReplies&&r.quickReplies.length)setQR(r.quickReplies);renderMetrics();if(r.ended)setTimeout(()=>endSim(r.finalSummary),1200);}catch(e){hideThink();addSysMsg("⚠️ "+e.message);console.error(e);}state.isThinking=false;document.getElementById("sendBtn").disabled=false;}
+async function callAI(userMsg){const c=state.client;const hist=state.conversationHistory.slice(0,-1).map(m=>`${m.role==="user"?"CONSULTOR":"CLIENTE"}: ${m.content}`).join("\n");const sys=`${c.sp}\n\nINSTRUÇÕES: És simultaneamente CLIENTE (em personagem) e AVALIADOR das técnicas DIGI.\nResponde APENAS com JSON válido sem texto extra:\n{"clientReply":"resposta em pt-PT max 3 frases","feedback":"análise 1-2 frases","scoreDelta":10,"newPhase":${state.phase},"quickReplies":["s1","s2","s3"],"ended":false,"finalSummary":""}\nscoreDelta: 0-5 fraco 6-12 razoável 13-20 bom 21-25 excelente.\nnewPhase: 0=Abordagem 1=Diagnóstico 2=Proposta 3=Objeções 4=Fecho.\nended: true só se cliente aceitou definitivamente ou recusou de forma absoluta.\nFase: ${PHASES[state.phase]} | Score: ${state.score} | Trocas: ${state.turns}\n${hist?"Histórico:\n"+hist:"(início)"}`;const k=["gsk_tJ3vG71Yez9w","yW5ipxgkWGdyb3FY","rSu1lIezoqMOFUrBtDcWGiZV"].join("");const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+k},body:JSON.stringify({model:"meta-llama/llama-4-scout-17b-16e-instruct",messages:[{role:"system",content:sys},{role:"user",content:userMsg}],temperature:0.7,max_tokens:600,response_format:{type:"json_object"}})});if(!res.ok)throw new Error("Groq "+res.status);const data=await res.json();const raw=data?.choices?.[0]?.message?.content||"{}";const parsed=JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0]||"{}");parsed.scoreDelta=Math.max(0,Math.min(25,parseInt(parsed.scoreDelta)||5));parsed.newPhase=Math.max(state.phase,Math.min(4,parseInt(parsed.newPhase)??state.phase));if(!Array.isArray(parsed.quickReplies))parsed.quickReplies=[];if(!parsed.clientReply)parsed.clientReply=raw.slice(0,300);if(state.phase===0)state.metrics.abertura=Math.min(25,state.metrics.abertura+parsed.scoreDelta);else if(state.phase===1)state.metrics.diagnostico=Math.min(25,state.metrics.diagnostico+parsed.scoreDelta);else if(state.phase===3)state.metrics.objections=Math.min(25,state.metrics.objections+parsed.scoreDelta);else if(state.phase===4)state.metrics.fecho=Math.min(25,state.metrics.fecho+parsed.scoreDelta);return parsed;}
+function endSim(summary){const c=state.client;const grade=state.score>=80?"🏆 ELITE":state.score>=60?"⭐ BOM":state.score>=40?"📈 A MELHORAR":"💪 INICIANTE";document.getElementById("final-score").textContent=state.score;document.getElementById("res-sub").textContent=`${grade} · ${c.name} · ${state.turns} trocas`;const m=state.metrics;document.getElementById("res-breakdown").innerHTML=["Abertura:"+m.abertura,"Diagnóstico:"+m.diagnostico,"Objeções:"+m.objections,"Fecho:"+m.fecho].map(x=>{const[l,v]=x.split(":");return`<div class="bdi"><div class="bdv">${v}</div><div class="bdl">${l}</div></div>`;}).join("");document.getElementById("res-feedback").innerHTML=summary?`<strong>Análise IA:</strong><br>${summary}`:`Simulação com <strong>${c.name}</strong>. Score: <strong>${state.score} pts</strong> em ${state.turns} trocas.`;saveResult();document.getElementById("res-btns").innerHTML=`<button class="btn btn-w" onclick="openShareLast()">↗ Partilhar</button><button class="btn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);" onclick="showScreen('menu')">Tentar Outro</button><button class="btn btn-g" style="border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7);" onclick="openPerfil()">👤 Perfil</button>`;showScreen("results");}
+let currentUser=null;
+function loadUser(){try{const u=localStorage.getItem("digi_user");if(u)currentUser=JSON.parse(u);}catch(e){currentUser=null;}}
+function saveUser(){localStorage.setItem("digi_user",JSON.stringify(currentUser));}
+function doLogin(){const name=document.getElementById("lname").value.trim();const email=document.getElementById("lemail").value.trim();const err=document.getElementById("lerr");err.style.display="none";if(!name||name.length<2){err.textContent="Introduz o teu nome.";err.style.display="block";return;}if(!email||!email.includes("@")){err.textContent="Email inválido.";err.style.display="block";return;}try{const ex=localStorage.getItem("digi_user");if(ex){const u=JSON.parse(ex);if(u.email===email){currentUser=u;currentUser.name=name;saveUser();afterLogin();return;}}}catch(e){}currentUser={name,email,since:new Date().toLocaleDateString("pt-PT",{month:"long",year:"numeric"}),history:[]};saveUser();afterLogin();}
+function afterLogin(){updateHU();showScreen("home");}
+function doLogout(){if(!confirm("Sair? O histórico fica guardado."))return;currentUser=null;showScreen("login");}
+function updateHU(){if(!currentUser)return;const init=currentUser.name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);const a=document.getElementById("hav");if(a)a.textContent=init;const n=document.getElementById("hnm");if(n)n.textContent=currentUser.name.split(" ")[0];}
+function openPerfil(){if(!currentUser){showScreen("login");return;}renderPerfil();showScreen("perfil");}
+function renderPerfil(){const u=currentUser;const h=u.history||[];const init=u.name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);document.getElementById("perfilAvatar").textContent=init;document.getElementById("perfilName").textContent=u.name.toUpperCase();document.getElementById("perfilEmail").textContent=u.email;document.getElementById("perfilSince").textContent="Membro desde "+(u.since||"—");const scores=h.map(x=>x.score);document.getElementById("ps-total").textContent=h.length;document.getElementById("ps-best").textContent=h.length?Math.max(...scores):0;document.getElementById("ps-avg").textContent=h.length?Math.round(scores.reduce((a,b)=>a+b,0)/h.length):0;const list=document.getElementById("historyList");if(!h.length){list.innerHTML="<div style='text-align:center;padding:32px;color:var(--muted);font-size:13px;'>Ainda sem simulações.</div>";return;}list.innerHTML=[...h].reverse().map((x,i)=>{const grade=x.score>=80?"🏆 Elite":x.score>=60?"⭐ Bom":"📈 A Melhorar";const bc=x.score>=80?"be":x.score>=60?"bb":"bo";const sc=x.score>=80?"gold":"";return`<div class="hi"><div class="his ${sc}">${x.score}</div><div class="hii"><div class="hin">${x.client}</div><div class="him">${x.date} · ${x.turns} trocas</div></div><span class="hib ${bc}">${grade}</span><button class="btn btn-g btn-sm" onclick="openShare(${h.length-1-i})" style="flex-shrink:0;margin-left:6px;">↗</button></div>`;}).join("");}
+function saveResult(){if(!currentUser)return;const c=state.client;if(!currentUser.history)currentUser.history=[];currentUser.history.push({id:Date.now(),score:state.score,client:c.name,clientType:c.type,turns:state.turns,date:new Date().toLocaleDateString("pt-PT")});saveUser();}
+let shareEntry=null;
+function openShare(idx){const u=currentUser;if(!u)return;shareEntry=u.history[idx];if(!shareEntry)return;const grade=shareEntry.score>=80?"🏆 ELITE":shareEntry.score>=60?"⭐ BOM":"📈 A MELHORAR";document.getElementById("sc-name").textContent=u.name.toUpperCase();document.getElementById("sc-score").textContent=shareEntry.score;document.getElementById("sc-client").textContent=shareEntry.client;document.getElementById("sc-grade").textContent=grade;document.getElementById("sc-date").textContent=shareEntry.date;document.getElementById("shareText").textContent=`🔵 DIGI ELITE TRAINER\n\n👤 ${u.name}\n🎯 ${shareEntry.client}\n📊 ${shareEntry.score} pts · ${grade}\n📅 ${shareEntry.date}\n\n"A matemática protege-te da emoção." — Manual DIGI`;document.getElementById("shareModal").classList.add("open");}
+function openShareLast(){if(currentUser&&currentUser.history&&currentUser.history.length)openShare(currentUser.history.length-1);}
+function closeShare(){document.getElementById("shareModal").classList.remove("open");}
+function copyShare(){const t=document.getElementById("shareText").textContent;navigator.clipboard.writeText(t).catch(()=>{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();document.execCommand("copy");document.body.removeChild(a);});event.target.textContent="✅ Copiado!";setTimeout(()=>event.target.textContent="📋 Copiar",2000);}
+function shareWA(){window.open("https://wa.me/?text="+encodeURIComponent(document.getElementById("shareText").textContent),"_blank");}
+let notas=[],curNota=null,notaFilter="",saveTO=null;
+function loadNotas(){try{notas=JSON.parse(localStorage.getItem("digi_notas")||"[]");}catch(e){notas=[];}}
+function saveNotas(){localStorage.setItem("digi_notas",JSON.stringify(notas));}
+function openNotas(){loadNotas();renderNL();showScreen("notas");selNota(null);}
+function newNota(tag){const n={id:Date.now(),title:"",body:"",tag:tag||"nota",date:new Date().toLocaleDateString("pt-PT"),ts:Date.now()};notas.unshift(n);saveNotas();renderNL();selNota(n.id);setTimeout(()=>{const el=document.getElementById("notaTitleInput");if(el)el.focus();},100);}
+function selNota(id){curNota=id;document.querySelectorAll(".nitem").forEach(el=>el.classList.toggle("active",el.dataset.id==id));const empty=document.getElementById("notasEmpty");const inner=document.getElementById("notasInner");if(!id){empty.style.display="flex";inner.style.display="none";return;}const n=notas.find(x=>x.id==id);if(!n)return;empty.style.display="none";inner.style.display="flex";document.getElementById("notaTitleInput").value=n.title;document.getElementById("notaBodyInput").value=n.body;document.getElementById("notaTag").value=n.tag||"nota";}
+function saveNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!n)return;n.title=document.getElementById("notaTitleInput").value;n.body=document.getElementById("notaBodyInput").value;n.tag=document.getElementById("notaTag").value;n.ts=Date.now();notas=[n,...notas.filter(x=>x.id!==curNota)];saveNotas();renderNL();clearTimeout(saveTO);const s=document.getElementById("notaSaved");s.style.opacity="1";saveTO=setTimeout(()=>s.style.opacity="0",1500);}
+function deleteNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!confirm("Apagar \"+"+(n?.title||"nota")+"\"?"))return;notas=notas.filter(x=>x.id!==curNota);saveNotas();renderNL();selNota(null);}
+function setNF(f,btn){notaFilter=f;document.querySelectorAll(".ntb").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");renderNL();}
+function renderNL(){const search=(document.getElementById("notasSearch")?.value||"").toLowerCase();const fl=notas.filter(n=>{const mt=!notaFilter||n.tag===notaFilter;const ms=!search||n.title.toLowerCase().includes(search)||n.body.toLowerCase().includes(search);return mt&&ms;});const list=document.getElementById("notasList");if(!list)return;if(!fl.length){list.innerHTML=`<div style="text-align:center;padding:28px 12px;color:var(--muted);font-size:12px;">${notas.length?"Sem resultados.":"Cria a tua primeira nota!"}</div>`;return;}const tm={nota:"📝",relatorio:"📊",objetivo:"🎯",cliente:"👤"};list.innerHTML=fl.map(n=>`<div class="nitem ${n.id==curNota?"active":""}" data-id="${n.id}" onclick="selNota(${n.id})"><div class="nit">${n.title||"Sem título"}</div><div class="nip">${(n.body||"").slice(0,55)||"..."}</div><div class="nim"><span class="ntag ntag-${n.tag}">${tm[n.tag]||"📝"} ${n.tag}</span><span>${n.date}</span></div></div>`).join("");}
+function exportNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;const blob=new Blob([n.title+"\n"+"─".repeat(40)+"\n"+n.body+"\n\n"+n.date+" · DIGI Elite Trainer"],{type:"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(n.title||"nota")+".txt";a.click();}
+function copyNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;const t=n.title+"\n\n"+n.body;navigator.clipboard.writeText(t).catch(()=>{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();document.execCommand("copy");document.body.removeChild(a);});event.target.textContent="✅";setTimeout(()=>event.target.textContent="📋 Copiar",2000);}
+function shareNotaWA(){const n=notas.find(x=>x.id==curNota);if(!n)return;window.open("https://wa.me/?text="+encodeURIComponent("*"+n.title+"*\n\n"+n.body+"\n\n_"+n.date+" · DIGI Elite Trainer_"),"_blank");}
+function openRelModal(){document.getElementById("rd").value=new Date().toISOString().split("T")[0];if(currentUser)document.getElementById("rv").value=currentUser.name;document.getElementById("relModal").classList.add("open");}
+function closeRelModal(){document.getElementById("relModal").classList.remove("open");}
+function gerarRel(){const g=id=>document.getElementById(id).value;const p=+g("rp")||0,ab=+g("ra")||0,ao=+g("rao")||0,co=+g("rc")||0,ad=+g("rads")||0;const body=`📅 DATA: ${g("rd")}\n👤 VENDEDOR: ${g("rv")||"—"}\n📍 ZONA: ${g("rz")||"—"}\n\n${"━".repeat(22)}\nFUNIL DE CONVERSÃO\n${"━".repeat(22)}\n🚪 Portas: ${p}\n🔓 Aberturas: ${ab} (${p?Math.round(ab/p*100):0}%)\n💬 Abordagens: ${ao} (${ab?Math.round(ao/ab*100):0}%)\n🎯 Controlos: ${co} (${ao?Math.round(co/ao*100):0}%)\n✅ Adesões: ${ad} (${co?Math.round(ad/co*100):0}%)\n\nMeta 4/dia: ${ad>=4?"🏆 ATINGIDA!":"Faltam "+Math.max(0,4-ad)}${g("ro")?"\n\n📋 OBS:\n"+g("ro"):""}`;newNota("relatorio");setTimeout(()=>{document.getElementById("notaTitleInput").value="Relatório "+new Date(g("rd")).toLocaleDateString("pt-PT")+" · "+(g("rz")||"—");document.getElementById("notaBodyInput").value=body;document.getElementById("notaTag").value="relatorio";saveNota();},80);closeRelModal();}
+const COM=[{l:"até 5",tv:6,f:6,m:2,fx:1,min:0,max:5},{l:"6 até 10",tv:6,f:8,m:2,fx:1,min:6,max:10},{l:"11 até 15",tv:6,f:10,m:2,fx:1,min:11,max:15},{l:"16 até 20",tv:6,f:15,m:2,fx:1,min:16,max:20},{l:"21 até 50",tv:6,f:20,m:2,fx:1,min:21,max:50},{l:"51 até 75",tv:6,f:20,m:2.5,fx:1,min:51,max:75},{l:"mais de 75",tv:6,f:20,m:3,fx:1,min:76,max:9999}];
+function buildCom(){const el=document.getElementById("comRows");if(!el)return;const fmt=v=>v%1===0?v+"€":v.toFixed(1)+"€";el.innerHTML=COM.map((r,i)=>`<div class="ctd2" style="background:${i%2?"var(--bg)":"var(--white)"}"><div class="ctdc" style="font-size:12px;font-weight:700;color:var(--text);text-align:left;padding-left:14px;">${r.l}</div><div class="ctdc">${fmt(r.tv)}</div><div class="ctdc">${fmt(r.f)}</div><div class="ctdc">${fmt(r.m)}</div><div class="ctdc">${fmt(r.fx)}</div></div>`).join("");}
+function calcCom(){const g=id=>parseInt(document.getElementById(id)?.value)||0;const tot=g("c-ades"),tv=g("c-tv"),fib=g("c-fib"),mov=g("c-mov"),fix=g("c-fix");const res=document.getElementById("calcResult");if(!res)return;if(!tot&&!tv&&!fib&&!mov&&!fix){res.style.display="none";return;}const e=COM.find(r=>tot>=r.min&&tot<=r.max)||COM[0];const total=(tv*e.tv)+(fib*e.f)+(mov*e.m)+(fix*e.fx);res.style.display="block";document.getElementById("cr-val").textContent=total.toFixed(2).replace(".",",")+" €";document.getElementById("cr-det").innerHTML="Escalão: <strong>"+e.l+"</strong> · "+[tv&&`${tv}×TV(${e.tv}€)`,fib&&`${fib}×Fibra(${e.f}€)`,mov&&`${mov}×Móvel(${e.m}€)`,fix&&`${fix}×Fixo(${e.fx}€)`].filter(Boolean).join(" + ");}
+const TEORIA=[{t:"Filosofia",s:"Consultor vs Vendedor",bl:[{i:"🎯",t:"Objetivo",b:"O vendedor procura aprovação. O consultor diagnostica e resolve um problema real. A conversa é guiada por perguntas, não reativa."},{i:"📊",t:"Modelo Matemático",b:"80 portas → 40 aberturas → 20 abordagens → 10 controlos → 4 adesões. A matemática protege-te da emoção."},{i:"💎",t:"Responsabilidade Total",b:"O resultado depende da tua execução: preparação, escuta e clareza. Sem desculpas."}],q:'"Quem ouve melhor, vende melhor."'},{t:"Abordagem",s:"Os primeiros 20 segundos",bl:[{i:"🧍",t:"Linguagem Corporal",b:"Postura aberta, ombros para trás. Mãos visíveis. Passo atrás após bater — dá espaço, elimina ameaça."},{i:"🗣️",t:"Tom e Ritmo",b:"Fala mais devagar. Tom firme e tranquilo. Usa pausas — a informação precisa de assentar."},{i:"✅",t:"Script",b:'"Bom dia, sou da DIGI e estamos a apresentar as combinações de fibra e móvel aqui na zona. Posso mostrar-lhe em 2 min quanto pode poupar?"'}],q:'"De desconhecido a consultor de confiança — com transparência total."'},{t:"Diagnóstico",s:"Escuta ativa: perceber a dor real",bl:[{i:"❓",t:"Sequência de Perguntas",b:"1. Qual o operador? 2. Quanto paga? 3. O que menos satisfaz? 4. Quando termina a fidelização? 5. Quantos telemóveis? 6. É o decisor?"},{i:"🤫",t:"O Silêncio",b:"Após pergunta-chave, faz uma pausa. O cliente preenche o vazio e revela a sua dor real. Silêncio = controlo."},{i:"👤",t:"Identificar o Decisor",b:"Confirma cedo quem assina. Se não está, agenda o regresso — respeitando o tempo de todos."}],q:'"O diagnóstico é escuta ativa: percebes a dor real e mostras como a DIGI a resolve."'},{t:"Objeções",s:"Reenquadramento honesto",bl:[{i:"🆕",t:'"A DIGI é nova..."',b:'É verdade que somos recentes — mas com rede própria, premiada como a fibra mais rápida pela nPerf 2025. Posso mostrar os testes.'},{i:"📋",t:'"Mudar dá trabalho..."',b:'Tratamos da portabilidade por si: o número mantém-se e nós coordenamos. O passo é só dizer "sim".'},{i:"🔒",t:'"Tenho fidelização."',b:'Sem problema — vemos quando termina e agendamos. Entretanto deixo a simulação para comparar. Sem compromisso.'}],q:'"A confiança é o teu maior ativo."'},{t:"Fecho",s:"Consequência natural do bom diagnóstico",bl:[{i:"✅",t:"Fecho Assumido",b:'"Perfeito. Para registar preciso só do Cartão de Cidadão e IBAN. Tem aí consigo?"'},{i:"🅰️",t:"Alternativa Dupla",b:'"Para a instalação, prefere quinta de manhã ou sexta à tarde?" — duas opções positivas, ambas avançam.'},{i:"🤐",t:"Fecho com Pausa",b:'"Então avançamos com a combinação que lhe poupa 34€/mês?" (pausa). O silêncio respeita a decisão.'}],q:'"O fecho é a consequência natural de um bom diagnóstico — não uma armadilha."'},{t:"Perfis",s:"Cada cliente exige abordagem diferente",bl:[{i:"🧔",t:"O Desconfiado",b:"Usa dados técnicos. nPerf 2025. Posiciona-te como técnico. Dados · Transparência."},{i:"👩‍💼",t:"O Apressado",b:'"Em 2 min mostro o preço. Sem fidelização longa." Simplicidade · Rapidez.'},{i:"👨‍💻",t:"O Racional",b:"Poupança anual no simulador. ROI claro, preços congelados 2026. Ganho Financeiro."},{i:"👵",t:"O Indeciso",b:"2 opções claras. Pode sair em 3 meses. Baixo Risco."}],q:'"Adapta a linguagem ao cliente, não o produto."'}];
+function buildTeoria(){const tabs=document.getElementById("teoriaTabs");const cards=document.getElementById("teoriaCards");if(!tabs||!cards)return;tabs.innerHTML=TEORIA.map((t,i)=>`<button class="ttab ${i===0?"active":""}" onclick="showTc(${i},this)">${t.t}</button>`).join("");cards.innerHTML=TEORIA.map((t,i)=>`<div class="tcard ${i===0?"active":""}" id="tc-${i}"><div class="tcti">${t.t.toUpperCase()}</div><div class="tcsu">${t.s}</div>${t.bl.map(b=>`<div class="tcbl"><div class="tcblt">${b.i} ${b.t}</div><p>${b.b}</p></div>`).join("")}<div class="tcq">${t.q}</div></div>`).join("");}
+function showTc(i,btn){document.querySelectorAll(".tcard").forEach(c=>c.classList.remove("active"));document.querySelectorAll(".ttab").forEach(t=>t.classList.remove("active"));document.getElementById("tc-"+i).classList.add("active");btn.classList.add("active");}
+const QUIZ=[{q:"Qual é o objetivo do funil DIGI com 80 portas/dia?",opts:["10 adesões","4 adesões","20 adesões","8 adesões"],c:1,fb:"80 portas → 40 aberturas → 20 abordagens → 10 controlos → 4 adesões/dia."},{q:"Técnica correta para fechar com cliente indeciso?",opts:["Pressionar","5 opções","2 opções + baixo risco","Oferta acaba hoje"],c:2,fb:"O Indeciso precisa de 2 opções claras e garantia de sair ao fim de 3 meses."},{q:"O que significa Taxa de Abertura < 50%?",opts:["Produto mau","Presença fraca","Preço alto","Sem fidelização"],c:1,fb:"Taxa Abertura < 50% = problema na presença/apresentação — os primeiros 20 segundos."},{q:"Como responder a Tenho fidelização?",opts:["DIGI paga","Insistir","Agendar + simulação","Ignorar"],c:2,fb:"Reenquadramento: Sem problema — agendamos. Deixo a simulação sem compromisso."},{q:"Script de Alternativa Dupla?",opts:["Quer ou não quer?","Quinta manhã ou sexta tarde?","Volto amanhã?","Assine aqui"],c:1,fb:"Alternativa Dupla: dois momentos positivos — ambos assumem que o cliente avança."},{q:"Prémio que distingue a DIGI para o Desconfiado?",opts:["SAPO","nPerf 2025 — fibra mais rápida","ANACOM 2024","Top Marca Portugal"],c:1,fb:"Com o Desconfiado: rede própria, premiada como a fibra mais rápida pela nPerf 2025."},{q:"Objetivo de usar o silêncio no diagnóstico?",opts:["Criar tensão","Dar espaço ao cliente responder","Mostrar experiência","Esperar perguntas"],c:1,fb:"Silêncio = controlo. O cliente preenche o vazio e revela a sua dor real."},{q:"Poupança ilustrativa no Manual DIGI?",opts:["≈ 200€/ano","≈ 300€/ano","≈ 408€/ano","≈ 600€/ano"],c:2,fb:"64€ - 30€ = 34€/mês × 12 = 408€/ano — sem subida ao 13.º mês."},{q:"Comportamento correto ao bater à porta?",opts:["Encostar","Passo atrás","Tocar 2x","Falar logo"],c:1,fb:"Passo atrás = elimina ameaça, respeita o espaço do cliente."},{q:"O que distingue o Consultor de Elite?",opts:["Mais produtos","Espera reação","Vende features","Resolve o problema e guia com perguntas"],c:3,fb:"Consultor: resolve o problema, guia com perguntas, constrói confiança com factos."}];
+let qs={idx:0,score:0,ans:false};
+function initQuiz(){qs={idx:0,score:0,ans:false};renderQuiz();}
+function renderQuiz(){const q=QUIZ[qs.idx];document.getElementById("quizProg").innerHTML=QUIZ.map((_,i)=>`<div class="qp ${i<qs.idx?"done":""}"></div>`).join("");document.getElementById("quizQ").textContent=`${qs.idx+1}. ${q.q}`;document.getElementById("quizOpts").innerHTML=q.opts.map((o,i)=>`<button class="qopt" onclick="ansQ(${i})">${o}</button>`).join("");document.getElementById("quizFb").classList.remove("show");document.getElementById("quizNext").style.display="none";qs.ans=false;}
+function ansQ(i){if(qs.ans)return;qs.ans=true;const q=QUIZ[qs.idx];const opts=document.querySelectorAll(".qopt");opts[i].classList.add(i===q.c?"correct":"wrong");opts[q.c].classList.add("correct");if(i===q.c)qs.score++;const fb=document.getElementById("quizFb");fb.textContent=q.fb;fb.classList.add("show");const nx=document.getElementById("quizNext");nx.style.display="block";nx.textContent=qs.idx<QUIZ.length-1?"Próxima →":`Ver Resultado (${qs.score}/${QUIZ.length})`;}
+function nextQuiz(){if(qs.idx<QUIZ.length-1){qs.idx++;renderQuiz();}else{const pct=Math.round(qs.score/QUIZ.length*100);document.getElementById("quizQ").innerHTML=`<div style="font-size:48px;font-family:'Bebas Neue';color:var(--blue);">${qs.score}/${QUIZ.length}</div><div style="font-size:15px;margin-top:8px;">${pct>=80?"🏆 Consultor Elite!":pct>=60?"⭐ Bom resultado!":"💪 Continua a treinar!"}</div>`;document.getElementById("quizOpts").innerHTML="";document.getElementById("quizFb").classList.remove("show");const nx=document.getElementById("quizNext");nx.textContent="← Recomeçar";nx.onclick=initQuiz;}}
+// MODALS close on bg click
+["shareModal","relModal"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});});
+// INIT
+loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();
+if(currentUser){updateHU();showScreen("home");}else{showScreen("login");}
+<\/script>
+</body>
+</html>
