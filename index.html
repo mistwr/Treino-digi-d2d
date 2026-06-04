@@ -3,13 +3,20 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#002BFF">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="DIGI Trainer">
+<link rel="manifest" href="/manifest.json">
+<link rel="apple-touch-icon" href="/icon.svg">
+
 <title>DIGI Elite Trainer</title>
 <meta name="theme-color" content="#002BFF">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DIGI Trainer">
-<link rel="manifest" href="data:application/json,{%22name%22:%22DIGI%20Elite%20Trainer%22,%22short_name%22:%22DIGI%20Trainer%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22%23002BFF%22,%22theme_color%22:%22%23002BFF%22,%22icons%22:[{%22src%22:%22data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A//www.w3.org/2000/svg%27%20viewBox%3D%270%200%20192%20192%27%3E%3Crect%20width%3D%27192%27%20height%3D%27192%27%20rx%3D%2740%27%20fill%3D%27%23002BFF%27/%3E%3Ctext%20x%3D%2796%27%20y%3D%27130%27%20font-size%3D%2790%27%20text-anchor%3D%27middle%27%20fill%3D%27white%27%20font-family%3D%27Arial%27%20font-weight%3D%27bold%27%3ED%3C/text%3E%3C/svg%3E%22,%22sizes%22:%22192x192%22,%22type%22:%22image/svg+xml%22}]}">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet">
 <style>
 :root{--blue:#002BFF;--blue2:#0022cc;--blue3:#3352FF;--pale:#E8ECFF;--ghost:rgba(0,43,255,0.07);--bg:#F4F6FF;--white:#fff;--border:#D6DCFF;--text:#0A0F2E;--muted:#6B7A99;--green:#00B87A;--red:#E53935;}
@@ -561,23 +568,25 @@ function installPWA() {
 
 function triggerInstall() {
   const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
-  const isInStandalone = window.navigator.standalone === true;
-  const isAndroid = /android/i.test(navigator.userAgent);
-  
-  if (isInStandalone) {
+  const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
+
+  if (isStandalone) {
     alert('✅ A app já está instalada!');
     return;
   }
   if (deferredPrompt) {
-    installPWA();
+    // Android Chrome - native prompt
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(choice => {
+      deferredPrompt = null;
+      document.getElementById('pwaBanner').classList.remove('show');
+    });
   } else if (isIOS) {
+    // iOS Safari instructions
     document.getElementById('iosHint').classList.add('show');
-  } else if (isAndroid) {
-    // Show manual instructions for Android
-    document.getElementById('pwaBanner').classList.add('show');
-    alert('Para instalar:\n\n1. Toca nos 3 pontos ⋮ do browser\n2. Seleciona "Adicionar ao ecrã inicial"\n3. Confirma a instalação');
   } else {
-    alert('Para instalar:\n\nNo Chrome: Menu → "Instalar DIGI Elite Trainer"\nNo Edge: Menu → "Aplicações" → "Instalar"');
+    // Fallback - show banner or instructions
+    document.getElementById('pwaBanner').classList.add('show');
   }
 }
 
@@ -591,19 +600,7 @@ function closeIOSHint() {
 // Register service worker for offline support
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    // Inline service worker
-    const swCode = `
-      const CACHE = 'digi-v1';
-      self.addEventListener('install', e => {
-        e.waitUntil(caches.open(CACHE).then(c => c.addAll(['/'])));
-      });
-      self.addEventListener('fetch', e => {
-        e.respondWith(caches.match(e.request).then(r => r || fetch(e.request)));
-      });
-    `;
-    const blob = new Blob([swCode], {type: 'application/javascript'});
-    const swUrl = URL.createObjectURL(blob);
-    navigator.serviceWorker.register(swUrl).catch(() => {});
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
   });
 }
 
