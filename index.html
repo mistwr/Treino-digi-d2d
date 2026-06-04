@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="DIGI Trainer">
 <link rel="manifest" href="/manifest.json">
-<link rel="apple-touch-icon" href="/icon.svg">
+<link rel="apple-touch-icon" href="/icon-192.png">
 
 <title>DIGI Elite Trainer</title>
 <meta name="theme-color" content="#002BFF">
@@ -567,27 +567,31 @@ function installPWA() {
 }
 
 function triggerInstall() {
-  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+  const isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent.toLowerCase());
   const isStandalone = window.navigator.standalone === true || window.matchMedia('(display-mode: standalone)').matches;
 
   if (isStandalone) {
-    alert('✅ A app já está instalada!');
+    alert('A app já está instalada no teu ecrã!');
     return;
   }
+
   if (deferredPrompt) {
-    // Android Chrome - native prompt
+    // Android Chrome - prompt nativo disponível
     deferredPrompt.prompt();
     deferredPrompt.userChoice.then(choice => {
       deferredPrompt = null;
       document.getElementById('pwaBanner').classList.remove('show');
     });
-  } else if (isIOS) {
-    // iOS Safari instructions
-    document.getElementById('iosHint').classList.add('show');
-  } else {
-    // Fallback - show banner or instructions
-    document.getElementById('pwaBanner').classList.add('show');
+    return;
   }
+
+  if (isIOS) {
+    document.getElementById('iosHint').classList.add('show');
+    return;
+  }
+
+  // Android sem prompt ainda - instruções manuais
+  document.getElementById('iosHint').classList.add('show');
 }
 
 function closePWA() {
