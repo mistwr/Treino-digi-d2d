@@ -1,4 +1,4 @@
-const CACHE = 'digi-v' + Date.now();
+const CACHE = 'digi-v3';
 
 self.addEventListener('install', e => {
   self.skipWaiting();
@@ -14,6 +14,6 @@ self.addEventListener('activate', e => {
 
 self.addEventListener('fetch', e => {
   e.respondWith(
-    fetch(e.request).catch(() => caches.match(e.request))
+    fetch(e.request, {cache: 'no-store'}).catch(() => caches.match(e.request))
   );
 });
