@@ -294,6 +294,41 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 .cvp-sms-btn{display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;font-family:Inter;}
 .cvp-sms-btn:hover{background:var(--blue2);}
 .cvp-call-btn{display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;cursor:pointer;margin-top:8px;margin-left:6px;font-family:Inter;}
+
+/* FORMAÇÃO */
+#formacao{background:var(--bg);}
+.fw{max-width:680px;margin:0 auto;padding:20px 16px;}
+.ftabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:20px;overflow-x:auto;padding-bottom:4px;}
+.ftab{background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;}
+.ftab.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+.fmod{display:none;}
+.fmod.active{display:block;animation:fu .3s ease;}
+.fcard{background:var(--white);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:12px;box-shadow:0 1px 4px rgba(0,0,0,.04);}
+.fcard-title{font-family:"Bebas Neue";font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:8px;display:flex;align-items:center;gap:8px;}
+.fcard-sub{font-size:12px;color:var(--muted);margin-bottom:14px;font-weight:500;}
+.price-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-bottom:12px;}
+.price-box{background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:10px;padding:14px;color:#fff;text-align:center;}
+.price-box.green{background:linear-gradient(135deg,#00B87A,#00965f);}
+.price-box.gold{background:linear-gradient(135deg,#F59E0B,#D97706);}
+.price-box.dark{background:linear-gradient(135deg,#0A0F2E,#1a2040);}
+.pb-speed{font-size:11px;opacity:.75;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;}
+.pb-price{font-family:"Bebas Neue";font-size:38px;line-height:1;}
+.pb-unit{font-size:11px;opacity:.7;}
+.pb-desc{font-size:11px;opacity:.8;margin-top:6px;line-height:1.4;}
+.feat-list{display:flex;flex-direction:column;gap:6px;}
+.feat-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.5;}
+.feat-item::before{content:"✓";color:var(--green);font-weight:800;flex-shrink:0;margin-top:1px;}
+.warn-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);line-height:1.5;}
+.warn-item::before{content:"⚠️";flex-shrink:0;}
+.badge-new{background:rgba(0,184,122,.12);color:var(--green);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;letter-spacing:.5px;}
+.badge-hot{background:rgba(229,57,53,.1);color:var(--red);font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;}
+.compare-table{width:100%;border-collapse:collapse;font-size:12px;margin-top:12px;}
+.compare-table th{background:var(--blue);color:#fff;padding:8px 10px;text-align:left;font-weight:700;font-size:11px;letter-spacing:.5px;}
+.compare-table td{padding:8px 10px;border-bottom:1px solid var(--border);}
+.compare-table tr:nth-child(even) td{background:var(--bg);}
+.compare-table .price-cell{font-weight:800;color:var(--blue);}
+.highlight-box{background:var(--blue);color:#fff;border-radius:10px;padding:14px 16px;margin-top:12px;font-size:13px;line-height:1.6;}
+.highlight-box strong{display:block;font-family:"Bebas Neue";font-size:18px;letter-spacing:1px;margin-bottom:4px;}
 @media(max-width:680px){.sl,.nl{grid-template-columns:1fr;}.sb,.nsb{display:none;}}
 </style>
 </head>
@@ -323,6 +358,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
     <button class="pb" onclick="openNotas()" id="txt-notas">📝 Notas</button>
     <button class="pb" onclick="showScreen('comissoes')" id="txt-com">💶 Comissões</button>
     <button class="pb" onclick="showScreen('cvp')" style="min-width:100%;background:rgba(255,200,0,0.15);border-color:rgba(255,200,0,0.4);">📱 Consultar CVP</button>
+    <button class="pb" onclick="showScreen('formacao')" style="min-width:100%;background:rgba(0,255,150,0.1);border-color:rgba(0,255,150,0.3);">📚 Formação de Produto</button>
   </div>
   <div class="tl" id="txt-tools">Ferramentas DIGI</div>
   <div class="tr">
@@ -804,6 +840,15 @@ function renderCVP() {
   }).join('');
 }
 
+
+// ══ FORMAÇÃO ══
+function showFmod(i, btn) {
+  document.querySelectorAll('.fmod').forEach(m => m.classList.remove('active'));
+  document.querySelectorAll('.ftab').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('fmod-' + i);
+  if (el) el.classList.add('active');
+  if (btn) btn.classList.add('active');
+}
 // ══ INIT ══
 loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();renderCVP();
 applyLang();
@@ -835,5 +880,206 @@ if(currentUser){updateHU();showScreen("home");}else{showScreen("login");}
   <div id="cvpList"></div>
 </div>
 </div>
-</body>
-</html>
+
+<!-- FORMAÇÃO DE PRODUTO -->
+<div id="formacao" class="screen">
+<div class="hdr">
+  <div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Formação de Produto</span></div>
+  <button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button>
+</div>
+<div class="fw">
+
+  <!-- TABS -->
+  <div class="ftabs">
+    <button class="ftab active" onclick="showFmod(0,this)">🌐 Internet</button>
+    <button class="ftab" onclick="showFmod(1,this)">📺 TV</button>
+    <button class="ftab" onclick="showFmod(2,this)">📱 Móvel</button>
+    <button class="ftab" onclick="showFmod(3,this)">☎️ Voz Fixa</button>
+    <button class="ftab" onclick="showFmod(4,this)">📦 Pacotes</button>
+    <button class="ftab" onclick="showFmod(5,this)">📋 Requisitos</button>
+    <button class="ftab" onclick="showFmod(6,this)">⚡ Ativação</button>
+    <button class="ftab" onclick="showFmod(7,this)">💡 Vantagens</button>
+  </div>
+
+  <!-- 0: INTERNET FIBRA -->
+  <div class="fmod active" id="fmod-0">
+    <div class="fcard">
+      <div class="fcard-title">🌐 DIGI Net — Internet Fibra</div>
+      <div class="fcard-sub">Fibra óptica simétrica · Router gratuito · Instalação gratuita · 3 meses fidelização</div>
+      <div class="price-grid">
+        <div class="price-box">
+          <div class="pb-speed">500 Mbps</div>
+          <div class="pb-price">7€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">Router Zyxel EX3301<br>Wi-Fi 6</div>
+        </div>
+        <div class="price-box green">
+          <div class="pb-speed">1 Gbps ⭐</div>
+          <div class="pb-price">10€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">Router Huawei HG8147X6<br>Wi-Fi 6</div>
+        </div>
+        <div class="price-box dark">
+          <div class="pb-speed">10 Gbps PRO</div>
+          <div class="pb-price">15€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">Router ZTE 8748<br>Wi-Fi 7 · +20€ instalação</div>
+        </div>
+      </div>
+      <div class="feat-list">
+        <div class="feat-item">Velocidade SIMÉTRICA (download = upload)</div>
+        <div class="feat-item">Rede de fibra óptica própria DIGI</div>
+        <div class="feat-item">Router gratuito incluído</div>
+        <div class="feat-item">Instalação gratuita (exceto 10Gbps: +20€ único)</div>
+        <div class="feat-item">Fidelização apenas 3 meses (ou 0 meses +50€ instalação)</div>
+        <div class="feat-item">Premiada pela nPerf 2025 como a fibra mais rápida</div>
+      </div>
+      <div class="highlight-box" style="margin-top:12px;">
+        <strong>💡 ARGUMENTO DE VENDA</strong>
+        Fibra 1Gbps por 10€/mês vs MEO/NOS/Vodafone que cobram 30-50€ pela mesma velocidade. Poupança de +240€/ano só na fibra!
+      </div>
+    </div>
+  </div>
+
+  <!-- 1: TV -->
+  <div class="fmod" id="fmod-1">
+    <div class="fcard">
+      <div class="fcard-title">📺 DIGI TV</div>
+      <div class="fcard-sub">+80 canais todos em HD · Instalação gratuita</div>
+      <div class="price-grid">
+        <div class="price-box">
+          <div class="pb-speed">TV Isolada</div>
+          <div class="pb-price">12€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">+80 canais HD</div>
+        </div>
+        <div class="price-box green">
+          <div class="pb-speed">TV + Net + Ilimitado</div>
+          <div class="pb-price">10€</div>
+          <div class="pb-unit">/mês TV</div>
+          <div class="pb-desc">Desconto ao combinar</div>
+        </div>
+      </div>
+      <div style="margin-bottom:12px;">
+        <div style="font-weight:700;font-size:13px;margin-bottom:8px;">3 Tipos de Equipamento:</div>
+        <div class="fcard" style="margin-bottom:8px;padding:12px;">
+          <div style="font-weight:700;color:var(--blue);margin-bottom:4px;">CATV — Descodificador</div>
+          <div class="warn-item">Sem função Restart</div>
+          <div class="warn-item">Sem gravação</div>
+          <div class="feat-item">Sistema Android</div>
+        </div>
+        <div class="fcard" style="margin-bottom:8px;padding:12px;">
+          <div style="font-weight:700;color:var(--blue);margin-bottom:4px;">IPTV Box R1A</div>
+          <div class="feat-item">Função Restart (retroage 7 dias)</div>
+          <div class="warn-item">Sem gravação</div>
+          <div class="feat-item">Sistema Android</div>
+        </div>
+        <div class="fcard" style="padding:12px;">
+          <div style="display:flex;align-items:center;gap:8px;font-weight:700;color:var(--blue);margin-bottom:4px;">IPTV Box R2A <span class="badge-new">NOVO</span></div>
+          <div class="feat-item">Android TV 12 — instala apps (YouTube, Disney+, Netflix...)</div>
+          <div class="feat-item">14 dias de programação (7 passado + 6 futuro)</div>
+          <div class="feat-item">Continuar a Ver + Flashback</div>
+          <div class="feat-item">3 sessões simultâneas (Box + 2 dispositivos)</div>
+        </div>
+      </div>
+      <div class="highlight-box">
+        <strong>💡 ARGUMENTO DE VENDA</strong>
+        TV com mais de 80 canais HD incluída num pacote 3P a 25€/mês total (Net 1Gbps + Ilimitado + TV). Concorrência cobra 50-70€ pelo mesmo!
+      </div>
+    </div>
+  </div>
+
+  <!-- 2: MÓVEL -->
+  <div class="fmod" id="fmod-2">
+    <div class="fcard">
+      <div class="fcard-title">📱 DIGI Móvel — Preços Atualizados 2025</div>
+      <div class="fcard-sub">5G incluído · Chamadas nacionais ilimitadas · Dados acumuláveis · Sem fidelização</div>
+
+      <div style="font-weight:700;font-size:14px;margin-bottom:10px;color:var(--blue);">📦 Tarifário ILIMITADO</div>
+      <table class="compare-table">
+        <tr><th>Nº de Linhas</th><th>Sem Net</th><th>Com Net DIGI</th></tr>
+        <tr><td>1 número</td><td class="price-cell">6€/mês</td><td class="price-cell">5€/mês</td></tr>
+        <tr><td>2 números</td><td class="price-cell">5,5€/mês cada</td><td class="price-cell">4,5€/mês cada</td></tr>
+        <tr><td>3+ números</td><td class="price-cell">5€/mês cada</td><td class="price-cell">4€/mês cada</td></tr>
+      </table>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:16px;">Dados ilimitados 5G · Chamadas nacionais ilimitadas · 1000 SMS DIGI-DIGI · Roaming UE incluído</div>
+
+      <div style="font-weight:700;font-size:14px;margin-bottom:10px;color:var(--blue);">📊 Tarifários com Plafond de Dados</div>
+      <div class="price-grid">
+        <div class="price-box">
+          <div class="pb-speed">50 GB</div>
+          <div class="pb-price">4€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">Acumuláveis</div>
+        </div>
+        <div class="price-box">
+          <div class="pb-speed">100 GB</div>
+          <div class="pb-price">5€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">Acumuláveis</div>
+        </div>
+        <div class="price-box">
+          <div class="pb-speed">150 GB</div>
+          <div class="pb-price">6€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">Acumuláveis</div>
+        </div>
+        <div class="price-box green">
+          <div class="pb-speed">200 GB</div>
+          <div class="pb-price">9€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">+ 400 min internacionais</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:var(--muted);margin-top:6px;margin-bottom:12px;">Todos incluem: chamadas ilimitadas nacionais · 1000 SMS DIGI · dados acumulam mês a mês · 5G</div>
+
+      <div style="font-weight:700;font-size:14px;margin-bottom:8px;color:var(--blue);">📱 Pré-Pago</div>
+      <div class="feat-list" style="margin-bottom:12px;">
+        <div class="feat-item">Custo inicial 10€ (revertido em saldo)</div>
+        <div class="feat-item">Mesmos plafonds que pós-pago: 50/100/150/200 GB</div>
+        <div class="feat-item">Dados não consumidos acumulam se tarifário renovado</div>
+        <div class="feat-item">Sem limite de cartões por NIF</div>
+      </div>
+
+      <div class="highlight-box">
+        <strong>💡 ARGUMENTO DE VENDA</strong>
+        Ilimitado a 5€/mês com Net DIGI vs Vodafone/NOS que cobram 20-35€ pelo mesmo plano. 3+ linhas a 4€/mês cada — família com 4 telemóveis paga 16€/mês na DIGI, vs 80-120€ na concorrência!
+      </div>
+    </div>
+  </div>
+
+  <!-- 3: VOZ FIXA -->
+  <div class="fmod" id="fmod-3">
+    <div class="fcard">
+      <div class="fcard-title">☎️ DIGI Voz Fixa</div>
+      <div class="fcard-sub">Telefone fixo gratuito incluído · 2 opções de tarifário</div>
+      <div class="price-grid">
+        <div class="price-box green">
+          <div class="pb-speed">Chamadas Ilimitadas</div>
+          <div class="pb-price">2€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">Ilimitado fixos e móveis nacionais · Telefone grátis</div>
+        </div>
+        <div class="price-box">
+          <div class="pb-speed">Por Minuto</div>
+          <div class="pb-price">1€</div>
+          <div class="pb-unit">/mês</div>
+          <div class="pb-desc">1 cênt/min · Ilimitado DIGI-DIGI · Telefone grátis</div>
+        </div>
+      </div>
+      <div class="feat-list">
+        <div class="feat-item">Telefone fixo GRATUITO incluído em ambos</div>
+        <div class="feat-item">Chamadas ilimitadas entre números DIGI no tarifário por minuto</div>
+        <div class="feat-item">Fidelização 3 meses</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4: PACOTES -->
+  <div class="fmod" id="fmod-4">
+    <div class="fcard">
+      <div class="fcard-title">📦 Exemplos de Pacotes Completos</div>
+      <div class="fcard-sub">Preços atualizados — Abril 2025</div>
+
+      <div class="price-grid">
+        <div class="pric
