@@ -638,12 +638,7 @@ function showScreen(id){
   var t=document.getElementById(id);
   if(t)t.classList.add("active");
   window.scrollTo(0,0);
-  if(id==="formacao"){
-    document.querySelectorAll(".fmod").forEach(function(m){m.style.display="none";m.classList.remove("active");});
-    var first=document.getElementById("fmod-0");
-    if(first){first.style.display="block";first.classList.add("active");}
-    document.querySelectorAll(".ftab").forEach(function(tb,i){tb.classList.toggle("active",i===0);});
-  }
+  if(id==="formacao"){ fTab(0); }
 }
 
 // ══ STATE ══
@@ -855,14 +850,27 @@ function renderCVP() {
 
 
 
-// ══ ACCORDION ══
-function toggleAcc(btn) {
-  var body = btn.nextElementSibling;
-  var icon = btn.querySelector('span:last-child');
-  var isOpen = body.style.display === 'block';
-  body.style.display = isOpen ? 'none' : 'block';
-  icon.textContent = isOpen ? '+' : '−';
+
+// ══ FORMAÇÃO TABS ══
+function fTab(i) {
+  for(var n=0;n<8;n++){
+    var p=document.getElementById('fp'+n);
+    var t=document.getElementById('ft'+n);
+    if(p) p.style.display = (n===i)?'block':'none';
+    if(t){
+      if(n===i){
+        t.style.background='var(--blue)';
+        t.style.borderColor='var(--blue)';
+        t.style.color='#fff';
+      } else {
+        t.style.background='var(--white)';
+        t.style.borderColor='var(--border)';
+        t.style.color='var(--muted)';
+      }
+    }
+  }
 }
+
 // ══ INIT ══
 loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();renderCVP();
 applyLang();
@@ -901,127 +909,111 @@ if(currentUser){updateHU();showScreen("home");}else{showScreen("login");}
   <div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Formação de Produto</span></div>
   <button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button>
 </div>
-<div style="max-width:680px;margin:0 auto;padding:16px;overflow-y:auto;">
+<div style="max-width:680px;margin:0 auto;padding:16px;">
 
-  <!-- ACCORDION SECTIONS -->
+  <!-- TABS ROW -->
+  <div id="ftabs" style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+    <button onclick="fTab(0)" id="ft0" style="background:var(--blue);border:1px solid var(--blue);color:#fff;font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">🌐 Internet</button>
+    <button onclick="fTab(1)" id="ft1" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">📺 TV</button>
+    <button onclick="fTab(2)" id="ft2" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">📱 Móvel</button>
+    <button onclick="fTab(3)" id="ft3" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">☎️ Voz Fixa</button>
+    <button onclick="fTab(4)" id="ft4" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">📦 Pacotes</button>
+    <button onclick="fTab(5)" id="ft5" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">📋 Requisitos</button>
+    <button onclick="fTab(6)" id="ft6" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">⚡ Ativação</button>
+    <button onclick="fTab(7)" id="ft7" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;white-space:nowrap;">💡 Vantagens</button>
+  </div>
 
-  <!-- 1. INTERNET -->
-  <div style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;">
-    <button onclick="toggleAcc(this)" style="width:100%;background:none;border:none;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:Inter;font-size:15px;font-weight:700;color:var(--text);">
-      <span>🌐 Internet Fibra</span><span style="color:var(--blue);font-size:20px;">+</span>
-    </button>
-    <div class="acc-body" style="display:none;padding:0 16px 16px;">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Fibra óptica simétrica · Router gratuito · 3 meses fidelização</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+  <!-- PANEL 0: INTERNET -->
+  <div id="fp0">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;">
+      <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">🌐 DIGI Net — Internet Fibra</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">Fibra óptica simétrica · Router gratuito · Instalação gratuita · 3 meses fidelização</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
         <div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;">500 Mbps</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">7€</div>
+          <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">500 Mbps</div>
+          <div style="font-family:'Bebas Neue';font-size:44px;line-height:1;">7€</div>
           <div style="font-size:11px;opacity:.7;">/mês</div>
-          <div style="font-size:11px;opacity:.8;margin-top:4px;">Zyxel EX3301 · Wi-Fi 6</div>
+          <div style="font-size:11px;opacity:.8;margin-top:6px;">Zyxel EX3301 · Wi-Fi 6</div>
         </div>
         <div style="background:#00B87A;color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;">1 Gbps ⭐</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">10€</div>
+          <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">1 Gbps ⭐</div>
+          <div style="font-family:'Bebas Neue';font-size:44px;line-height:1;">10€</div>
           <div style="font-size:11px;opacity:.7;">/mês</div>
-          <div style="font-size:11px;opacity:.8;margin-top:4px;">Huawei HG8147X6 · Wi-Fi 6</div>
+          <div style="font-size:11px;opacity:.8;margin-top:6px;">Huawei HG8147X6 · Wi-Fi 6</div>
         </div>
       </div>
-      <div style="background:#0A0F2E;color:#fff;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px;">
-        <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;">10 Gbps PRO</div>
-        <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">15€</div>
-        <div style="font-size:11px;opacity:.7;">/mês + 20€ instalação (único)</div>
-        <div style="font-size:11px;opacity:.8;margin-top:4px;">ZTE 8748 · Wi-Fi 7</div>
+      <div style="background:#0A0F2E;color:#fff;border-radius:10px;padding:14px;text-align:center;margin-bottom:14px;">
+        <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;">10 Gbps PRO</div>
+        <div style="font-family:'Bebas Neue';font-size:44px;line-height:1;">15€</div>
+        <div style="font-size:11px;opacity:.7;">/mês + 20€ instalação (custo único)</div>
+        <div style="font-size:11px;opacity:.8;margin-top:6px;">ZTE 8748 · Wi-Fi 7</div>
       </div>
-      <div style="font-size:13px;color:var(--text);line-height:1.8;">
+      <div style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:12px;">
         ✅ Velocidade SIMÉTRICA (download = upload)<br>
         ✅ Rede de fibra óptica própria DIGI<br>
         ✅ Router gratuito incluído<br>
         ✅ Instalação gratuita (exceto 10Gbps: +20€ único)<br>
         ✅ Fidelização apenas 3 meses<br>
-        ✅ Premiada nPerf 2025 — fibra mais rápida
+        ✅ Premiada nPerf 2025 — fibra mais rápida de Portugal
       </div>
-      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:12px;margin-top:12px;font-size:13px;">
-        💡 <strong>Argumento:</strong> Fibra 1Gbps a 10€/mês vs MEO/NOS/Vodafone que cobram 30-50€. Poupança +240€/ano só na fibra!
+      <div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;font-size:13px;line-height:1.5;">
+        💡 <strong>Argumento:</strong> Fibra 1Gbps a 10€/mês vs MEO/NOS/Vodafone que cobram 30-50€. Poupança de +240€/ano só na fibra!
       </div>
     </div>
   </div>
 
-  <!-- 2. TV -->
-  <div style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;">
-    <button onclick="toggleAcc(this)" style="width:100%;background:none;border:none;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:Inter;font-size:15px;font-weight:700;color:var(--text);">
-      <span>📺 TV DIGI</span><span style="color:var(--blue);font-size:20px;">+</span>
-    </button>
-    <div class="acc-body" style="display:none;padding:0 16px 16px;">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">+80 canais HD · Instalação gratuita</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
+  <!-- PANEL 1: TV -->
+  <div id="fp1" style="display:none;">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;">
+      <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📺 DIGI TV</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">+80 canais todos em HD · Instalação gratuita</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
         <div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;">TV Isolada</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">12€</div>
+          <div style="font-size:10px;opacity:.75;margin-bottom:4px;">TV Isolada</div>
+          <div style="font-family:'Bebas Neue';font-size:44px;line-height:1;">12€</div>
           <div style="font-size:11px;opacity:.7;">/mês</div>
         </div>
         <div style="background:#00B87A;color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;">Com Net+Ilimitado</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">10€</div>
-          <div style="font-size:11px;opacity:.7;">/mês TV</div>
+          <div style="font-size:10px;opacity:.75;margin-bottom:4px;">Net + Ilimitado + TV</div>
+          <div style="font-family:'Bebas Neue';font-size:44px;line-height:1;">10€</div>
+          <div style="font-size:11px;opacity:.7;">/mês (TV)</div>
         </div>
       </div>
-      <div style="font-size:13px;color:var(--text);font-weight:700;margin-bottom:8px;">3 tipos de equipamento:</div>
-      <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:6px;font-size:13px;">
-        <b>CATV — Descodificador</b><br>
-        <span style="color:var(--muted);">⚠️ Sem Restart · ⚠️ Sem gravação · Sistema Android</span>
+      <div style="font-weight:700;font-size:13px;margin-bottom:10px;">3 Tipos de Equipamento:</div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;font-size:13px;">
+        <div style="font-weight:700;color:var(--blue);margin-bottom:4px;">CATV — Descodificador</div>
+        ⚠️ Sem Restart · ⚠️ Sem gravação · Android
       </div>
-      <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:6px;font-size:13px;">
-        <b>IPTV Box R1A</b><br>
-        <span style="color:var(--muted);">✅ Restart 7 dias · ⚠️ Sem gravação · Android</span>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:8px;font-size:13px;">
+        <div style="font-weight:700;color:var(--blue);margin-bottom:4px;">IPTV Box R1A</div>
+        ✅ Restart 7 dias · ⚠️ Sem gravação · Android
       </div>
-      <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:12px;font-size:13px;">
-        <b>IPTV Box R2A 🆕</b><br>
-        <span style="color:var(--muted);">✅ Android TV 12 (YouTube, Netflix, Disney+)<br>✅ 14 dias programação · ✅ 3 sessões simultâneas</span>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;margin-bottom:14px;font-size:13px;">
+        <div style="font-weight:700;color:var(--blue);margin-bottom:4px;">IPTV Box R2A 🆕</div>
+        ✅ Android TV 12 (YouTube, Netflix, Disney+...)<br>
+        ✅ 14 dias de programação · ✅ 3 sessões simultâneas
       </div>
-      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:12px;font-size:13px;">
-        💡 Pacote 3P: Net 1Gbps + TV + 1 Ilimitado = <strong>25€/mês</strong>. Concorrência cobra 60-80€!
+      <div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;font-size:13px;">
+        💡 Pacote 3P: Net 1Gbps + TV + 1 Ilimitado = <strong>25€/mês total</strong>. Concorrência cobra 60-80€!
       </div>
     </div>
   </div>
 
-  <!-- 3. MÓVEL -->
-  <div style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;">
-    <button onclick="toggleAcc(this)" style="width:100%;background:none;border:none;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:Inter;font-size:15px;font-weight:700;color:var(--text);">
-      <span>📱 Móvel DIGI</span><span style="color:var(--blue);font-size:20px;">+</span>
-    </button>
-    <div class="acc-body" style="display:none;padding:0 16px 16px;">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">5G · Chamadas ilimitadas · Dados acumuláveis · Sem fidelização</p>
-      
-      <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📦 ILIMITADO (5G + chamadas + dados)</div>
-      <div style="background:var(--bg);border-radius:8px;overflow:hidden;margin-bottom:12px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:8px;">
-          <div>Linhas</div><div style="text-align:center;">Sem Net</div><div style="text-align:right;">Com Net</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;font-size:13px;border-bottom:1px solid var(--border);">
-          <div>1 número</div><div style="text-align:center;font-weight:700;color:var(--blue);">6€</div><div style="text-align:right;font-weight:700;color:#00B87A;">5€</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;font-size:13px;border-bottom:1px solid var(--border);background:var(--pale);">
-          <div>2 números</div><div style="text-align:center;font-weight:700;color:var(--blue);">5,5€</div><div style="text-align:right;font-weight:700;color:#00B87A;">4,5€</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;font-size:13px;">
-          <div>3+ números</div><div style="text-align:center;font-weight:700;color:var(--blue);">5€</div><div style="text-align:right;font-weight:700;color:#00B87A;">4€</div>
-        </div>
-      </div>
+  <!-- PANEL 2: MÓVEL -->
+  <div id="fp2" style="display:none;">
+    <div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:10px;">
+      <div style="font-family:'Bebas Neue';font-size:24px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📱 DIGI Móvel</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:14px;">5G · Chamadas nacionais ilimitadas · Dados acumuláveis · Sem fidelização</div>
 
-      <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📊 Plafond de Dados (acumuláveis)</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">50 GB</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">4€</div>
+      <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📦 Tarifário ILIMITADO</div>
+      <div style="background:var(--bg);border-radius:8px;overflow:hidden;margin-bottom:14px;font-size:13px;">
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;background:var(--blue);color:#fff;font-weight:700;padding:9px 10px;font-size:11px;">
+          <div>Nº Linhas</div><div style="text-align:center;">Sem Net</div><div style="text-align:center;">Com Net DIGI</div>
         </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">100 GB</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">5€</div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;padding:9px 10px;border-bottom:1px solid var(--border);">
+          <div>1 número</div><div style="text-align:center;font-weight:800;color:var(--blue);">6€</div><div style="text-align:center;font-weight:800;color:#00B87A;">5€</div>
         </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">150 GB</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">6€</div>
+        <div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;padding:9px 10px;border-bottom:1px solid var(--border);background:var(--pale);">
+          <div>2 números</div><div style="text-align:center;font-weight:800;color:var(--blue);">5,5€</div><div style="text-align:center;font-weight:800;color:#00B87A;">4,5€</div>
         </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">200 GB + 400 min int.</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">9€</d
+        <div style="displa
