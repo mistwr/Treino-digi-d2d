@@ -54,7 +54,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 .pb:hover{background:rgba(255,255,255,.16);}
 .tl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:10px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);}
 .tr{display:flex;gap:8px;margin-bottom:16px;}
-.tb{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:Inter;font-size:10px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.tb{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:Inter;font-size:10px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;}
 .tb:hover{background:rgba(255,255,255,.12);}
 .tb span:first-child{font-size:18px;}
 /* INSTALL BTN */
@@ -365,18 +365,18 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
     <button class="pb" onclick="showScreen('cvp')" style="min-width:100%;background:rgba(255,200,0,0.15);border-color:rgba(255,200,0,0.4);">📱 Consultar CVP</button>
     <button class="pb" onclick="showScreen('formacao')" style="min-width:100%;background:rgba(0,255,150,0.1);border-color:rgba(0,255,150,0.3);">📚 Formação de Produto</button>
   </div>
-  <div class="tl" id="txt-tools" style="margin-top:20px;">Ferramentas DIGI</div>
+  <div class="tl" id="txt-tools">Ferramentas DIGI</div>
   <div class="tr">
-    <button class="tb" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')"><span>🔗</span><span>DealerCare</span></button>
-    <button class="tb" onclick="window.open('https://digiportugal.addingplus.net/menu','_blank')"><span>🏠</span><span>Visitas</span></button>
-    <button class="tb" onclick="window.open('https://quero-aderir-digi-pt.vercel.app/','_blank')"><span>📊</span><span>Simulador</span></button>
+    <button class="tb" onclick="openLink('https://digi-accounts-sso.digimobil.es/v2/login')"><span>🔗</span><span>DealerCare</span></button>
+    <button class="tb" onclick="openLink('https://digiportugal.addingplus.net/menu')"><span>🏠</span><span>Visitas</span></button>
+    <button class="tb" onclick="openLink('https://quero-aderir-digi-pt.vercel.app/')"><span>📊</span><span>Simulador</span></button>
   </div>
-  <div class="tr" style="margin-top:6px;">
-    <button class="tb" onclick="window.open('https://play.google.com/store/apps/details?id=ro.digionline.tv','_blank')"><span>📺</span><span>DIGI TV</span></button>
-    <button class="tb" onclick="showScreen('canais')"><span>📡</span><span>Canais TV</span></button>
-    <button class="tb" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')"><span>🔐</span><span>2FA</span></button>
+  <div class="tr">
+    <button class="tb" onclick="openLink('https://play.google.com/store/apps/details?id=ro.digionline.tv')"><span>📺</span><span>DIGI TV</span></button>
+    <button class="tb" onclick="openLink('https://www.digi.pt/tv/canais')"><span>📡</span><span>Canais TV</span></button>
+    <button class="tb" onclick="openLink('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2')"><span>🔐</span><span>2FA</span></button>
   </div>
-  <!-- INSTALL BUTTON -->
+    <!-- INSTALL BUTTON -->
   <div class="install-row" style="margin-top:16px;">
     <button class="install-btn-main" onclick="openInstallModal()" id="txt-install">
       📲 Instalar App no Telemóvel
@@ -609,51 +609,6 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 </div>
 </div>
 
-<!-- CANAIS TV -->
-<div id="canais" class="screen">
-<div class="hdr">
-  <div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Canais TV</span></div>
-  <button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button>
-</div>
-<div style="max-width:680px;margin:0 auto;padding:16px;">
-
-  <!-- Header -->
-  <div style="background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:14px;padding:18px;color:#fff;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
-    <div>
-      <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:4px;">📡 GRELHA DE CANAIS</div>
-      <div style="font-size:12px;opacity:.8;">+80 canais HD · Atualizado 2025</div>
-    </div>
-    <button onclick="window.open('https://www.digi.pt/tv/canais','_blank')" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:Inter;font-size:11px;font-weight:700;padding:8px 12px;border-radius:8px;cursor:pointer;">Ver oficial →</button>
-  </div>
-
-  <!-- DIGI TV App buttons -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
-    <button onclick="window.open('https://play.google.com/store/apps/details?id=ro.digionline.tv','_blank')" style="background:#00B87A;color:#fff;border:none;border-radius:10px;padding:12px;font-family:Inter;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-      🤖 Android — Play Store
-    </button>
-    <button onclick="window.open('https://apps.apple.com/pt/app/digi-tv/id1437386598','_blank')" style="background:#0A0F2E;color:#fff;border:none;border-radius:10px;padding:12px;font-family:Inter;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
-      🍎 iPhone — App Store
-    </button>
-  </div>
-
-  <!-- Filter tabs -->
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="canaisTabs">
-    <button onclick="filterCanais('todos',this)" style="background:var(--blue);border:1px solid var(--blue);color:#fff;font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">Todos</button>
-    <button onclick="filterCanais('generalistas',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📺 Generalistas</button>
-    <button onclick="filterCanais('informacao',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📰 Informação</button>
-    <button onclick="filterCanais('desporto',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">⚽ Desporto</button>
-    <button onclick="filterCanais('infantil',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">👶 Infantil</button>
-    <button onclick="filterCanais('filmes',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">🎬 Filmes</button>
-    <button onclick="filterCanais('musica',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">🎵 Música</button>
-    <button onclick="filterCanais('lifestyle',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">🏠 Lifestyle</button>
-  </div>
-
-  <!-- Channels grid -->
-  <div id="canaisGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;"></div>
-
-</div>
-</div>
-
 
 <script>
 // ══ TRANSLATIONS ══
@@ -803,4 +758,16 @@ function deleteNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if
 function setNF(f,btn){notaFilter=f;document.querySelectorAll(".ntb").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");renderNL();}
 function renderNL(){const search=(document.getElementById("notasSearch")?.value||"").toLowerCase();const fl=notas.filter(n=>{return(!notaFilter||n.tag===notaFilter)&&(!search||n.title.toLowerCase().includes(search)||n.body.toLowerCase().includes(search));});const list=document.getElementById("notasList");if(!list)return;if(!fl.length){list.innerHTML=`<div style="text-align:center;padding:28px 12px;color:var(--muted);font-size:12px;">${notas.length?"—":"+"}</div>`;return;}const tm={nota:"📝",relatorio:"📊",objetivo:"🎯",cliente:"👤"};list.innerHTML=fl.map(n=>`<div class="nitem ${n.id==curNota?"active":""}" data-id="${n.id}" onclick="selNota(${n.id})"><div class="nit">${n.title||"—"}</div><div class="nip">${(n.body||"").slice(0,55)||"..."}</div><div class="nim"><span class="ntag ntag-${n.tag}">${tm[n.tag]||"📝"} ${n.tag}</span><span>${n.date}</span></div></div>`).join("");}
 function exportNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;const blob=new Blob([n.title+"\n"+"─".repeat(40)+"\n"+n.body+"\n\n"+n.date+" · DIGI Elite Trainer"],{type:"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(n.title||"nota")+".txt";a.click();}
-function copyNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;navigator.clipboard.writeText(n.title+"\n\n"+n.body).catch(()=>{});event.target.textContent="✅";setTimeout(()=>event.target.textContent="📋 Copiar",2000)
+function copyNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;navigator.clipboard.writeText(n.title+"\n\n"+n.body).catch(()=>{});event.target.textContent="✅";setTimeout(()=>event.target.textContent="📋 Copiar",2000);}
+function shareNotaWA(){const n=notas.find(x=>x.id==curNota);if(!n)return;window.open("https://wa.me/?text="+encodeURIComponent("*"+n.title+"*\n\n"+n.body+"\n\n_"+n.date+" · DIGI_"),"_blank");}
+function openRelModal(){document.getElementById("rd").value=new Date().toISOString().split("T")[0];if(currentUser)document.getElementById("rv").value=currentUser.name;document.getElementById("relModal").classList.add("open");}
+function closeRelModal(){document.getElementById("relModal").classList.remove("open");}
+function gerarRel(){const g=id=>document.getElementById(id).value;const p=+g("rp")||0,ab=+g("ra")||0,ao=+g("rao")||0,co=+g("rc")||0,ad=+g("rads")||0;const body=`📅 ${g("rd")}\n👤 ${g("rv")||"—"}\n📍 ${g("rz")||"—"}\n\n${"━".repeat(20)}\nFUNIL\n${"━".repeat(20)}\n🚪 Portas: ${p}\n🔓 Aberturas: ${ab} (${p?Math.round(ab/p*100):0}%)\n💬 Abordagens: ${ao} (${ab?Math.round(ao/ab*100):0}%)\n🎯 Controlos: ${co} (${ao?Math.round(co/ao*100):0}%)\n✅ Adesões: ${ad} (${co?Math.round(ad/co*100):0}%)\n\n${ad>=4?"🏆 META ATINGIDA!":"Faltam "+Math.max(0,4-ad)+"/4"}${g("ro")?"\n\n📋 "+g("ro"):""}`;newNota("relatorio");setTimeout(()=>{document.getElementById("notaTitleInput").value="Relatório "+new Date(g("rd")).toLocaleDateString("pt-PT")+" · "+(g("rz")||"—");document.getElementById("notaBodyInput").value=body;document.getElementById("notaTag").value="relatorio";saveNota();},80);closeRelModal();}
+
+// ══ COMISSÕES ══
+const COM=[{l:"até 5",tv:6,f:6,m:2,fx:1,min:0,max:5},{l:"6 até 10",tv:6,f:8,m:2,fx:1,min:6,max:10},{l:"11 até 15",tv:6,f:10,m:2,fx:1,min:11,max:15},{l:"16 até 20",tv:6,f:15,m:2,fx:1,min:16,max:20},{l:"21 até 50",tv:6,f:20,m:2,fx:1,min:21,max:50},{l:"51 até 75",tv:6,f:20,m:2.5,fx:1,min:51,max:75},{l:"mais de 75",tv:6,f:20,m:3,fx:1,min:76,max:9999}];
+function buildCom(){const el=document.getElementById("comRows");if(!el)return;const fmt=v=>v%1===0?v+"€":v.toFixed(1)+"€";el.innerHTML=COM.map((r,i)=>`<div class="ctd2" style="background:${i%2?"var(--bg)":"var(--white)"}"><div class="ctdc" style="font-size:12px;font-weight:700;color:var(--text);text-align:left;padding-left:14px;">${r.l}</div><div class="ctdc">${fmt(r.tv)}</div><div class="ctdc">${fmt(r.f)}</div><div class="ctdc">${fmt(r.m)}</div><div class="ctdc">${fmt(r.fx)}</div></div>`).join("");}
+function calcCom(){const g=id=>parseInt(document.getElementById(id)?.value)||0;const tot=g("c-ades"),tv=g("c-tv"),fib=g("c-fib"),mov=g("c-mov"),fix=g("c-fix");const res=document.getElementById("calcResult");if(!res)return;if(!tot&&!tv&&!fib&&!mov&&!fix){res.style.display="none";return;}const e=COM.find(r=>tot>=r.min&&tot<=r.max)||COM[0];const total=(tv*e.tv)+(fib*e.f)+(mov*e.m)+(fix*e.fx);res.style.display="block";document.getElementById("cr-val").textContent=total.toFixed(2).replace(".",",")+"\xa0€";document.getElementById("cr-det").innerHTML="Escalão: <strong>"+e.l+"</strong> · "+[tv&&`${tv}×TV(${e.tv}€)`,fib&&`${fib}×Fibra(${e.f}€)`,mov&&`${mov}×Móvel(${e.m}€)`,fix&&`${fix}×Fixo(${e.fx}€)`].filter(Boolean).join(" + ");}
+
+// ══ TEORIA ══
+const TEORIA=[{t:"Filosofia",s:"Consultor vs Vendedor",bl:[{i:"🎯",t:"Objetivo",b:"O vendedor procura aprovação. O consultor diagnostica e resolve um problema real."},{i:"📊",t:"Modelo Matemático",b:"80 portas → 40 aberturas → 20 abordagens → 10 controlos → 4 adesões."},{i:"💎",t:"Responsabilidade",b:"O resultado depende da tua execução. Sem desculpas."}],q:'"Quem ouve melhor, vende melhor."'},{t:"Abordagem",s:"Os primeiros 20 segundos",bl:[{i:"🧍",t:"Linguagem Corporal",b:"Postura aberta. Passo atrás após bater — dá espaço, elimina ameaça."},{i:"🗣️",t:"Tom",b:"Fala mais devagar. Tom firme. Usa pausas."},{i:"✅",t:"Script",b:'"Bom dia, sou da DIGI. Posso mostrar-lhe em 2 min quanto pode poupar?"'}],q:'"De desconhecido a consultor de confiança."'},{t:"Diagnóstico",s:"Escuta ativa",bl:[{i:"❓",t:"Perguntas",b:"1. Operador? 2. Quanto paga? 3. O que menos satisfaz? 4. Fidelização? 5. Telemóveis? 6. Decisor?"},{i:"🤫",t:"Silêncio",b:"Após pergunta-chave, pausa. O cliente revela a dor real."},{i:"👤",t:"Decisor",b:"Confirma cedo quem assina."}],q:'"O diagnóstico é escuta ativa."'},{t:"Objeções",s:"Reenquadramento honesto",bl:[{i:"🆕",t:'"DIGI é nova"',b:'Rede própria, premiada nPerf 2025. Posso mostrar os testes.'},{i:"📋",t:'"Mudar dá trabalho"',b:'Trat
