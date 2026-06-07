@@ -4,6 +4,9 @@
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#002BFF">
 <meta name="version" content="2.1.0">
 <meta name="mobile-web-app-capable" content="yes">
@@ -794,5 +797,4 @@ function openNotas(){loadNotas();renderNL();showScreen("notas");selNota(null);}
 function newNota(tag){const n={id:Date.now(),title:"",body:"",tag:tag||"nota",date:new Date().toLocaleDateString("pt-PT"),ts:Date.now()};notas.unshift(n);saveNotas();renderNL();selNota(n.id);setTimeout(()=>{const el=document.getElementById("notaTitleInput");if(el)el.focus();},100);}
 function selNota(id){curNota=id;document.querySelectorAll(".nitem").forEach(el=>el.classList.toggle("active",el.dataset.id==id));const empty=document.getElementById("notasEmpty");const inner=document.getElementById("notasInner");if(!id){empty.style.display="flex";inner.style.display="none";return;}const n=notas.find(x=>x.id==id);if(!n)return;empty.style.display="none";inner.style.display="flex";document.getElementById("notaTitleInput").value=n.title;document.getElementById("notaBodyInput").value=n.body;document.getElementById("notaTag").value=n.tag||"nota";}
 function saveNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!n)return;n.title=document.getElementById("notaTitleInput").value;n.body=document.getElementById("notaBodyInput").value;n.tag=document.getElementById("notaTag").value;n.ts=Date.now();notas=[n,...notas.filter(x=>x.id!==curNota)];saveNotas();renderNL();clearTimeout(saveTO);const s=document.getElementById("notaSaved");s.style.opacity="1";saveTO=setTimeout(()=>s.style.opacity="0",1500);}
-function deleteNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!confirm("Apagar?"))return;notas=notas.filter(x=>x.id!==curNota);saveNotas();renderNL();selNota(null);}
-function setNF(f,btn){notaFilter=f;document.querySelectorAll(".ntb").forEach(b=>b.classList.remove("active"));if(bt
+function deleteNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!confirm("Apagar?"))return;notas=notas.filter(x=>x.id
