@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="theme-color" content="#002BFF">
 <meta name="version" content="2.1.0">
 <meta name="mobile-web-app-capable" content="yes">
@@ -50,7 +54,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 .pb:hover{background:rgba(255,255,255,.16);}
 .tl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:10px;padding-top:16px;border-top:1px solid rgba(255,255,255,.1);}
 .tr{display:flex;gap:8px;margin-bottom:16px;}
-.tb{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:Inter;font-size:10px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.tb{flex:1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);color:rgba(255,255,255,.7);font-family:Inter;font-size:10px;font-weight:700;padding:10px 6px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;text-decoration:none;}
 .tb:hover{background:rgba(255,255,255,.12);}
 .tb span:first-child{font-size:18px;}
 /* INSTALL BTN */
@@ -336,7 +340,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 <body>
 
 <!-- HOME -->
-<div id="home" class="screen">
+<div id="home" class="screen" style="display:flex;">
 <div class="hw">
   <div class="htop">
     <div style="display:flex;align-items:center;gap:10px;"><div class="lb">DIGI</div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;">Elite Trainer</div></div>
@@ -363,9 +367,14 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
   </div>
   <div class="tl" id="txt-tools">Ferramentas DIGI</div>
   <div class="tr">
-    <button class="tb" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')"><span>🔗</span><span>DealerCare</span></button>
-    <button class="tb" onclick="window.open('https://quero-aderir-digi-pt.vercel.app/','_blank')"><span>📊</span><span>Simulador</span></button>
-    <button class="tb" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')"><span>🔐</span><span>2FA</span></button>
+    <a href="https://digi-accounts-sso.digimobil.es/v2/login" target="_blank" rel="noopener" class="tb"><span>🔗</span><span>DealerCare</span></a>
+    <a href="https://digiportugal.addingplus.net/menu" target="_blank" rel="noopener" class="tb"><span>🏠</span><span>Visitas</span></a>
+    <a href="https://quero-aderir-digi-pt.vercel.app/" target="_blank" rel="noopener" class="tb"><span>📊</span><span>Simulador</span></a>
+  </div>
+  <div class="tr" style="margin-top:6px;">
+    <a href="https://play.google.com/store/apps/details?id=ro.digionline.tv" target="_blank" rel="noopener" class="tb"><span>📺</span><span>DIGI TV</span></a>
+    <a href="https://www.digi.pt/tv/canais" target="_blank" rel="noopener" class="tb"><span>📡</span><span>Canais TV</span></a>
+    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener" class="tb"><span>🔐</span><span>2FA</span></a>
   </div>
   <!-- INSTALL BUTTON -->
   <div class="install-row" style="margin-top:16px;">
@@ -560,6 +569,92 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 <div class="qw2"><div class="qprog" id="quizProg"></div><div class="qq" id="quizQ"></div><div class="qopts" id="quizOpts"></div><div class="qfb" id="quizFb"></div><button class="btn btn-f" id="quizNext" style="display:none;margin-top:14px;" onclick="nextQuiz()">Próxima →</button></div>
 </div>
 
+
+<!-- FORMAÇÃO DE PRODUTO -->
+<div id="formacao" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Formação de Produto</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
+<div style="padding:16px;overflow-y:auto;"><div style="max-width:680px;margin:0 auto;">
+<div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+<button onclick="fTab(0)" id="ft0" style="background:var(--blue);border:1px solid var(--blue);color:#fff;font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">🌐 Internet</button>
+<button onclick="fTab(1)" id="ft1" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📺 TV</button>
+<button onclick="fTab(2)" id="ft2" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📱 Móvel</button>
+<button onclick="fTab(3)" id="ft3" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">☎️ Voz Fixa</button>
+<button onclick="fTab(4)" id="ft4" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📦 Pacotes</button>
+<button onclick="fTab(5)" id="ft5" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📋 Requisitos</button>
+<button onclick="fTab(6)" id="ft6" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">⚡ Ativação</button>
+<button onclick="fTab(7)" id="ft7" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:7px 14px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">💡 Vantagens</button>
+</div>
+<div id="fp0"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">🌐 Internet Fibra</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Fibra simétrica · Router gratuito · 3 meses fidelização</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;"><div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">500 MBPS</div><div style="font-family:'Bebas Neue';font-size:42px;line-height:1;">7€</div><div style="font-size:11px;opacity:.7;">/mês</div><div style="font-size:11px;margin-top:5px;opacity:.8;">Zyxel EX3301 · Wi-Fi 6</div></div><div style="background:#00B87A;color:#fff;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">1 GBPS ⭐</div><div style="font-family:'Bebas Neue';font-size:42px;line-height:1;">10€</div><div style="font-size:11px;opacity:.7;">/mês</div><div style="font-size:11px;margin-top:5px;opacity:.8;">Huawei HG8147X6 · Wi-Fi 6</div></div></div><div style="background:#0A0F2E;color:#fff;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">10 GBPS PRO</div><div style="font-family:'Bebas Neue';font-size:42px;line-height:1;">15€</div><div style="font-size:11px;opacity:.7;">/mês + 20€ instalação único</div><div style="font-size:11px;margin-top:5px;opacity:.8;">ZTE 8748 · Wi-Fi 7</div></div><div style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:12px;">✅ Velocidade SIMÉTRICA<br>✅ Rede fibra óptica própria DIGI<br>✅ Router gratuito incluído<br>✅ Instalação gratuita (exceto 10Gbps +20€)<br>✅ Fidelização apenas 3 meses<br>✅ nPerf 2025 — fibra mais rápida de Portugal</div><div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;font-size:13px;">💡 Fibra 1Gbps a 10€/mês vs MEO/NOS/Vodafone 30-50€. Poupança +240€/ano!</div></div></div>
+<div id="fp1" style="display:none;"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📺 DIGI TV</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">+80 canais HD · Instalação gratuita</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;"><div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">TV Isolada</div><div style="font-family:'Bebas Neue';font-size:42px;line-height:1;">12€</div><div style="font-size:11px;opacity:.7;">/mês</div></div><div style="background:#00B87A;color:#fff;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">Net+Ilimitado+TV</div><div style="font-family:'Bebas Neue';font-size:42px;line-height:1;">10€</div><div style="font-size:11px;opacity:.7;">/mês TV</div></div></div><div style="font-weight:700;font-size:13px;margin-bottom:8px;">3 Tipos de Equipamento:</div><div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:6px;font-size:13px;"><b style="color:var(--blue);">CATV</b> — ⚠️ Sem Restart · ⚠️ Sem gravação</div><div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:6px;font-size:13px;"><b style="color:var(--blue);">IPTV Box R1A</b> — ✅ Restart 7 dias · ⚠️ Sem gravação</div><div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:12px;font-size:13px;"><b style="color:var(--blue);">IPTV Box R2A 🆕</b> — ✅ Android TV 12 · ✅ 14 dias · ✅ 3 sessões</div><div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;font-size:13px;">💡 3P: Net 1Gbps + TV + 1 Ilimitado = <b>25€/mês</b>. Concorrência cobra 60-80€!</div></div></div>
+<div id="fp2" style="display:none;"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📱 Móvel DIGI</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">5G · Chamadas ilimitadas · Dados acumuláveis · Sem fidelização</div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📦 ILIMITADO</div><div style="background:var(--bg);border-radius:8px;overflow:hidden;margin-bottom:12px;font-size:13px;"><div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;background:var(--blue);color:#fff;font-weight:700;padding:8px 10px;font-size:11px;"><div>Linhas</div><div style="text-align:center;">Sem Net</div><div style="text-align:center;">Com Net</div></div><div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;padding:8px 10px;border-bottom:1px solid var(--border);"><div>1 número</div><div style="text-align:center;font-weight:800;color:var(--blue);">6€</div><div style="text-align:center;font-weight:800;color:#00B87A;">5€</div></div><div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--pale);"><div>2 números</div><div style="text-align:center;font-weight:800;color:var(--blue);">5,5€</div><div style="text-align:center;font-weight:800;color:#00B87A;">4,5€</div></div><div style="display:grid;grid-template-columns:1.2fr 1fr 1fr;padding:8px 10px;"><div>3+ números</div><div style="text-align:center;font-weight:800;color:var(--blue);">5€</div><div style="text-align:center;font-weight:800;color:#00B87A;">4€</div></div></div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📊 Plafond (acumulável)</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;"><div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:11px;color:var(--muted);">50 GB</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">4€</div></div><div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:11px;color:var(--muted);">100 GB</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">5€</div></div><div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:11px;color:var(--muted);">150 GB</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">6€</div></div><div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;"><div style="font-size:11px;color:var(--muted);">200 GB+400min</div><div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">9€</div></div></div><div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;font-size:13px;">💡 3+ linhas com Net = <b>4€/mês cada</b>. Família 4 = 16€ vs 80-120€ na concorrência!</div></div></div>
+<div id="fp3" style="display:none;"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">☎️ Voz Fixa</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Telefone fixo gratuito · Fidelização 3 meses</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"><div style="background:#00B87A;color:#fff;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:10px;opacity:.8;margin-bottom:4px;">Chamadas Ilimitadas</div><div style="font-family:'Bebas Neue';font-size:46px;line-height:1;">2€</div><div style="font-size:11px;opacity:.7;">/mês</div><div style="font-size:11px;margin-top:6px;line-height:1.5;">Fixos e móveis nacionais<br>📞 Telefone grátis</div></div><div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;text-align:center;"><div style="font-size:10px;opacity:.8;margin-bottom:4px;">Por Minuto</div><div style="font-family:'Bebas Neue';font-size:46px;line-height:1;">1€</div><div style="font-size:11px;opacity:.7;">/mês</div><div style="font-size:11px;margin-top:6px;line-height:1.5;">1 cênt/min · DIGI-DIGI grátis<br>📞 Telefone grátis</div></div></div></div></div>
+<div id="fp4" style="display:none;"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📦 Pacotes e Comparação</div><div style="font-size:12px;color:var(--muted);margin-bottom:12px;">Preços 2025</div><div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;"><div style="background:var(--blue);color:#fff;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">Net 500Mbps+Ilimitado</div><div style="font-family:'Bebas Neue';font-size:34px;line-height:1;">11€</div><div style="font-size:11px;opacity:.7;">/mês</div></div><div style="background:#00B87A;color:#fff;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">Net 1Gbps+Ilimitado ⭐</div><div style="font-family:'Bebas Neue';font-size:34px;line-height:1;">15€</div><div style="font-size:11px;opacity:.7;">/mês</div></div><div style="background:#F59E0B;color:#fff;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">Net+TV+Ilimitado</div><div style="font-family:'Bebas Neue';font-size:34px;line-height:1;">25€</div><div style="font-size:11px;opacity:.7;">/mês</div></div><div style="background:#0A0F2E;color:#fff;border-radius:10px;padding:12px;text-align:center;"><div style="font-size:10px;opacity:.75;margin-bottom:4px;">Net+TV+3 Ilimitados</div><div style="font-family:'Bebas Neue';font-size:34px;line-height:1;">37€</div><div style="font-size:11px;opacity:.7;">/mês</div></div></div><div style="background:var(--bg);border-radius:8px;overflow:hidden;font-size:12px;margin-bottom:12px;"><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;background:var(--blue);color:#fff;font-weight:700;padding:8px 10px;font-size:11px;"><div>Pacote</div><div>DIGI</div><div>Concorr.</div><div>Poupar/ano</div></div><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:7px 10px;border-bottom:1px solid var(--border);"><div>Fibra 1Gbps</div><div style="color:var(--blue);font-weight:800;">10€</div><div>35-50€</div><div style="color:#00B87A;font-weight:800;">+300€</div></div><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:7px 10px;border-bottom:1px solid var(--border);background:var(--pale);"><div>Net+Ilimitado</div><div style="color:var(--blue);font-weight:800;">15€</div><div>45-60€</div><div style="color:#00B87A;font-weight:800;">+360€</div></div><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:7px 10px;border-bottom:1px solid var(--border);"><div>Net+TV+Ilit.</div><div style="color:var(--blue);font-weight:800;">25€</div><div>60-80€</div><div style="color:#00B87A;font-weight:800;">+420€</div></div><div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;padding:7px 10px;background:var(--pale);"><div>Net+TV+3 Ilit.</div><div style="color:var(--blue);font-weight:800;">37€</div><div>80-100€</div><div style="color:#00B87A;font-weight:800;">+516€</div></div></div><div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;font-size:13px;">🏆 <b>Preços não sobem com inflação.</b> Aplica-se a todos — atuais e novos. Sem asteriscos.</div></div></div>
+<div id="fp5" style="display:none;"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:12px;">📋 Requisitos de Contratação</div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">👤 Particulares</div><div style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:14px;">✅ Maior de 18 anos<br>✅ NIF Português<br>✅ CC ou BI+NIF ou Passaporte+NIF ou Título Residência+NIF<br>✅ Morada em Portugal Continental<br>✅ Email e telemóvel de contacto</div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">🏢 Empresas / PME</div><div style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:14px;">✅ NIPC (NIF da empresa)<br>✅ CRC ou CCP<br>✅ NIF + documento do Sócio-Gerente</div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📊 Limites por NIF</div><div style="background:var(--bg);border-radius:8px;overflow:hidden;font-size:13px;"><div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--blue);color:#fff;font-weight:700;padding:8px 10px;font-size:11px;"><div>Serviço</div><div style="text-align:center;">Por Ordem</div><div style="text-align:center;">Total NIF</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 10px;border-bottom:1px solid var(--border);"><div>Fibra</div><div style="text-align:center;">Máx. 1</div><div style="text-align:center;font-weight:700;">Máx. 2</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--pale);"><div>TV</div><div style="text-align:center;">Máx. 1</div><div style="text-align:center;font-weight:700;">Máx. 2</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 10px;border-bottom:1px solid var(--border);"><div>Voz Fixa</div><div style="text-align:center;">Máx. 1</div><div style="text-align:center;font-weight:700;">Máx. 2</div></div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px 10px;"><div>Voz Móvel</div><div style="text-align:center;">Máx. 6</div><div style="text-align:center;font-weight:700;">Máx. 6</div></div></div></div></div>
+<div id="fp6" style="display:none;"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:12px;">⚡ Prazos de Ativação</div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">🌐 Fibra</div><div style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:14px;">✅ Contacto em 5 a 7 dias corridos após validação<br>⚠️ Portabilidade móvel só ativa APÓS instalação fibra<br>⚠️ Dados incorretos = atrasos! Verificar NIF, morada, IBAN</div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📱 Móvel</div><div style="background:var(--bg);border-radius:8px;overflow:hidden;font-size:13px;margin-bottom:14px;"><div style="display:grid;grid-template-columns:1.5fr 1fr;background:var(--blue);color:#fff;font-weight:700;padding:8px 10px;font-size:11px;"><div>Tipo</div><div>Prazo</div></div><div style="display:grid;grid-template-columns:1.5fr 1fr;padding:8px 10px;border-bottom:1px solid var(--border);"><div>Número novo</div><div style="font-weight:700;color:#00B87A;">Imediato</div></div><div style="display:grid;grid-template-columns:1.5fr 1fr;padding:8px 10px;border-bottom:1px solid var(--border);background:var(--pale);"><div>Com portabilidade</div><div style="font-weight:700;">24h - 72h úteis</div></div><div style="display:grid;grid-template-columns:1.5fr 1fr;padding:8px 10px;"><div>Data à escolha</div><div style="font-weight:700;">1 dia útil</div></div></div><div style="background:#E53935;color:#fff;border-radius:10px;padding:14px;font-size:13px;">⚠️ <b>NUNCA indicar prazo exato para a fibra.</b> Dizer: "contactado em 5-7 dias corridos após validação."</div></div></div>
+<div id="fp7" style="display:none;"><div style="background:#fff;border:1px solid var(--border);border-radius:12px;padding:18px;"><div style="font-family:'Bebas Neue';font-size:22px;letter-spacing:2px;color:var(--blue);margin-bottom:12px;">💡 Vantagens e Scripts</div><div style="font-size:13px;color:var(--text);line-height:1.9;margin-bottom:14px;">✅ Liberdade de escolha — sem pacotes fechados<br>✅ Fidelização 3 meses fixo · zero no móvel<br>✅ Preços não indexados à inflação<br>✅ Velocidade simétrica em toda a fibra<br>✅ Dados móveis acumuláveis mês a mês<br>✅ 5G incluído em todos os tarifários<br>✅ nPerf 2025 — fibra mais rápida de Portugal<br>✅ eSIM gratuito para pós-pago<br>✅ App MyDIGI — gestão total</div><div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:10px;">🎯 Scripts por Objeção</div><div style="background:var(--bg);border-left:3px solid #E53935;border-radius:0 8px 8px 0;padding:10px;margin-bottom:8px;font-size:13px;"><div style="font-weight:700;color:#E53935;font-size:12px;margin-bottom:4px;">"A DIGI é nova, não conheço"</div><div style="color:var(--muted);">"Rede própria, nPerf 2025 — fibra mais rápida. Posso mostrar os testes."</div></div><div style="background:var(--bg);border-left:3px solid #E53935;border-radius:0 8px 8px 0;padding:10px;margin-bottom:8px;font-size:13px;"><div style="font-weight:700;color:#E53935;font-size:12px;margin-bottom:4px;">"Os preços vão subir"</div><div style="color:var(--muted);">"Não indexados à inflação. Qualquer atualização aplica-se a todos."</div></div><div style="background:var(--bg);border-left:3px solid #E53935;border-radius:0 8px 8px 0;padding:10px;margin-bottom:8px;font-size:13px;"><div style="font-weight:700;color:#E53935;font-size:12px;margin-bottom:4px;">"Tenho medo de perder o número"</div><div style="color:var(--muted);">"Tratamos nós — portabilidade. O número mantém-se. Só precisas de dizer 'sim'."</div></div><div style="background:var(--bg);border-left:3px solid #E53935;border-radius:0 8px 8px 0;padding:10px;font-size:13px;"><div style="font-weight:700;color:#E53935;font-size:12px;margin-bottom:4px;">"Ainda tenho fidelização"</div><div style="color:var(--muted);">"Agendamos para quando terminar. Deixo a simulação — sem compromisso."</div></div></div></div>
+</div></div></div>
+
+<!-- CVP SCREEN -->
+<div id="cvp" class="screen">
+<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Consulta de CVP</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
+<div style="max-width:600px;margin:0 auto;padding:20px 16px;">
+  <div style="background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:14px;padding:20px;color:#fff;margin-bottom:20px;"><div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:6px;">📱 CONSULTA DE CVP</div><div style="font-size:13px;opacity:.8;">Código de Validação de Portabilidade · Usa quando o cliente não tem a fatura em mão</div></div>
+  <div style="background:var(--pale);border-radius:10px;padding:14px 16px;border-left:3px solid var(--blue);font-size:13px;color:var(--blue);line-height:1.7;margin-bottom:20px;font-weight:500;">💡 O cliente envia SMS ou liga para o operador atual para obter o CVP. Depois dás o código à DIGI para tratar da portabilidade.</div>
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
+    <button onclick="filterCVP('all',this)" class="ntb active" style="padding:6px 12px;font-size:12px;">Todos</button>
+    <button onclick="filterCVP('movel',this)" class="ntb" style="padding:6px 12px;font-size:12px;">📱 Móvel</button>
+    <button onclick="filterCVP('fixo',this)" class="ntb" style="padding:6px 12px;font-size:12px;">☎️ Fixo/Fibra</button>
+  </div>
+  <div id="cvpList"></div>
+</div>
+</div>
+
+<!-- CANAIS TV -->
+<div id="canais" class="screen">
+<div class="hdr">
+  <div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Canais TV</span></div>
+  <button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button>
+</div>
+<div style="max-width:680px;margin:0 auto;padding:16px;">
+
+  <!-- Header -->
+  <div style="background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:14px;padding:18px;color:#fff;margin-bottom:16px;display:flex;align-items:center;justify-content:space-between;">
+    <div>
+      <div style="font-family:'Bebas Neue';font-size:28px;letter-spacing:2px;margin-bottom:4px;">📡 GRELHA DE CANAIS</div>
+      <div style="font-size:12px;opacity:.8;">+80 canais HD · Atualizado 2025</div>
+    </div>
+    <button onclick="window.open('https://www.digi.pt/tv/canais','_blank')" style="background:rgba(255,255,255,.2);border:1px solid rgba(255,255,255,.4);color:#fff;font-family:Inter;font-size:11px;font-weight:700;padding:8px 12px;border-radius:8px;cursor:pointer;">Ver oficial →</button>
+  </div>
+
+  <!-- DIGI TV App buttons -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
+    <button onclick="window.open('https://play.google.com/store/apps/details?id=ro.digionline.tv','_blank')" style="background:#00B87A;color:#fff;border:none;border-radius:10px;padding:12px;font-family:Inter;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+      🤖 Android — Play Store
+    </button>
+    <button onclick="window.open('https://apps.apple.com/pt/app/digi-tv/id1437386598','_blank')" style="background:#0A0F2E;color:#fff;border:none;border-radius:10px;padding:12px;font-family:Inter;font-size:12px;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;">
+      🍎 iPhone — App Store
+    </button>
+  </div>
+
+  <!-- Filter tabs -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px;" id="canaisTabs">
+    <button onclick="filterCanais('todos',this)" style="background:var(--blue);border:1px solid var(--blue);color:#fff;font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">Todos</button>
+    <button onclick="filterCanais('generalistas',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📺 Generalistas</button>
+    <button onclick="filterCanais('informacao',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">📰 Informação</button>
+    <button onclick="filterCanais('desporto',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">⚽ Desporto</button>
+    <button onclick="filterCanais('infantil',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">👶 Infantil</button>
+    <button onclick="filterCanais('filmes',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">🎬 Filmes</button>
+    <button onclick="filterCanais('musica',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">🎵 Música</button>
+    <button onclick="filterCanais('lifestyle',this)" style="background:var(--white);border:1px solid var(--border);color:var(--muted);font-size:12px;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:Inter;font-weight:600;">🏠 Lifestyle</button>
+  </div>
+
+  <!-- Channels grid -->
+  <div id="canaisGrid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;"></div>
+
+</div>
+</div>
+
+
 <script>
 // ══ TRANSLATIONS ══
 const T = {
@@ -638,12 +733,7 @@ function showScreen(id){
   var t=document.getElementById(id);
   if(t)t.classList.add("active");
   window.scrollTo(0,0);
-  if(id==="formacao"){
-    document.querySelectorAll(".fmod").forEach(function(m){m.style.display="none";m.classList.remove("active");});
-    var first=document.getElementById("fmod-0");
-    if(first){first.style.display="block";first.classList.add("active");}
-    document.querySelectorAll(".ftab").forEach(function(tb,i){tb.classList.toggle("active",i===0);});
-  }
+  if(id==="formacao"){ fTab(0); }
 }
 
 // ══ STATE ══
@@ -714,314 +804,4 @@ function setNF(f,btn){notaFilter=f;document.querySelectorAll(".ntb").forEach(b=>
 function renderNL(){const search=(document.getElementById("notasSearch")?.value||"").toLowerCase();const fl=notas.filter(n=>{return(!notaFilter||n.tag===notaFilter)&&(!search||n.title.toLowerCase().includes(search)||n.body.toLowerCase().includes(search));});const list=document.getElementById("notasList");if(!list)return;if(!fl.length){list.innerHTML=`<div style="text-align:center;padding:28px 12px;color:var(--muted);font-size:12px;">${notas.length?"—":"+"}</div>`;return;}const tm={nota:"📝",relatorio:"📊",objetivo:"🎯",cliente:"👤"};list.innerHTML=fl.map(n=>`<div class="nitem ${n.id==curNota?"active":""}" data-id="${n.id}" onclick="selNota(${n.id})"><div class="nit">${n.title||"—"}</div><div class="nip">${(n.body||"").slice(0,55)||"..."}</div><div class="nim"><span class="ntag ntag-${n.tag}">${tm[n.tag]||"📝"} ${n.tag}</span><span>${n.date}</span></div></div>`).join("");}
 function exportNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;const blob=new Blob([n.title+"\n"+"─".repeat(40)+"\n"+n.body+"\n\n"+n.date+" · DIGI Elite Trainer"],{type:"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(n.title||"nota")+".txt";a.click();}
 function copyNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;navigator.clipboard.writeText(n.title+"\n\n"+n.body).catch(()=>{});event.target.textContent="✅";setTimeout(()=>event.target.textContent="📋 Copiar",2000);}
-function shareNotaWA(){const n=notas.find(x=>x.id==curNota);if(!n)return;window.open("https://wa.me/?text="+encodeURIComponent("*"+n.title+"*\n\n"+n.body+"\n\n_"+n.date+" · DIGI_"),"_blank");}
-function openRelModal(){document.getElementById("rd").value=new Date().toISOString().split("T")[0];if(currentUser)document.getElementById("rv").value=currentUser.name;document.getElementById("relModal").classList.add("open");}
-function closeRelModal(){document.getElementById("relModal").classList.remove("open");}
-function gerarRel(){const g=id=>document.getElementById(id).value;const p=+g("rp")||0,ab=+g("ra")||0,ao=+g("rao")||0,co=+g("rc")||0,ad=+g("rads")||0;const body=`📅 ${g("rd")}\n👤 ${g("rv")||"—"}\n📍 ${g("rz")||"—"}\n\n${"━".repeat(20)}\nFUNIL\n${"━".repeat(20)}\n🚪 Portas: ${p}\n🔓 Aberturas: ${ab} (${p?Math.round(ab/p*100):0}%)\n💬 Abordagens: ${ao} (${ab?Math.round(ao/ab*100):0}%)\n🎯 Controlos: ${co} (${ao?Math.round(co/ao*100):0}%)\n✅ Adesões: ${ad} (${co?Math.round(ad/co*100):0}%)\n\n${ad>=4?"🏆 META ATINGIDA!":"Faltam "+Math.max(0,4-ad)+"/4"}${g("ro")?"\n\n📋 "+g("ro"):""}`;newNota("relatorio");setTimeout(()=>{document.getElementById("notaTitleInput").value="Relatório "+new Date(g("rd")).toLocaleDateString("pt-PT")+" · "+(g("rz")||"—");document.getElementById("notaBodyInput").value=body;document.getElementById("notaTag").value="relatorio";saveNota();},80);closeRelModal();}
-
-// ══ COMISSÕES ══
-const COM=[{l:"até 5",tv:6,f:6,m:2,fx:1,min:0,max:5},{l:"6 até 10",tv:6,f:8,m:2,fx:1,min:6,max:10},{l:"11 até 15",tv:6,f:10,m:2,fx:1,min:11,max:15},{l:"16 até 20",tv:6,f:15,m:2,fx:1,min:16,max:20},{l:"21 até 50",tv:6,f:20,m:2,fx:1,min:21,max:50},{l:"51 até 75",tv:6,f:20,m:2.5,fx:1,min:51,max:75},{l:"mais de 75",tv:6,f:20,m:3,fx:1,min:76,max:9999}];
-function buildCom(){const el=document.getElementById("comRows");if(!el)return;const fmt=v=>v%1===0?v+"€":v.toFixed(1)+"€";el.innerHTML=COM.map((r,i)=>`<div class="ctd2" style="background:${i%2?"var(--bg)":"var(--white)"}"><div class="ctdc" style="font-size:12px;font-weight:700;color:var(--text);text-align:left;padding-left:14px;">${r.l}</div><div class="ctdc">${fmt(r.tv)}</div><div class="ctdc">${fmt(r.f)}</div><div class="ctdc">${fmt(r.m)}</div><div class="ctdc">${fmt(r.fx)}</div></div>`).join("");}
-function calcCom(){const g=id=>parseInt(document.getElementById(id)?.value)||0;const tot=g("c-ades"),tv=g("c-tv"),fib=g("c-fib"),mov=g("c-mov"),fix=g("c-fix");const res=document.getElementById("calcResult");if(!res)return;if(!tot&&!tv&&!fib&&!mov&&!fix){res.style.display="none";return;}const e=COM.find(r=>tot>=r.min&&tot<=r.max)||COM[0];const total=(tv*e.tv)+(fib*e.f)+(mov*e.m)+(fix*e.fx);res.style.display="block";document.getElementById("cr-val").textContent=total.toFixed(2).replace(".",",")+"\xa0€";document.getElementById("cr-det").innerHTML="Escalão: <strong>"+e.l+"</strong> · "+[tv&&`${tv}×TV(${e.tv}€)`,fib&&`${fib}×Fibra(${e.f}€)`,mov&&`${mov}×Móvel(${e.m}€)`,fix&&`${fix}×Fixo(${e.fx}€)`].filter(Boolean).join(" + ");}
-
-// ══ TEORIA ══
-const TEORIA=[{t:"Filosofia",s:"Consultor vs Vendedor",bl:[{i:"🎯",t:"Objetivo",b:"O vendedor procura aprovação. O consultor diagnostica e resolve um problema real."},{i:"📊",t:"Modelo Matemático",b:"80 portas → 40 aberturas → 20 abordagens → 10 controlos → 4 adesões."},{i:"💎",t:"Responsabilidade",b:"O resultado depende da tua execução. Sem desculpas."}],q:'"Quem ouve melhor, vende melhor."'},{t:"Abordagem",s:"Os primeiros 20 segundos",bl:[{i:"🧍",t:"Linguagem Corporal",b:"Postura aberta. Passo atrás após bater — dá espaço, elimina ameaça."},{i:"🗣️",t:"Tom",b:"Fala mais devagar. Tom firme. Usa pausas."},{i:"✅",t:"Script",b:'"Bom dia, sou da DIGI. Posso mostrar-lhe em 2 min quanto pode poupar?"'}],q:'"De desconhecido a consultor de confiança."'},{t:"Diagnóstico",s:"Escuta ativa",bl:[{i:"❓",t:"Perguntas",b:"1. Operador? 2. Quanto paga? 3. O que menos satisfaz? 4. Fidelização? 5. Telemóveis? 6. Decisor?"},{i:"🤫",t:"Silêncio",b:"Após pergunta-chave, pausa. O cliente revela a dor real."},{i:"👤",t:"Decisor",b:"Confirma cedo quem assina."}],q:'"O diagnóstico é escuta ativa."'},{t:"Objeções",s:"Reenquadramento honesto",bl:[{i:"🆕",t:'"DIGI é nova"',b:'Rede própria, premiada nPerf 2025. Posso mostrar os testes.'},{i:"📋",t:'"Mudar dá trabalho"',b:'Tratamos da portabilidade. O passo é só dizer "sim".'},{i:"🔒",t:'"Tenho fidelização"',b:'Sem problema — agendamos. Entretanto deixo a simulação.'}],q:'"A confiança é o teu maior ativo."'},{t:"Fecho",s:"Consequência natural",bl:[{i:"✅",t:"Assumido",b:'"Para registar preciso do CC e IBAN. Tem aí consigo?"'},{i:"🅰️",t:"Alternativa Dupla",b:'"Prefere quinta manhã ou sexta tarde?"'},{i:"🤐",t:"Com Pausa",b:'"Avançamos com a combinação que poupa 34€/mês?" (pausa)'}],q:'"O fecho é consequência de um bom diagnóstico."'},{t:"Perfis",s:"4 tipos de cliente",bl:[{i:"🧔",t:"Desconfiado",b:"Dados técnicos. nPerf 2025. Técnico."},{i:"👩‍💼",t:"Apressado",b:'"2 min, preço direto. Sem fidelização longa."'},{i:"👨‍💻",t:"Racional",b:"ROI claro, poupança anual, preços congelados."},{i:"👵",t:"Indeciso",b:"2 opções claras. Sai em 3 meses. Baixo risco."}],q:'"Adapta a linguagem ao cliente."'}];
-function buildTeoria(){const tabs=document.getElementById("teoriaTabs");const cards=document.getElementById("teoriaCards");if(!tabs||!cards)return;tabs.innerHTML=TEORIA.map((t,i)=>`<button class="ttab ${i===0?"active":""}" onclick="showTc(${i},this)">${t.t}</button>`).join("");cards.innerHTML=TEORIA.map((t,i)=>`<div class="tcard ${i===0?"active":""}" id="tc-${i}"><div class="tcti">${t.t.toUpperCase()}</div><div class="tcsu">${t.s}</div>${t.bl.map(b=>`<div class="tcbl"><div class="tcblt">${b.i} ${b.t}</div><p>${b.b}</p></div>`).join("")}<div class="tcq">${t.q}</div></div>`).join("");}
-function showTc(i,btn){document.querySelectorAll(".tcard").forEach(c=>c.classList.remove("active"));document.querySelectorAll(".ttab").forEach(t=>t.classList.remove("active"));document.getElementById("tc-"+i).classList.add("active");btn.classList.add("active");}
-
-// ══ QUIZ ══
-const QUIZ=[{q:"Qual é o objetivo do funil DIGI com 80 portas/dia?",opts:["10 adesões","4 adesões","20 adesões","8 adesões"],c:1,fb:"80 → 40 → 20 → 10 → 4 adesões/dia."},{q:"Técnica para fechar com cliente indeciso?",opts:["Pressionar","5 opções","2 opções + baixo risco","Oferta acaba hoje"],c:2,fb:"2 opções claras + garantia de saída em 3 meses."},{q:"Taxa de Abertura < 50% significa?",opts:["Produto mau","Presença fraca","Preço alto","Sem fidelização"],c:1,fb:"Problema na presença/apresentação — primeiros 20 segundos."},{q:"Como responder a 'Tenho fidelização'?",opts:["DIGI paga","Insistir","Agendar + simulação","Ignorar"],c:2,fb:"Sem problema — agendamos. Deixo simulação sem compromisso."},{q:"Script de Alternativa Dupla?",opts:["Quer ou não?","Quinta manhã ou sexta tarde?","Volto amanhã?","Assine aqui"],c:1,fb:"Dois momentos positivos — ambos assumem que avança."},{q:"Prémio DIGI para o Desconfiado?",opts:["SAPO","nPerf 2025 — fibra mais rápida","ANACOM","Top Marca"],c:1,fb:"Rede própria, premiada nPerf 2025."},{q:"Objetivo do silêncio no diagnóstico?",opts:["Tensão","Dar espaço ao cliente","Mostrar experiência","Esperar"],c:1,fb:"Silêncio = controlo. Cliente revela a dor real."},{q:"Poupança ilustrativa Manual DIGI?",opts:["200€/ano","300€/ano","408€/ano","600€/ano"],c:2,fb:"64€ - 30€ = 34€/mês × 12 = 408€/ano."},{q:"Comportamento ao bater à porta?",opts:["Encostar","Passo atrás","Tocar 2x","Falar logo"],c:1,fb:"Passo atrás = elimina ameaça."},{q:"O que distingue o Consultor de Elite?",opts:["Mais produtos","Espera reação","Vende features","Resolve o problema e guia com perguntas"],c:3,fb:"Resolve o problema, guia com perguntas, constrói confiança."}];
-let qs={idx:0,score:0,ans:false};
-function initQuiz(){qs={idx:0,score:0,ans:false};renderQuiz();}
-function renderQuiz(){const q=QUIZ[qs.idx];document.getElementById("quizProg").innerHTML=QUIZ.map((_,i)=>`<div class="qp ${i<qs.idx?"done":""}"></div>`).join("");document.getElementById("quizQ").textContent=`${qs.idx+1}. ${q.q}`;document.getElementById("quizOpts").innerHTML=q.opts.map((o,i)=>`<button class="qopt" onclick="ansQ(${i})">${o}</button>`).join("");document.getElementById("quizFb").classList.remove("show");document.getElementById("quizNext").style.display="none";qs.ans=false;}
-function ansQ(i){if(qs.ans)return;qs.ans=true;const q=QUIZ[qs.idx];const opts=document.querySelectorAll(".qopt");opts[i].classList.add(i===q.c?"correct":"wrong");opts[q.c].classList.add("correct");if(i===q.c)qs.score++;const fb=document.getElementById("quizFb");fb.textContent=q.fb;fb.classList.add("show");const nx=document.getElementById("quizNext");nx.style.display="block";nx.textContent=qs.idx<QUIZ.length-1?"Próxima →":`Resultado: ${qs.score}/${QUIZ.length}`;}
-function nextQuiz(){if(qs.idx<QUIZ.length-1){qs.idx++;renderQuiz();}else{const pct=Math.round(qs.score/QUIZ.length*100);document.getElementById("quizQ").innerHTML=`<div style="font-size:48px;font-family:'Bebas Neue';color:var(--blue);">${qs.score}/${QUIZ.length}</div><div style="font-size:15px;margin-top:8px;">${pct>=80?"🏆 Elite!":pct>=60?"⭐ Bom!":"💪 Continua!"}</div>`;document.getElementById("quizOpts").innerHTML="";document.getElementById("quizFb").classList.remove("show");const nx=document.getElementById("quizNext");nx.textContent="← Recomeçar";nx.onclick=initQuiz;}}
-
-// ══ PWA INSTALL ══
-let deferredPrompt=null;
-
-window.addEventListener("beforeinstallprompt",e=>{
-  e.preventDefault();
-  deferredPrompt=e;
-  // Show native button in modal
-  const nb=document.getElementById("nativeInstallBtn");
-  if(nb){nb.style.display="block";}
-});
-
-window.addEventListener("appinstalled",()=>{
-  deferredPrompt=null;
-  closeInstallModal();
-});
-
-function openInstallModal(){
-  const isStandalone=window.navigator.standalone===true||window.matchMedia("(display-mode: standalone)").matches;
-  if(isStandalone){alert(T[lang].installed||"✅ App já instalada!");return;}
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  document.getElementById("androidSteps").style.display=isIOS?"none":"block";
-  document.getElementById("iosSteps").style.display=isIOS?"block":"none";
-  const nb=document.getElementById("nativeInstallBtn");
-  if(nb)nb.style.display=deferredPrompt?"block":"none";
-  document.getElementById("installModal").classList.add("open");
-}
-
-function closeInstallModal(){document.getElementById("installModal").classList.remove("open");}
-
-function doNativeInstall(){
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(()=>{deferredPrompt=null;closeInstallModal();});
-}
-
-// Close modal on bg click
-document.getElementById("installModal").addEventListener("click",function(e){if(e.target===this)closeInstallModal();});
-["shareModal","relModal"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});});
-
-// ══ SERVICE WORKER ══
-if("serviceWorker" in navigator){
-  window.addEventListener("load",()=>{
-    navigator.serviceWorker.register("/sw.js").catch(()=>{});
-  });
-}
-
-
-// ══ CVP ══
-const CVP_DATA = [
-  {op:"NOS", emoji:"📡", color:"#000", bg:"#f0f0f0", type:"movel",
-   steps:["Envia SMS para <b>1242</b>","Texto da SMS: <b>CVP 123456789</b> (substitui pelo NIF do cliente)","Liga para <b>1242</b> e segue instruções"],
-   sms:"1242", smsBody:"CVP ", call:"1242"},
-  {op:"Vodafone", emoji:"🔴", color:"#fff", bg:"#e60000", type:"movel",
-   steps:["Envia SMS para <b>12815</b> com a palavra <b>CVP</b>","Liga para <b>12815</b> e segue instruções"],
-   sms:"12815", smsBody:"CVP", call:"12815"},
-  {op:"MEO", emoji:"🔵", color:"#fff", bg:"#0066cc", type:"movel",
-   steps:["Envia SMS para <b>16200</b> com a palavra <b>CVP</b>","Liga para <b>16200</b> e segue instruções"],
-   sms:"16200", smsBody:"CVP", call:"16200"},
-  {op:"WTF / WOO", emoji:"🟢", color:"#fff", bg:"#00b04f", type:"movel",
-   steps:["Envia SMS para <b>1242</b>","Texto: <b>CVP 123456789</b> (NIF do cliente)","Liga para <b>1242</b> e segue instruções"],
-   sms:"1242", smsBody:"CVP ", call:"1242"},
-  {op:"Amigo (NOS)", emoji:"💜", color:"#fff", bg:"#6600cc", type:"movel",
-   steps:["Através da app <b>Amigo</b>","Liga para <b>923171717</b> e segue instruções"],
-   call:"923171717"},
-  {op:"UZO", emoji:"🟡", color:"#000", bg:"#ffdd00", type:"movel",
-   steps:["Liga para <b>707960000</b> e segue instruções"],
-   call:"707960000"},
-  {op:"Lycamobile", emoji:"🌿", color:"#fff", bg:"#00a651", type:"movel",
-   steps:["Envia email para <b>cs@lycamobile.pt</b>","Liga para <b>265001632</b> e segue instruções"],
-   call:"265001632"},
-  {op:"Yorn (Vodafone)", emoji:"🟠", color:"#fff", bg:"#ff6600", type:"movel",
-   steps:["Envia SMS para <b>12815</b> com a palavra <b>CVP</b>","Liga para <b>12715</b> e segue instruções"],
-   sms:"12815", smsBody:"CVP", call:"12715"},
-  {op:"NOWO", emoji:"⚫", color:"#fff", bg:"#222222", type:"movel",
-   steps:["Envia SMS para <b>928190785</b> com a palavra <b>CVP</b>","Liga para <b>210850083</b> e segue instruções"],
-   sms:"928190785", smsBody:"CVP", call:"210850083"},
-  {op:"MEO (Fibra/Fixo)", emoji:"🔵", color:"#fff", bg:"#0066cc", type:"fixo",
-   steps:["Liga para <b>16200</b> (Apoio ao Cliente MEO)","Pede o Código de Portabilidade para a linha fixa","Segue as instruções do assistente"],
-   call:"16200"},
-  {op:"NOS (Fibra/Fixo)", emoji:"📡", color:"#000", bg:"#f0f0f0", type:"fixo",
-   steps:["Liga para <b>1242</b> (Apoio ao Cliente NOS)","Pede o Código de Portabilidade para a linha fixa","Segue as instruções do assistente"],
-   call:"1242"},
-  {op:"Vodafone (Fibra/Fixo)", emoji:"🔴", color:"#fff", bg:"#e60000", type:"fixo",
-   steps:["Liga para <b>12815</b> (Apoio ao Cliente Vodafone)","Pede o Código de Portabilidade para a linha fixa"],
-   call:"12815"},
-];
-
-let cvpFilter = 'all';
-
-function filterCVP(f, btn) {
-  cvpFilter = f;
-  document.querySelectorAll('#cvp .ntb').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderCVP();
-}
-
-function renderCVP() {
-  const list = document.getElementById('cvpList');
-  if (!list) return;
-  const filtered = CVP_DATA.filter(c => cvpFilter === 'all' || c.type === cvpFilter);
-  list.innerHTML = filtered.map(c => {
-    const stepsHtml = c.steps.map(s => `<div class="cvp-step">${s}</div>`).join('');
-    const smsBtn = c.sms ? `<button class="cvp-sms-btn" onclick="window.open('sms:${c.sms}?body=${encodeURIComponent(c.smsBody)}','_blank')">💬 Enviar SMS para ${c.sms}</button>` : '';
-    const callBtn = c.call ? `<button class="cvp-call-btn" onclick="window.open('tel:${c.call}','_blank')">📞 Ligar ${c.call}</button>` : '';
-    return `<div class="cvp-card">
-      <div class="cvp-op">
-        <div class="cvp-logo" style="background:${c.bg};color:${c.color};">${c.emoji}</div>
-        <div><div class="cvp-name">${c.op}</div><div class="cvp-type">${c.type === 'movel' ? '📱 Voz Móvel' : '☎️ Fixo / Fibra'}</div></div>
-      </div>
-      ${stepsHtml}
-      <div style="display:flex;flex-wrap:wrap;gap:0;">${smsBtn}${callBtn}</div>
-    </div>`;
-  }).join('');
-}
-
-
-
-
-// ══ ACCORDION ══
-function toggleAcc(btn) {
-  var body = btn.nextElementSibling;
-  var icon = btn.querySelector('span:last-child');
-  var isOpen = body.style.display === 'block';
-  body.style.display = isOpen ? 'none' : 'block';
-  icon.textContent = isOpen ? '+' : '−';
-}
-// ══ INIT ══
-loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();renderCVP();
-applyLang();
-if(currentUser){updateHU();showScreen("home");}else{showScreen("login");}
-</script>
-
-<!-- CVP SCREEN -->
-<div id="cvp" class="screen">
-<div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Consulta de CVP</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
-<div style="max-width:600px;margin:0 auto;padding:20px 16px;">
-
-  <div style="background:linear-gradient(135deg,var(--blue),var(--blue3));border-radius:14px;padding:20px;color:#fff;margin-bottom:20px;">
-    <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;margin-bottom:6px;">📱 CONSULTA DE CVP</div>
-    <div style="font-size:13px;opacity:.8;line-height:1.5;">Código de Validação de Portabilidade<br>Usa quando o cliente não tem a fatura em mão</div>
-  </div>
-
-  <!-- COMO FUNCIONA -->
-  <div style="background:var(--pale);border-radius:10px;padding:14px 16px;border-left:3px solid var(--blue);font-size:13px;color:var(--blue);line-height:1.7;margin-bottom:20px;font-weight:500;">
-    💡 O cliente envia um SMS ou liga para o número do seu operador atual para obter o CVP. Depois dás esse código à DIGI para tratar da portabilidade.
-  </div>
-
-  <!-- FILTRO -->
-  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px;">
-    <button onclick="filterCVP('all',this)" class="ntb active" style="padding:6px 12px;font-size:12px;">Todos</button>
-    <button onclick="filterCVP('movel',this)" class="ntb" style="padding:6px 12px;font-size:12px;">📱 Móvel</button>
-    <button onclick="filterCVP('fixo',this)" class="ntb" style="padding:6px 12px;font-size:12px;">☎️ Fixo/Fibra</button>
-  </div>
-
-  <div id="cvpList"></div>
-</div>
-</div>
-
-<!-- FORMAÇÃO DE PRODUTO -->
-<div id="formacao" class="screen">
-<div class="hdr">
-  <div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls">Formação de Produto</span></div>
-  <button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button>
-</div>
-<div style="max-width:680px;margin:0 auto;padding:16px;overflow-y:auto;">
-
-  <!-- ACCORDION SECTIONS -->
-
-  <!-- 1. INTERNET -->
-  <div style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;">
-    <button onclick="toggleAcc(this)" style="width:100%;background:none;border:none;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:Inter;font-size:15px;font-weight:700;color:var(--text);">
-      <span>🌐 Internet Fibra</span><span style="color:var(--blue);font-size:20px;">+</span>
-    </button>
-    <div class="acc-body" style="display:none;padding:0 16px 16px;">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">Fibra óptica simétrica · Router gratuito · 3 meses fidelização</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;">500 Mbps</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">7€</div>
-          <div style="font-size:11px;opacity:.7;">/mês</div>
-          <div style="font-size:11px;opacity:.8;margin-top:4px;">Zyxel EX3301 · Wi-Fi 6</div>
-        </div>
-        <div style="background:#00B87A;color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;">1 Gbps ⭐</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">10€</div>
-          <div style="font-size:11px;opacity:.7;">/mês</div>
-          <div style="font-size:11px;opacity:.8;margin-top:4px;">Huawei HG8147X6 · Wi-Fi 6</div>
-        </div>
-      </div>
-      <div style="background:#0A0F2E;color:#fff;border-radius:10px;padding:14px;text-align:center;margin-bottom:12px;">
-        <div style="font-size:10px;opacity:.75;text-transform:uppercase;letter-spacing:1px;">10 Gbps PRO</div>
-        <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">15€</div>
-        <div style="font-size:11px;opacity:.7;">/mês + 20€ instalação (único)</div>
-        <div style="font-size:11px;opacity:.8;margin-top:4px;">ZTE 8748 · Wi-Fi 7</div>
-      </div>
-      <div style="font-size:13px;color:var(--text);line-height:1.8;">
-        ✅ Velocidade SIMÉTRICA (download = upload)<br>
-        ✅ Rede de fibra óptica própria DIGI<br>
-        ✅ Router gratuito incluído<br>
-        ✅ Instalação gratuita (exceto 10Gbps: +20€ único)<br>
-        ✅ Fidelização apenas 3 meses<br>
-        ✅ Premiada nPerf 2025 — fibra mais rápida
-      </div>
-      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:12px;margin-top:12px;font-size:13px;">
-        💡 <strong>Argumento:</strong> Fibra 1Gbps a 10€/mês vs MEO/NOS/Vodafone que cobram 30-50€. Poupança +240€/ano só na fibra!
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. TV -->
-  <div style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;">
-    <button onclick="toggleAcc(this)" style="width:100%;background:none;border:none;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:Inter;font-size:15px;font-weight:700;color:var(--text);">
-      <span>📺 TV DIGI</span><span style="color:var(--blue);font-size:20px;">+</span>
-    </button>
-    <div class="acc-body" style="display:none;padding:0 16px 16px;">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">+80 canais HD · Instalação gratuita</p>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div style="background:var(--blue);color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;">TV Isolada</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">12€</div>
-          <div style="font-size:11px;opacity:.7;">/mês</div>
-        </div>
-        <div style="background:#00B87A;color:#fff;border-radius:10px;padding:14px;text-align:center;">
-          <div style="font-size:10px;opacity:.75;">Com Net+Ilimitado</div>
-          <div style="font-family:'Bebas Neue';font-size:40px;line-height:1;">10€</div>
-          <div style="font-size:11px;opacity:.7;">/mês TV</div>
-        </div>
-      </div>
-      <div style="font-size:13px;color:var(--text);font-weight:700;margin-bottom:8px;">3 tipos de equipamento:</div>
-      <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:6px;font-size:13px;">
-        <b>CATV — Descodificador</b><br>
-        <span style="color:var(--muted);">⚠️ Sem Restart · ⚠️ Sem gravação · Sistema Android</span>
-      </div>
-      <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:6px;font-size:13px;">
-        <b>IPTV Box R1A</b><br>
-        <span style="color:var(--muted);">✅ Restart 7 dias · ⚠️ Sem gravação · Android</span>
-      </div>
-      <div style="background:var(--bg);border-radius:8px;padding:10px;margin-bottom:12px;font-size:13px;">
-        <b>IPTV Box R2A 🆕</b><br>
-        <span style="color:var(--muted);">✅ Android TV 12 (YouTube, Netflix, Disney+)<br>✅ 14 dias programação · ✅ 3 sessões simultâneas</span>
-      </div>
-      <div style="background:var(--blue);color:#fff;border-radius:8px;padding:12px;font-size:13px;">
-        💡 Pacote 3P: Net 1Gbps + TV + 1 Ilimitado = <strong>25€/mês</strong>. Concorrência cobra 60-80€!
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. MÓVEL -->
-  <div style="background:#fff;border:1px solid var(--border);border-radius:12px;margin-bottom:10px;overflow:hidden;">
-    <button onclick="toggleAcc(this)" style="width:100%;background:none;border:none;padding:16px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;font-family:Inter;font-size:15px;font-weight:700;color:var(--text);">
-      <span>📱 Móvel DIGI</span><span style="color:var(--blue);font-size:20px;">+</span>
-    </button>
-    <div class="acc-body" style="display:none;padding:0 16px 16px;">
-      <p style="font-size:12px;color:var(--muted);margin-bottom:12px;">5G · Chamadas ilimitadas · Dados acumuláveis · Sem fidelização</p>
-      
-      <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📦 ILIMITADO (5G + chamadas + dados)</div>
-      <div style="background:var(--bg);border-radius:8px;overflow:hidden;margin-bottom:12px;">
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;background:var(--blue);color:#fff;font-size:11px;font-weight:700;padding:8px;">
-          <div>Linhas</div><div style="text-align:center;">Sem Net</div><div style="text-align:right;">Com Net</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;font-size:13px;border-bottom:1px solid var(--border);">
-          <div>1 número</div><div style="text-align:center;font-weight:700;color:var(--blue);">6€</div><div style="text-align:right;font-weight:700;color:#00B87A;">5€</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;font-size:13px;border-bottom:1px solid var(--border);background:var(--pale);">
-          <div>2 números</div><div style="text-align:center;font-weight:700;color:var(--blue);">5,5€</div><div style="text-align:right;font-weight:700;color:#00B87A;">4,5€</div>
-        </div>
-        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:8px;font-size:13px;">
-          <div>3+ números</div><div style="text-align:center;font-weight:700;color:var(--blue);">5€</div><div style="text-align:right;font-weight:700;color:#00B87A;">4€</div>
-        </div>
-      </div>
-
-      <div style="font-weight:700;font-size:13px;color:var(--blue);margin-bottom:8px;">📊 Plafond de Dados (acumuláveis)</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;">
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">50 GB</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">4€</div>
-        </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">100 GB</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">5€</div>
-        </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">150 GB</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">6€</div>
-        </div>
-        <div style="background:var(--bg);border-radius:8px;padding:10px;text-align:center;">
-          <div style="font-size:10px;color:var(--muted);">200 GB + 400 min int.</div>
-          <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);">9€</d
+func
