@@ -1,27 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt">
 <head>
-<script>
-// Matar service worker e limpar cache
-if('serviceWorker' in navigator){
-  navigator.serviceWorker.getRegistrations().then(function(regs){
-    regs.forEach(function(r){ r.unregister(); });
-  });
-}
-if('caches' in window){
-  caches.keys().then(function(keys){
-    keys.forEach(function(k){ caches.delete(k); });
-  });
-}
-// Capturar erros JS e mostrar no ecra
-window.onerror = function(msg, src, line, col, err){
-  var d = document.createElement('div');
-  d.style.cssText = 'position:fixed;top:0;left:0;right:0;background:#E53935;color:#fff;padding:16px;font-family:monospace;font-size:13px;z-index:99999;';
-  d.innerHTML = '🔴 ERRO JS: ' + msg + '<br>Linha: ' + line + ':' + col;
-  document.body.appendChild(d);
-  return false;
-};
-</script>
 
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
@@ -814,4 +793,6 @@ function saveNotas(){localStorage.setItem("digi_notas",JSON.stringify(notas));}
 function openNotas(){loadNotas();renderNL();showScreen("notas");selNota(null);}
 function newNota(tag){const n={id:Date.now(),title:"",body:"",tag:tag||"nota",date:new Date().toLocaleDateString("pt-PT"),ts:Date.now()};notas.unshift(n);saveNotas();renderNL();selNota(n.id);setTimeout(()=>{const el=document.getElementById("notaTitleInput");if(el)el.focus();},100);}
 function selNota(id){curNota=id;document.querySelectorAll(".nitem").forEach(el=>el.classList.toggle("active",el.dataset.id==id));const empty=document.getElementById("notasEmpty");const inner=document.getElementById("notasInner");if(!id){empty.style.display="flex";inner.style.display="none";return;}const n=notas.find(x=>x.id==id);if(!n)return;empty.style.display="none";inner.style.display="flex";document.getElementById("notaTitleInput").value=n.title;document.getElementById("notaBodyInput").value=n.body;document.getElementById("notaTag").value=n.tag||"nota";}
-function saveNota(
+function saveNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!n)return;n.title=document.getElementById("notaTitleInput").value;n.body=document.getElementById("notaBodyInput").value;n.tag=document.getElementById("notaTag").value;n.ts=Date.now();notas=[n,...notas.filter(x=>x.id!==curNota)];saveNotas();renderNL();clearTimeout(saveTO);const s=document.getElementById("notaSaved");s.style.opacity="1";saveTO=setTimeout(()=>s.style.opacity="0",1500);}
+function deleteNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!confirm("Apagar?"))return;notas=notas.filter(x=>x.id!==curNota);saveNotas();renderNL();selNota(null);}
+function setNF(f,btn){notaFilter=f;document.querySelectorAll(".ntb").forEach(b=>b.classList.remove("active"));if(bt
