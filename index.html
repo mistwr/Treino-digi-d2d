@@ -367,16 +367,16 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
   </div>
   <div class="tl" id="txt-tools">Ferramentas DIGI</div>
   <div class="tr">
-    <a href="https://digi-accounts-sso.digimobil.es/v2/login" target="_blank" rel="noopener" class="tb"><span>🔗</span><span>DealerCare</span></a>
-    <a href="https://digiportugal.addingplus.net/menu" target="_blank" rel="noopener" class="tb"><span>🏠</span><span>Visitas</span></a>
-    <a href="https://quero-aderir-digi-pt.vercel.app/" target="_blank" rel="noopener" class="tb"><span>📊</span><span>Simulador</span></a>
+    <button class="tb" onclick="window.open('https://digi-accounts-sso.digimobil.es/v2/login','_blank')"><span>🔗</span><span>DealerCare</span></button>
+    <button class="tb" onclick="window.open('https://digiportugal.addingplus.net/menu','_blank')"><span>🏠</span><span>Visitas</span></button>
+    <button class="tb" onclick="window.open('https://quero-aderir-digi-pt.vercel.app/','_blank')"><span>📊</span><span>Simulador</span></button>
   </div>
-  <div class="tr" style="margin-top:6px;">
-    <a href="https://play.google.com/store/apps/details?id=ro.digionline.tv" target="_blank" rel="noopener" class="tb"><span>📺</span><span>DIGI TV</span></a>
-    <a href="https://www.digi.pt/tv/canais" target="_blank" rel="noopener" class="tb"><span>📡</span><span>Canais TV</span></a>
-    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener" class="tb"><span>🔐</span><span>2FA</span></a>
+  <div class="tr">
+    <button class="tb" onclick="window.open('https://play.google.com/store/apps/details?id=ro.digionline.tv','_blank')"><span>📺</span><span>DIGI TV</span></button>
+    <button class="tb" onclick="window.open('https://www.digi.pt/tv/canais','_blank')"><span>📡</span><span>Canais TV</span></button>
+    <button class="tb" onclick="window.open('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2','_blank')"><span>🔐</span><span>2FA</span></button>
   </div>
-  <!-- INSTALL BUTTON -->
+    <!-- INSTALL BUTTON -->
   <div class="install-row" style="margin-top:16px;">
     <button class="install-btn-main" onclick="openInstallModal()" id="txt-install">
       📲 Instalar App no Telemóvel
@@ -803,5 +803,4 @@ function deleteNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if
 function setNF(f,btn){notaFilter=f;document.querySelectorAll(".ntb").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");renderNL();}
 function renderNL(){const search=(document.getElementById("notasSearch")?.value||"").toLowerCase();const fl=notas.filter(n=>{return(!notaFilter||n.tag===notaFilter)&&(!search||n.title.toLowerCase().includes(search)||n.body.toLowerCase().includes(search));});const list=document.getElementById("notasList");if(!list)return;if(!fl.length){list.innerHTML=`<div style="text-align:center;padding:28px 12px;color:var(--muted);font-size:12px;">${notas.length?"—":"+"}</div>`;return;}const tm={nota:"📝",relatorio:"📊",objetivo:"🎯",cliente:"👤"};list.innerHTML=fl.map(n=>`<div class="nitem ${n.id==curNota?"active":""}" data-id="${n.id}" onclick="selNota(${n.id})"><div class="nit">${n.title||"—"}</div><div class="nip">${(n.body||"").slice(0,55)||"..."}</div><div class="nim"><span class="ntag ntag-${n.tag}">${tm[n.tag]||"📝"} ${n.tag}</span><span>${n.date}</span></div></div>`).join("");}
 function exportNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;const blob=new Blob([n.title+"\n"+"─".repeat(40)+"\n"+n.body+"\n\n"+n.date+" · DIGI Elite Trainer"],{type:"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(n.title||"nota")+".txt";a.click();}
-function copyNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;navigator.clipboard.writeText(n.title+"\n\n"+n.body).catch(()=>{});event.target.textContent="✅";setTimeout(()=>event.target.textContent="📋 Copiar",2000);}
-func
+function copyNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;navigator.clipboard.writeText(n.title+"\n\n"+n.body).catch(()=>{});event.target.textContent="✅";setTimeout(()=>event.target.textContent="📋 Copiar
