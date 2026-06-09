@@ -4,7 +4,7 @@
   "description": "Simulador de vendas porta a porta DIGI",
   "start_url": "/",
   "scope": "/",
-  "display": "standalone",
+  "display": "minimal-ui",
   "background_color": "#002BFF",
   "theme_color": "#002BFF",
   "orientation": "portrait-primary",
