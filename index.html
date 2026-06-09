@@ -20,8 +20,8 @@
 <style>
 :root{--blue:#002BFF;--blue2:#0022cc;--blue3:#3352FF;--pale:#E8ECFF;--ghost:rgba(0,43,255,0.07);--bg:#F4F6FF;--white:#fff;--border:#D6DCFF;--text:#0A0F2E;--muted:#6B7A99;--green:#00B87A;--red:#E53935;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
-.screen{display:none;min-height:100vh;flex-direction:column;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;position:relative;}
+.screen{display:none;min-height:100vh;flex-direction:column;width:100%;}
 .screen.active{display:flex;}
 .hdr{height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:var(--white);border-bottom:2px solid var(--blue);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,43,255,.08);}
 .lb{background:var(--blue);color:#fff;font-family:"Bebas Neue";font-size:22px;letter-spacing:3px;padding:4px 12px 2px;border-radius:4px;}
@@ -35,6 +35,23 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 .btn-w:hover{background:var(--pale);}
 .btn-f{width:100%;justify-content:center;}
 .btn-r{background:var(--red);border:none;color:#fff;}
+
+/* HOME MENU */
+
+
+/* SIDEBAR ICONS */
+.sico{width:54px;background:transparent;border:none;color:rgba(255,255,255,.45);font-size:18px;border-radius:8px;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;padding:6px 2px;transition:all .15s;text-decoration:none;flex-shrink:0;font-family:Inter;}
+.sico span{font-size:8px;font-weight:700;letter-spacing:.3px;text-transform:uppercase;line-height:1;}
+.sico:hover{background:rgba(255,255,255,.1);color:rgba(255,255,255,.9);}
+.sico.active{background:rgba(0,43,255,.4);color:#fff;border:1px solid rgba(0,43,255,.6);}
+/* HOME PANES */
+.hpane{display:none;}
+.hpane.active{display:block;animation:fu .2s ease;}
+/* SLIDESHOW */
+.slide{display:none;}
+.slide.active{display:flex;}
+.sdot{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer;transition:all .2s;}
+.sdot.active{background:#fff;width:18px;border-radius:3px;}
 /* LANG */
 .lang-bar{display:flex;gap:6px;justify-content:center;margin-bottom:20px;flex-wrap:wrap;}
 .lang-btn{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:18px;padding:6px 10px;border-radius:8px;cursor:pointer;transition:all .2s;line-height:1;}
@@ -340,47 +357,196 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 <body>
 
 <!-- HOME -->
-<div id="home" class="screen" style="display:flex;">
-<div class="hw">
-  <div class="htop">
-    <div style="display:flex;align-items:center;gap:10px;"><div class="lb">DIGI</div><div style="font-size:10px;font-weight:700;color:rgba(255,255,255,.4);letter-spacing:2px;text-transform:uppercase;">Elite Trainer</div></div>
-    <button class="hpill" onclick="openPerfil()"><div class="hav" id="hav">?</div><span id="hnm">Entrar</span></button>
+<div id="home" class="screen" style="flex-direction:column;height:100vh;max-height:100vh;background:#080C1A;overflow:hidden;">
+
+  <!-- TOP BAR (mobile) -->
+  <div style="background:#0A0F2E;border-bottom:1px solid rgba(0,43,255,.3);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="background:var(--blue);color:#fff;font-family:'Bebas Neue';font-size:18px;letter-spacing:3px;padding:3px 10px 1px;border-radius:4px;">DIGI</div>
+      <div style="font-size:9px;font-weight:700;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;">ELITE TRAINER</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:8px;">
+      <div style="display:flex;gap:2px;">
+        <button class="lang-btn active" onclick="setLang('pt',this)" style="font-size:14px;padding:3px 5px;">🇵🇹</button>
+        <button class="lang-btn" onclick="setLang('en',this)" style="font-size:14px;padding:3px 5px;">🇬🇧</button>
+        <button class="lang-btn" onclick="setLang('es',this)" style="font-size:14px;padding:3px 5px;">🇪🇸</button>
+        <button class="lang-btn" onclick="setLang('ro',this)" style="font-size:14px;padding:3px 5px;">🇷🇴</button>
+      </div>
+      <button onclick="openPerfil()" style="background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.15);color:#fff;font-family:Inter;font-size:11px;font-weight:600;padding:6px 10px;border-radius:20px;cursor:pointer;display:flex;align-items:center;gap:6px;">
+        <div style="width:22px;height:22px;background:var(--blue);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;" id="hav">?</div>
+        <span id="hnm">Entrar</span>
+      </button>
+    </div>
   </div>
-  <!-- LANGUAGE BAR -->
-  <div class="lang-bar">
-    <button class="lang-btn active" onclick="setLang('pt',this)" title="Português">🇵🇹</button>
-    <button class="lang-btn" onclick="setLang('en',this)" title="English">🇬🇧</button>
-    <button class="lang-btn" onclick="setLang('es',this)" title="Español">🇪🇸</button>
-    <button class="lang-btn" onclick="setLang('ro',this)" title="Română">🇷🇴</button>
-  </div>
-  <div style="font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:12px;" id="txt-eyebrow">Sistema de Alta Performance</div>
-  <h1 class="hh1" id="txt-h1">Treina.<br>Mede.<br><span>Fecha.</span></h1>
-  <p class="hp" id="txt-sub">Simulador porta a porta com IA · feedback real · resultados guardados.</p>
-  <button class="btn btn-w hcta" onclick="showScreen('menu')" id="txt-cta">Iniciar Simulação →</button>
-  <div class="pr">
-    <button class="pb" onclick="showScreen('quiz');initQuiz()" id="txt-quiz">⚡ Teste</button>
-    <button class="pb" onclick="showScreen('teoria')" id="txt-manual">📖 Manual</button>
-    <button class="pb" onclick="openNotas()" id="txt-notas">📝 Notas</button>
-    <button class="pb" onclick="showScreen('comissoes')" id="txt-com">💶 Comissões</button>
-    <button class="pb" onclick="showScreen('cvp')" style="min-width:100%;background:rgba(255,200,0,0.15);border-color:rgba(255,200,0,0.4);">📱 Consultar CVP</button>
-    <button class="pb" onclick="showScreen('formacao')" style="min-width:100%;background:rgba(0,255,150,0.1);border-color:rgba(0,255,150,0.3);">📚 Formação de Produto</button>
-  </div>
-  <div class="tl" id="txt-tools">Ferramentas DIGI</div>
-  <div class="tr">
-    <a href="https://digi-accounts-sso.digimobil.es/v2/login" target="_blank" rel="noopener noreferrer" class="tb"><span>🔗</span><span>DealerCare</span></a>
-    <a href="https://digiportugal.addingplus.net/menu" target="_blank" rel="noopener noreferrer" class="tb"><span>🏠</span><span>Visitas</span></a>
-    <a href="https://quero-aderir-digi-pt.vercel.app/" target="_blank" rel="noopener noreferrer" class="tb"><span>📊</span><span>Simulador</span></a>
-  </div>
-  <div class="tr">
-    <a href="https://play.google.com/store/apps/details?id=ro.digionline.tv" target="_blank" rel="noopener noreferrer" class="tb"><span>📺</span><span>DIGI TV</span></a>
-    <a href="https://www.digi.pt/tv/canais" target="_blank" rel="noopener noreferrer" class="tb"><span>📡</span><span>Canais TV</span></a>
-    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener noreferrer" class="tb"><span>🔐</span><span>2FA</span></a>
-  </div>
-    <!-- INSTALL BUTTON -->
-  <div class="install-row" style="margin-top:16px;">
-    <button class="install-btn-main" onclick="openInstallModal()" id="txt-install">
-      📲 Instalar App no Telemóvel
-    </button>
+
+  <!-- MAIN AREA: sidebar + content -->
+  <div style="display:flex;flex:1;min-height:0;">
+
+    <!-- SIDEBAR -->
+    <div style="width:62px;min-width:62px;background:linear-gradient(180deg,#0A0F2E 0%,#050810 100%);border-right:1px solid rgba(0,43,255,.2);display:flex;flex-direction:column;align-items:center;padding:8px 4px;gap:2px;overflow-y:auto;">
+      <button class="sico active" id="snav-sim" onclick="showPane('pane-sim',this)">🚀<span>Simular</span></button>
+      <button class="sico" id="snav-quiz" onclick="showPane('pane-quiz',this)">⚡<span>Teste</span></button>
+      <button class="sico" id="snav-manual" onclick="showPane('pane-manual',this)">📖<span>Manual</span></button>
+      <button class="sico" id="snav-notas" onclick="showPane('pane-notas',this)">📝<span>Notas</span></button>
+      <button class="sico" id="snav-com" onclick="showPane('pane-com',this)">💶<span>Comis.</span></button>
+      <button class="sico" id="snav-cvp" onclick="showPane('pane-cvp',this)">📱<span>CVP</span></button>
+      <button class="sico" id="snav-form" onclick="showPane('pane-form',this)">📚<span>Form.</span></button>
+      <div style="width:40px;height:1px;background:rgba(255,255,255,.1);margin:4px 0;"></div>
+      <a href="https://digi-accounts-sso.digimobil.es/v2/login" target="_blank" rel="noopener" class="sico">🔗<span>Dealer</span></a>
+      <a href="https://digiportugal.addingplus.net/menu" target="_blank" rel="noopener" class="sico">🏠<span>Visitas</span></a>
+      <a href="https://quero-aderir-digi-pt.vercel.app/" target="_blank" rel="noopener" class="sico">📊<span>Simul.</span></a>
+      <a href="https://play.google.com/store/apps/details?id=ro.digionline.tv" target="_blank" rel="noopener" class="sico">📺<span>DigiTV</span></a>
+      <a href="https://www.digi.pt/tv/canais" target="_blank" rel="noopener" class="sico">📡<span>Canais</span></a>
+      <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener" class="sico">🔐<span>2FA</span></a>
+      <div style="flex:1;"></div>
+      <button onclick="openInstallModal()" class="sico">📲<span>Instalar</span></button>
+    </div>
+
+    <!-- CONTENT PANES -->
+    <div style="flex:1;overflow-y:auto;overflow-x:hidden;background:#080C1A;">
+
+      <!-- PANE: SIMULAÇÃO -->
+      <div id="pane-sim" class="hpane active">
+        <!-- Slideshow -->
+        <div style="position:relative;height:220px;overflow:hidden;background:#0A0F2E;">
+          <div class="slide active" style="position:absolute;inset:0;padding:24px 20px;background:linear-gradient(135deg,#002BFF 0%,#0A0F2E 100%);display:flex;align-items:center;">
+            <div>
+              <div style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:8px;">Sistema de Alta Performance</div>
+              <div style="font-family:'Bebas Neue';font-size:52px;line-height:.88;letter-spacing:3px;color:#fff;margin-bottom:10px;">Treina.<br>Mede.<br><span style="-webkit-text-stroke:1.5px rgba(255,255,255,.35);-webkit-text-fill-color:transparent;">Fecha.</span></div>
+              <div style="font-size:12px;color:rgba(255,255,255,.5);">Simulador IA porta a porta</div>
+            </div>
+          </div>
+          <div class="slide" style="position:absolute;inset:0;padding:24px 20px;background:linear-gradient(135deg,#005a3c 0%,#00B87A 100%);display:flex;align-items:center;">
+            <div>
+              <div style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px;">Fibra Mais Rápida · nPerf 2025</div>
+              <div style="font-family:'Bebas Neue';font-size:60px;line-height:.88;letter-spacing:2px;color:#fff;margin-bottom:8px;">1 Gbps<br>10€/mês</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);">vs MEO/NOS/Vodafone 35-50€</div>
+            </div>
+          </div>
+          <div class="slide" style="position:absolute;inset:0;padding:24px 20px;background:linear-gradient(135deg,#92400e 0%,#F59E0B 100%);display:flex;align-items:center;">
+            <div>
+              <div style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px;">Argumento de Fecho</div>
+              <div style="font-family:'Bebas Neue';font-size:68px;line-height:.88;letter-spacing:2px;color:#fff;margin-bottom:8px;">+408€<br><span style="font-size:30px;">por ano</span></div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);">64€ - 30€ = 34€/mês × 12</div>
+            </div>
+          </div>
+          <div class="slide" style="position:absolute;inset:0;padding:24px 20px;background:linear-gradient(135deg,#1a0a3c 0%,#7C3AED 100%);display:flex;align-items:center;">
+            <div>
+              <div style="font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:8px;">Funil D2D DIGI</div>
+              <div style="font-family:'Bebas Neue';font-size:44px;line-height:.95;letter-spacing:2px;color:#fff;margin-bottom:8px;">80 Portas<br>→ 4 Adesões</div>
+              <div style="font-size:12px;color:rgba(255,255,255,.65);">40 aber. · 20 abord. · 10 ctrl.</div>
+            </div>
+          </div>
+          <!-- Dots -->
+          <div style="position:absolute;bottom:10px;left:50%;transform:translateX(-50%);display:flex;gap:5px;">
+            <div class="sdot active" onclick="goSlide(0)"></div>
+            <div class="sdot" onclick="goSlide(1)"></div>
+            <div class="sdot" onclick="goSlide(2)"></div>
+            <div class="sdot" onclick="goSlide(3)"></div>
+          </div>
+          <button onclick="prevSlide()" style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.35);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;">‹</button>
+          <button onclick="nextSlide()" style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,.35);border:none;color:#fff;width:28px;height:28px;border-radius:50%;cursor:pointer;font-size:14px;">›</button>
+        </div>
+
+        <!-- Content below slideshow -->
+        <div style="padding:16px;">
+          <button class="btn btn-f" onclick="showScreen('menu')" style="font-size:14px;padding:14px;border-radius:10px;margin-bottom:14px;">🚀 Iniciar Simulação →</button>
+          <!-- Stats -->
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:14px;">
+            <div style="background:rgba(0,43,255,.12);border:1px solid rgba(0,43,255,.25);border-radius:10px;padding:10px;text-align:center;">
+              <div style="font-family:'Bebas Neue';font-size:28px;color:var(--blue);line-height:1;">4</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Perfis IA</div>
+            </div>
+            <div style="background:rgba(0,184,122,.1);border:1px solid rgba(0,184,122,.25);border-radius:10px;padding:10px;text-align:center;">
+              <div style="font-family:'Bebas Neue';font-size:28px;color:var(--green);line-height:1;">10</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Quiz</div>
+            </div>
+            <div style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.25);border-radius:10px;padding:10px;text-align:center;">
+              <div style="font-family:'Bebas Neue';font-size:28px;color:#F59E0B;line-height:1;">7</div>
+              <div style="font-size:9px;color:rgba(255,255,255,.4);font-weight:700;text-transform:uppercase;letter-spacing:1px;">Módulos</div>
+            </div>
+          </div>
+          <!-- Quick grid -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+            <button onclick="showPane('pane-quiz',document.getElementById('snav-quiz'))" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;cursor:pointer;text-align:left;">
+              <div style="font-size:22px;margin-bottom:5px;">⚡</div>
+              <div style="font-weight:700;font-size:12px;color:#fff;">Teste Rápido</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);">10 perguntas</div>
+            </button>
+            <button onclick="showPane('pane-form',document.getElementById('snav-form'))" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;cursor:pointer;text-align:left;">
+              <div style="font-size:22px;margin-bottom:5px;">📚</div>
+              <div style="font-weight:700;font-size:12px;color:#fff;">Formação</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);">Preços 2025</div>
+            </button>
+            <button onclick="showPane('pane-cvp',document.getElementById('snav-cvp'))" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;cursor:pointer;text-align:left;">
+              <div style="font-size:22px;margin-bottom:5px;">📱</div>
+              <div style="font-weight:700;font-size:12px;color:#fff;">CVP</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);">Portabilidade</div>
+            </button>
+            <button onclick="showPane('pane-com',document.getElementById('snav-com'))" style="background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:10px;padding:14px;cursor:pointer;text-align:left;">
+              <div style="font-size:22px;margin-bottom:5px;">💶</div>
+              <div style="font-weight:700;font-size:12px;color:#fff;">Comissões</div>
+              <div style="font-size:10px;color:rgba(255,255,255,.4);">Escalões</div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- PANE: QUIZ -->
+      <div id="pane-quiz" class="hpane">
+        <div style="padding:24px 20px;">
+          <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">⚡ Teste Rápido</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;">10 perguntas sobre técnicas DIGI D2D</div>
+          <button class="btn btn-f" onclick="showScreen('quiz');initQuiz()" style="font-size:14px;padding:14px;">Começar Teste →</button>
+        </div>
+      </div>
+
+      <!-- PANE: MANUAL -->
+      <div id="pane-manual" class="hpane">
+        <div style="padding:24px 20px;">
+          <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📖 Manual Digital</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;">Filosofia, abordagem, objeções e fecho</div>
+          <button class="btn btn-f" onclick="showScreen('teoria')" style="font-size:14px;padding:14px;">Abrir Manual →</button>
+        </div>
+      </div>
+
+      <!-- PANE: NOTAS -->
+      <div id="pane-notas" class="hpane">
+        <div style="padding:24px 20px;">
+          <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📝 Notas</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;">Notas de campo e relatório de portas</div>
+          <button class="btn btn-f" onclick="openNotas()" style="font-size:14px;padding:14px;">Abrir Notas →</button>
+        </div>
+      </div>
+
+      <!-- PANE: COMISSÕES -->
+      <div id="pane-com" class="hpane">
+        <div style="padding:24px 20px;">
+          <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">💶 Comissões</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;">Tabela por serviço e calculadora</div>
+          <button class="btn btn-f" onclick="showScreen('comissoes')" style="font-size:14px;padding:14px;">Ver Comissões →</button>
+        </div>
+      </div>
+
+      <!-- PANE: CVP -->
+      <div id="pane-cvp" class="hpane">
+        <div style="padding:24px 20px;">
+          <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📱 CVP</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;">Código de portabilidade por operador</div>
+          <button class="btn btn-f" onclick="showScreen('cvp')" style="font-size:14px;padding:14px;">Consultar CVP →</button>
+        </div>
+      </div>
+
+      <!-- PANE: FORMAÇÃO -->
+      <div id="pane-form" class="hpane">
+        <div style="padding:24px 20px;">
+          <div style="font-family:'Bebas Neue';font-size:32px;letter-spacing:2px;color:var(--blue);margin-bottom:4px;">📚 Formação</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.5);margin-bottom:20px;">Internet, TV, Móvel, Pacotes e mais</div>
+          <button class="btn btn-f" onclick="showScreen('formacao')" style="font-size:14px;padding:14px;">Abrir Formação →</button>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 </div>
@@ -612,6 +778,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 
 <script>
 // ══ TRANSLATIONS ══
+// ══ TRANSLATIONS ══
 const T = {
   pt:{eyebrow:"Sistema de Alta Performance",h1:"Treina.<br>Mede.<br><span>Fecha.</span>",sub:"Simulador porta a porta com IA · feedback real · resultados guardados.",cta:"Iniciar Simulação →",quiz:"⚡ Teste",manual:"📖 Manual",notas:"📝 Notas",com:"💶 Comissões",tools:"Ferramentas DIGI",install:"📲 Instalar App no Telemóvel",loginTitle:"ELITE TRAINER",loginSub:"Entra com o teu nome e email para guardar os teus resultados",loginBtn:"Entrar →",nameLabel:"Nome",menuTitle:"ESCOLHE O CLIENTE",menuDesc:"Cada perfil exige uma abordagem diferente.",endBtn:"Terminar",trocas:"Trocas",fase:"Fase",perfil:"Perfil",funil:"Funil",perf:"Performance",histLabel:"Histórico",sims:"Simulações",best:"Melhor",avg:"Média",share:"PARTILHAR RESULTADO",shareSub:"Partilha com a equipa",copyBtn:"📋 Copiar",closeBtn:"Fechar",notasTitle:"Notas & Relatórios",relBtn:"📊 Relatório",noNota:"SEM NOTA",placeholder:"O que dizes ao cliente?",imt_title:"📲 INSTALAR APP",imt_sub:"Adiciona ao ecrã inicial para acesso rápido como uma app nativa.",imt_a1:"Abre o menu do Chrome <strong>⋮</strong>",imt_a2:"Toca em <strong>\"Adicionar ao ecrã inicial\"</strong>",imt_a3:"Confirma tocando em <strong>\"Adicionar\"</strong>",imt_i1:"Toca no ícone <strong>⬆️ Partilhar</strong> no Safari",imt_i2:"Toca em <strong>\"Adicionar ao Ecrã de Início\"</strong>",imt_i3:"Toca em <strong>\"Adicionar\"</strong>",installed:"✅ App já instalada!"},
   en:{eyebrow:"High Performance System",h1:"Train.<br>Measure.<br><span>Close.</span>",sub:"Door-to-door AI simulator · real feedback · saved results.",cta:"Start Simulation →",quiz:"⚡ Quiz",manual:"📖 Manual",notas:"📝 Notes",com:"💶 Commissions",tools:"DIGI Tools",install:"📲 Install App on Phone",loginTitle:"ELITE TRAINER",loginSub:"Enter your name and email to save your results",loginBtn:"Enter →",nameLabel:"Name",menuTitle:"CHOOSE CLIENT",menuDesc:"Each profile requires a different approach.",endBtn:"End",trocas:"Turns",fase:"Phase",perfil:"Profile",funil:"Funnel",perf:"Performance",histLabel:"History",sims:"Simulations",best:"Best",avg:"Average",share:"SHARE RESULT",shareSub:"Share with your team",copyBtn:"📋 Copy",closeBtn:"Close",notasTitle:"Notes & Reports",relBtn:"📊 Report",noNota:"NO NOTE",placeholder:"What do you say to the client?",imt_title:"📲 INSTALL APP",imt_sub:"Add to home screen for quick access like a native app.",imt_a1:"Open Chrome menu <strong>⋮</strong>",imt_a2:"Tap <strong>\"Add to Home screen\"</strong>",imt_a3:"Confirm by tapping <strong>\"Add\"</strong>",imt_i1:"Tap the <strong>⬆️ Share</strong> icon in Safari",imt_i2:"Tap <strong>\"Add to Home Screen\"</strong>",imt_i3:"Tap <strong>\"Add\"</strong>",installed:"✅ App already installed!"},
@@ -682,14 +849,50 @@ function applyLang() {
   if (btns[langMap[lang]]) btns[langMap[lang]].classList.add('active');
 }
 
+
+// ══ SLIDESHOW ══
+var slideIdx = 0;
+var slideTimer = null;
+function goSlide(n) {
+  var slides = document.querySelectorAll('.slide');
+  var dots = document.querySelectorAll('.sdot');
+  slides.forEach(function(s){ s.classList.remove('active'); });
+  dots.forEach(function(d){ d.classList.remove('active'); });
+  slideIdx = (n + slides.length) % slides.length;
+  slides[slideIdx].classList.add('active');
+  dots[slideIdx].classList.add('active');
+}
+function nextSlide(){ goSlide(slideIdx + 1); resetTimer(); }
+function prevSlide(){ goSlide(slideIdx - 1); resetTimer(); }
+function resetTimer(){
+  clearInterval(slideTimer);
+  slideTimer = setInterval(function(){ goSlide(slideIdx + 1); }, 4000);
+}
+
+// ══ HOME PANES ══
+function showPane(id, btn) {
+  document.querySelectorAll('.hpane').forEach(function(p){ p.classList.remove('active'); });
+  document.querySelectorAll('.snav').forEach(function(b){ b.classList.remove('active'); });
+  var p = document.getElementById(id);
+  if (p) p.classList.add('active');
+  if (btn) btn.classList.add('active');
+  else {
+    var navId = 'snav-' + id.replace('pane-','');
+    var nb = document.getElementById(navId);
+    if (nb) nb.classList.add('active');
+  }
+  if (id === 'pane-sim' && !slideTimer) resetTimer();
+}
+
 // ══ SCREEN ══
 function showScreen(id){
   document.querySelectorAll(".screen").forEach(function(s){s.classList.remove("active");});
   var t=document.getElementById(id);
   if(t)t.classList.add("active");
-  window.scrollTo(0,0);
+  window.scrollTo({top:0,left:0,behavior:'instant'});
   document.body.scrollTop=0;
   document.documentElement.scrollTop=0;
+  if(t)t.scrollTop=0;
   if(id==="formacao"){ fTab(0); }
 }
 
@@ -725,103 +928,4 @@ function useQR(btn){document.getElementById("chatInput").value=btn.textContent;s
 function showThink(){const msgs=document.getElementById("chatMessages");const d=document.createElement("div");d.className="msg client";d.id="tmsg";d.innerHTML=`<div class="mav">${state.client.icon}</div><div><div class="mb"><div class="th"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div></div></div>`;msgs.appendChild(d);msgs.scrollTop=msgs.scrollHeight;}
 function hideThink(){const el=document.getElementById("tmsg");if(el)el.remove();}
 async function sendMsg(){if(state.isThinking)return;const inp=document.getElementById("chatInput");const txt=inp.value.trim();if(!txt)return;inp.value="";state.turns++;state.isThinking=true;document.getElementById("sendBtn").disabled=true;document.getElementById("quickReplies").innerHTML="";addMsg("user",txt);updateStats();showThink();state.conversationHistory.push({role:"user",content:txt});try{const r=await callAI(txt);hideThink();state.score+=r.scoreDelta;updateStats();if(r.newPhase>state.phase)updateFunnel(r.newPhase);addMsg("client",r.clientReply,r.feedback,r.scoreDelta);state.conversationHistory.push({role:"assistant",content:r.clientReply});if(r.quickReplies&&r.quickReplies.length)setQR(r.quickReplies);renderMetrics();if(r.ended)setTimeout(()=>endSim(r.finalSummary),1200);}catch(e){hideThink();addSysMsg("⚠️ "+e.message);console.error(e);}state.isThinking=false;document.getElementById("sendBtn").disabled=false;}
-async function callAI(userMsg){const c=state.client;const hist=state.conversationHistory.slice(0,-1).map(m=>`${m.role==="user"?"CONSULTOR":"CLIENTE"}: ${m.content}`).join("\n");const sys=`${c.sp}\n\nINSTRUÇÕES: És simultaneamente CLIENTE (em personagem) e AVALIADOR das técnicas DIGI.\nResponde APENAS com JSON válido sem texto extra:\n{"clientReply":"resposta em pt-PT max 3 frases","feedback":"análise 1-2 frases","scoreDelta":10,"newPhase":${state.phase},"quickReplies":["s1","s2","s3"],"ended":false,"finalSummary":""}\nscoreDelta: 0-5 fraco 6-12 razoável 13-20 bom 21-25 excelente.\nnewPhase: 0=Abordagem 1=Diagnóstico 2=Proposta 3=Objeções 4=Fecho.\nended: true só se aceitou ou recusou definitivamente.\nFase: ${PHASES[state.phase]} | Score: ${state.score} | Trocas: ${state.turns}\n${hist?"Histórico:\n"+hist:"(início)"}`;const k=["gsk_tJ3vG71Yez9w","yW5ipxgkWGdyb3FY","rSu1lIezoqMOFUrBtDcWGiZV"].join("");const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+k},body:JSON.stringify({model:"meta-llama/llama-4-scout-17b-16e-instruct",messages:[{role:"system",content:sys},{role:"user",content:userMsg}],temperature:0.7,max_tokens:600,response_format:{type:"json_object"}})});if(!res.ok)throw new Error("Groq "+res.status);const data=await res.json();const raw=data?.choices?.[0]?.message?.content||"{}";const parsed=JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0]||"{}");parsed.scoreDelta=Math.max(0,Math.min(25,parseInt(parsed.scoreDelta)||5));parsed.newPhase=Math.max(state.phase,Math.min(4,parseInt(parsed.newPhase)??state.phase));if(!Array.isArray(parsed.quickReplies))parsed.quickReplies=[];if(!parsed.clientReply)parsed.clientReply=raw.slice(0,300);if(state.phase===0)state.metrics.abertura=Math.min(25,state.metrics.abertura+parsed.scoreDelta);else if(state.phase===1)state.metrics.diagnostico=Math.min(25,state.metrics.diagnostico+parsed.scoreDelta);else if(state.phase===3)state.metrics.objections=Math.min(25,state.metrics.objections+parsed.scoreDelta);else if(state.phase===4)state.metrics.fecho=Math.min(25,state.metrics.fecho+parsed.scoreDelta);return parsed;}
-function endSim(summary){const c=state.client;const t=T[lang];const grade=state.score>=80?"🏆 ELITE":state.score>=60?"⭐ BOM":state.score>=40?"📈 A MELHORAR":"💪 INICIANTE";document.getElementById("final-score").textContent=state.score;document.getElementById("res-sub").textContent=`${grade} · ${c.name} · ${state.turns} ${t.trocas}`;const m=state.metrics;document.getElementById("res-breakdown").innerHTML=["Abertura:"+m.abertura,"Diagnóstico:"+m.diagnostico,"Objeções:"+m.objections,"Fecho:"+m.fecho].map(x=>{const[l,v]=x.split(":");return`<div class="bdi"><div class="bdv">${v}</div><div class="bdl">${l}</div></div>`;}).join("");document.getElementById("res-feedback").innerHTML=summary?`<strong>IA:</strong><br>${summary}`:`<strong>${c.name}</strong> · ${state.score} pts · ${state.turns} ${t.trocas}`;saveResult();document.getElementById("res-btns").innerHTML=`<button class="btn btn-w" onclick="openShareLast()">↗ ${t.share.split(" ")[0]}</button><button class="btn" style="background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.3);" onclick="showScreen('menu')">${c.icon}</button><button class="btn btn-g" style="border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.7);" onclick="openPerfil()">👤</button>`;showScreen("results");}
-
-// ══ USER ══
-let currentUser=null;
-function loadUser(){try{const u=localStorage.getItem("digi_user");if(u)currentUser=JSON.parse(u);}catch(e){currentUser=null;}}
-function saveUser(){localStorage.setItem("digi_user",JSON.stringify(currentUser));}
-function doLogin(){const name=document.getElementById("lname").value.trim();const email=document.getElementById("lemail").value.trim();const err=document.getElementById("lerr");err.style.display="none";const t=T[lang];if(!name||name.length<2){err.textContent=t.nameLabel+" inválido.";err.style.display="block";return;}if(!email||!email.includes("@")){err.textContent="Email inválido.";err.style.display="block";return;}try{const ex=localStorage.getItem("digi_user");if(ex){const u=JSON.parse(ex);if(u.email===email){currentUser=u;currentUser.name=name;saveUser();afterLogin();return;}}}catch(e){}currentUser={name,email,since:new Date().toLocaleDateString("pt-PT",{month:"long",year:"numeric"}),history:[]};saveUser();afterLogin();}
-function afterLogin(){updateHU();showScreen("home");}
-function doLogout(){if(!confirm("Sair?"))return;currentUser=null;showScreen("login");}
-function updateHU(){if(!currentUser)return;const init=currentUser.name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);const a=document.getElementById("hav");if(a)a.textContent=init;const n=document.getElementById("hnm");if(n)n.textContent=currentUser.name.split(" ")[0];}
-function openPerfil(){if(!currentUser){showScreen("login");return;}renderPerfil();showScreen("perfil");}
-function renderPerfil(){const u=currentUser;const h=u.history||[];const init=u.name.split(" ").map(w=>w[0]).join("").toUpperCase().slice(0,2);document.getElementById("perfilAvatar").textContent=init;document.getElementById("perfilName").textContent=u.name.toUpperCase();document.getElementById("perfilEmail").textContent=u.email;document.getElementById("perfilSince").textContent="Membro desde "+(u.since||"—");const scores=h.map(x=>x.score);document.getElementById("ps-total").textContent=h.length;document.getElementById("ps-best").textContent=h.length?Math.max(...scores):0;document.getElementById("ps-avg").textContent=h.length?Math.round(scores.reduce((a,b)=>a+b,0)/h.length):0;const list=document.getElementById("historyList");if(!h.length){list.innerHTML="<div style='text-align:center;padding:32px;color:var(--muted);font-size:13px;'>—</div>";return;}list.innerHTML=[...h].reverse().map((x,i)=>{const grade=x.score>=80?"🏆":x.score>=60?"⭐":"📈";const bc=x.score>=80?"be":x.score>=60?"bb":"bo";const sc=x.score>=80?"gold":"";return`<div class="hi"><div class="his ${sc}">${x.score}</div><div class="hii"><div class="hin">${x.client}</div><div class="him">${x.date} · ${x.turns} trocas</div></div><span class="hib ${bc}">${grade}</span><button class="btn btn-g btn-sm" onclick="openShare(${h.length-1-i})" style="flex-shrink:0;margin-left:6px;">↗</button></div>`;}).join("");}
-function saveResult(){if(!currentUser)return;const c=state.client;if(!currentUser.history)currentUser.history=[];currentUser.history.push({id:Date.now(),score:state.score,client:c.name,turns:state.turns,date:new Date().toLocaleDateString("pt-PT")});saveUser();}
-
-// ══ SHARE ══
-let shareEntry=null;
-function openShare(idx){const u=currentUser;if(!u)return;shareEntry=u.history[idx];if(!shareEntry)return;const grade=shareEntry.score>=80?"🏆 ELITE":shareEntry.score>=60?"⭐ BOM":"📈 A MELHORAR";document.getElementById("sc-name").textContent=u.name.toUpperCase();document.getElementById("sc-score").textContent=shareEntry.score;document.getElementById("sc-client").textContent=shareEntry.client;document.getElementById("sc-grade").textContent=grade;document.getElementById("sc-date").textContent=shareEntry.date;document.getElementById("shareText").textContent=`🔵 DIGI ELITE TRAINER\n\n👤 ${u.name}\n🎯 ${shareEntry.client}\n📊 ${shareEntry.score} pts · ${grade}\n📅 ${shareEntry.date}\n\n"A matemática protege-te da emoção." — Manual DIGI`;document.getElementById("shareModal").classList.add("open");}
-function openShareLast(){if(currentUser&&currentUser.history&&currentUser.history.length)openShare(currentUser.history.length-1);}
-function closeShare(){document.getElementById("shareModal").classList.remove("open");}
-function copyShare(){const t=document.getElementById("shareText").textContent;navigator.clipboard.writeText(t).catch(()=>{const a=document.createElement("textarea");a.value=t;document.body.appendChild(a);a.select();document.execCommand("copy");document.body.removeChild(a);});const btn=event.target;btn.textContent="✅";setTimeout(()=>btn.innerHTML=T[lang].copyBtn,2000);}
-function shareWA(){window.open("https://wa.me/?text="+encodeURIComponent(document.getElementById("shareText").textContent),"_blank");}
-
-// ══ NOTAS ══
-let notas=[],curNota=null,notaFilter="",saveTO=null;
-function loadNotas(){try{notas=JSON.parse(localStorage.getItem("digi_notas")||"[]");}catch(e){notas=[];}}
-function saveNotas(){localStorage.setItem("digi_notas",JSON.stringify(notas));}
-function openNotas(){loadNotas();renderNL();showScreen("notas");selNota(null);}
-function newNota(tag){const n={id:Date.now(),title:"",body:"",tag:tag||"nota",date:new Date().toLocaleDateString("pt-PT"),ts:Date.now()};notas.unshift(n);saveNotas();renderNL();selNota(n.id);setTimeout(()=>{const el=document.getElementById("notaTitleInput");if(el)el.focus();},100);}
-function selNota(id){curNota=id;document.querySelectorAll(".nitem").forEach(el=>el.classList.toggle("active",el.dataset.id==id));const empty=document.getElementById("notasEmpty");const inner=document.getElementById("notasInner");if(!id){empty.style.display="flex";inner.style.display="none";return;}const n=notas.find(x=>x.id==id);if(!n)return;empty.style.display="none";inner.style.display="flex";document.getElementById("notaTitleInput").value=n.title;document.getElementById("notaBodyInput").value=n.body;document.getElementById("notaTag").value=n.tag||"nota";}
-function saveNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!n)return;n.title=document.getElementById("notaTitleInput").value;n.body=document.getElementById("notaBodyInput").value;n.tag=document.getElementById("notaTag").value;n.ts=Date.now();notas=[n,...notas.filter(x=>x.id!==curNota)];saveNotas();renderNL();clearTimeout(saveTO);const s=document.getElementById("notaSaved");s.style.opacity="1";saveTO=setTimeout(()=>s.style.opacity="0",1500);}
-function deleteNota(){if(!curNota)return;const n=notas.find(x=>x.id==curNota);if(!confirm("Apagar?"))return;notas=notas.filter(x=>x.id!==curNota);saveNotas();renderNL();selNota(null);}
-function setNF(f,btn){notaFilter=f;document.querySelectorAll(".ntb").forEach(b=>b.classList.remove("active"));if(btn)btn.classList.add("active");renderNL();}
-function renderNL(){const search=(document.getElementById("notasSearch")?.value||"").toLowerCase();const fl=notas.filter(n=>{return(!notaFilter||n.tag===notaFilter)&&(!search||n.title.toLowerCase().includes(search)||n.body.toLowerCase().includes(search));});const list=document.getElementById("notasList");if(!list)return;if(!fl.length){list.innerHTML=`<div style="text-align:center;padding:28px 12px;color:var(--muted);font-size:12px;">${notas.length?"—":"+"}</div>`;return;}const tm={nota:"📝",relatorio:"📊",objetivo:"🎯",cliente:"👤"};list.innerHTML=fl.map(n=>`<div class="nitem ${n.id==curNota?"active":""}" data-id="${n.id}" onclick="selNota(${n.id})"><div class="nit">${n.title||"—"}</div><div class="nip">${(n.body||"").slice(0,55)||"..."}</div><div class="nim"><span class="ntag ntag-${n.tag}">${tm[n.tag]||"📝"} ${n.tag}</span><span>${n.date}</span></div></div>`).join("");}
-function exportNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;const blob=new Blob([n.title+"\n"+"─".repeat(40)+"\n"+n.body+"\n\n"+n.date+" · DIGI Elite Trainer"],{type:"text/plain;charset=utf-8"});const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download=(n.title||"nota")+".txt";a.click();}
-function copyNota(){const n=notas.find(x=>x.id==curNota);if(!n)return;navigator.clipboard.writeText(n.title+"\n\n"+n.body).catch(()=>{});event.target.textContent="✅";setTimeout(()=>event.target.textContent="📋 Copiar",2000);}
-function shareNotaWA(){const n=notas.find(x=>x.id==curNota);if(!n)return;window.open("https://wa.me/?text="+encodeURIComponent("*"+n.title+"*\n\n"+n.body+"\n\n_"+n.date+" · DIGI_"),"_blank");}
-function openRelModal(){document.getElementById("rd").value=new Date().toISOString().split("T")[0];if(currentUser)document.getElementById("rv").value=currentUser.name;document.getElementById("relModal").classList.add("open");}
-function closeRelModal(){document.getElementById("relModal").classList.remove("open");}
-function gerarRel(){const g=id=>document.getElementById(id).value;const p=+g("rp")||0,ab=+g("ra")||0,ao=+g("rao")||0,co=+g("rc")||0,ad=+g("rads")||0;const body=`📅 ${g("rd")}\n👤 ${g("rv")||"—"}\n📍 ${g("rz")||"—"}\n\n${"━".repeat(20)}\nFUNIL\n${"━".repeat(20)}\n🚪 Portas: ${p}\n🔓 Aberturas: ${ab} (${p?Math.round(ab/p*100):0}%)\n💬 Abordagens: ${ao} (${ab?Math.round(ao/ab*100):0}%)\n🎯 Controlos: ${co} (${ao?Math.round(co/ao*100):0}%)\n✅ Adesões: ${ad} (${co?Math.round(ad/co*100):0}%)\n\n${ad>=4?"🏆 META ATINGIDA!":"Faltam "+Math.max(0,4-ad)+"/4"}${g("ro")?"\n\n📋 "+g("ro"):""}`;newNota("relatorio");setTimeout(()=>{document.getElementById("notaTitleInput").value="Relatório "+new Date(g("rd")).toLocaleDateString("pt-PT")+" · "+(g("rz")||"—");document.getElementById("notaBodyInput").value=body;document.getElementById("notaTag").value="relatorio";saveNota();},80);closeRelModal();}
-
-// ══ COMISSÕES ══
-const COM_TV   = [{l:"por activação",v:6}];
-const COM_FIB  = [
-  {l:"1 a 5/mês",v:6},{l:"6 a 10/mês",v:8},{l:"11 a 15/mês",v:10},
-  {l:"16 a 20/mês",v:15},{l:"21 a 50/mês",v:20},{l:"51 a 75/mês",v:20},{l:"75+/mês",v:20}
-];
-const COM_MOV  = [
-  {l:"1 a 50/mês",v:2},{l:"51 a 75/mês",v:2.5},{l:"75+/mês",v:3}
-];
-const COM_FIX  = [{l:"por activação",v:1}];
-
-function buildCom(){
-  const el=document.getElementById("comRows");
-  if(!el)return;
-  // Build 4 mini-tables
-  const fmt=v=>v%1===0?v+"€":v.toFixed(1)+"€";
-  const mkTable=(title,data,color)=>{
-    return '<div style="margin-bottom:16px;">'
-      +'<div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;color:'+color+';margin-bottom:6px;">'+title+'</div>'
-      +'<div style="background:var(--white);border-radius:10px;overflow:hidden;border:1px solid var(--border);">'
-      +'<div style="display:grid;grid-template-columns:1fr auto;background:'+color+';color:#fff;padding:8px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">'
-      +'<div>Escalão</div><div>Comissão</div></div>'
-      +data.map((r,i)=>'<div style="display:grid;grid-template-columns:1fr auto;padding:9px 12px;border-bottom:1px solid var(--border);background:'+(i%2?'var(--bg)':'var(--white)')+';">'
-        +'<div style="font-size:13px;color:var(--text);">'+r.l+'</div>'
-        +'<div style="font-size:14px;font-weight:800;color:'+color+';">'+fmt(r.v)+'</div>'
-        +'</div>').join('')
-      +'</div></div>';
-  };
-  el.innerHTML =
-    mkTable('📺 TV DIGI', COM_TV, '#002BFF') +
-    mkTable('🌐 Fibra DIGI', COM_FIB, '#002BFF') +
-    mkTable('📱 Móvel DIGI', COM_MOV, '#00B87A') +
-    mkTable('☎️ Voz Fixa DIGI', COM_FIX, '#6B7A99');
-}
-
-function calcCom(){
-  const g=id=>parseInt(document.getElementById(id)?.value)||0;
-  const tot=g("c-ades"),tv=g("c-tv"),fib=g("c-fib"),mov=g("c-mov"),fix=g("c-fix");
-  const res=document.getElementById("calcResult");
-  if(!res)return;
-  if(!tv&&!fib&&!mov&&!fix){res.style.display="none";return;}
-  // Fibra escalao based on fib count
-  const fe=COM_FIB.find((r,i)=>{
-    const limits=[[1,5],[6,10],[11,15],[16,20],[21,50],[51,75],[76,9999]];
-    return fib>=limits[i][0]&&fib<=limits[i][1];
-  })||COM_FIB[0];
-  // Movel escalao based on mov count
-  const me=mov<=50?COM_MOV[0]:mov<=75?COM_MOV[1]:COM_MOV[2];
-  const total=(tv*6)+(fib*fe.v)+(mov*me.v)+(fix*1);
-  res.style.display="block";
-  document.getElementById("cr-val").textContent=total.toFixed(2).replace(".",",")+" €";
-  document.getElementById("cr-det").innerHTML=
-    [tv&&tv+"×TV(6€)",fib&&fib+"×Fibra("+fe.v+"€) ["+fe.l+"]",
-     mov&&mov+"×Móvel("+me.v+"€) ["+me.l+"]",fix&&fix+"×Fixo(1€)"]
-    .filter(Boolean).join(" + ");
-}
-
-// ══ TEORIA ══
-const TEORIA=[{t:"Filosofia",s:"Consultor vs Vendedor",bl:[{i:"🎯",t:"Objetivo",b:"O vendedor procura aprovação. O consultor diagnostica e resolve um problema real."},{i:"📊",t:"Modelo Matemático",b:"80 portas → 40 abert
+async function callAI(userMsg){const c=state.client;const hist=state.conversationHistory.slice(0,-1).map(m=>`${m.role==="user"?"CONSULTOR":"CLIENTE"}: ${m.content}`).join("\n");const sys=`${c.sp}\n\nINSTRUÇÕES: És simultaneamente CLIENTE (em personagem) e AVALIADOR das técnicas DIGI.\nResponde APENAS com JSON válido sem texto extra:\n{"clientReply":"resposta em pt-PT max 3 frases","feedback":"análise 1-2 frases","scoreDelta":10,"newPhase":${state.phase},"quickReplies":["s1","s2","s3"],"ended":false,"finalSummary":""}\nscoreDelta: 0-5 fraco 6-12 razoável 13-20 bom 21-25 excelente.\nnewPhase: 0=Abordagem 1=Diagnóstico 2=Proposta 3=Objeções 4=Fecho.\nended: true só se aceitou ou recusou definitivamente.\nFase: ${PHASES[state.phase]} | Score: ${state.score} | Trocas: ${state.turns}\n${hist?"Histórico:\n"+hist:"(início)"}`;const k=["gsk_tJ3vG71Yez9w","yW5ipxgkWGdyb3FY","rSu1lIezoqMOFUrBtDcWGiZV"].join("");const res=await fetch("https://api.groq.com/openai/v1/chat/completions",{method:"POST",headers:{"Content-Type":"application/json","Authorization":"Bearer "+k},body:JSON.stringify({model:"meta-llama/llama-4-scout-17b-16e-instruct",messages:[{role:"system",content:sys},{role:"user",content:userMsg}],temperature:0.7,max_tokens:600,response_format:{type:"json_object"}})});if(!res.ok)throw new Error("Groq "+res.status);const data=await res.json();const raw=data?.choices?.[0]?.message?.content||"{}";const parsed=JSON.parse(raw.match(/\{[\s\S]*\}/)?.[0]||"{}");parsed.scoreDelta=Math.max(0,Math.min(25,parseInt(parsed.scoreDelta)||5));parsed.newPhase=Math.max(state.phase,Math.min(4,parseInt(parsed.newPhase)??state.phase));if(!Array.isArray(parsed.quickReplies))parsed.quickReplies=[];if(!parsed.clientReply)parsed.clientReply=raw.slice(0,300);if(state.phase===0)state.metrics.abertura=Math.min(25,state.metrics.abertura+parsed.scoreDelta);else if(state.phase===1)state.metrics.diagnostico=Math.min(25,state.metrics.diagnostico+parsed.scoreDelta);else if(state.phase===3)stat
