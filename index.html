@@ -20,7 +20,7 @@
 <style>
 :root{--blue:#002BFF;--blue2:#0022cc;--blue3:#3352FF;--pale:#E8ECFF;--ghost:rgba(0,43,255,0.07);--bg:#F4F6FF;--white:#fff;--border:#D6DCFF;--text:#0A0F2E;--muted:#6B7A99;--green:#00B87A;--red:#E53935;}
 *{margin:0;padding:0;box-sizing:border-box;}
-body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;}
 .screen{display:none;min-height:100vh;flex-direction:column;}
 .screen.active{display:flex;}
 .hdr{height:64px;padding:0 20px;display:flex;align-items:center;justify-content:space-between;background:var(--white);border-bottom:2px solid var(--blue);position:sticky;top:0;z-index:100;box-shadow:0 2px 12px rgba(0,43,255,.08);}
@@ -367,14 +367,14 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
   </div>
   <div class="tl" id="txt-tools">Ferramentas DIGI</div>
   <div class="tr">
-    <button class="tb" onclick="openLink('https://digi-accounts-sso.digimobil.es/v2/login')"><span>🔗</span><span>DealerCare</span></button>
-    <button class="tb" onclick="openLink('https://digiportugal.addingplus.net/menu')"><span>🏠</span><span>Visitas</span></button>
-    <button class="tb" onclick="openLink('https://quero-aderir-digi-pt.vercel.app/')"><span>📊</span><span>Simulador</span></button>
+    <a href="https://digi-accounts-sso.digimobil.es/v2/login" target="_blank" rel="noopener noreferrer" class="tb"><span>🔗</span><span>DealerCare</span></a>
+    <a href="https://digiportugal.addingplus.net/menu" target="_blank" rel="noopener noreferrer" class="tb"><span>🏠</span><span>Visitas</span></a>
+    <a href="https://quero-aderir-digi-pt.vercel.app/" target="_blank" rel="noopener noreferrer" class="tb"><span>📊</span><span>Simulador</span></a>
   </div>
   <div class="tr">
-    <button class="tb" onclick="openLink('https://play.google.com/store/apps/details?id=ro.digionline.tv')"><span>📺</span><span>DIGI TV</span></button>
-    <button class="tb" onclick="openLink('https://www.digi.pt/tv/canais')"><span>📡</span><span>Canais TV</span></button>
-    <button class="tb" onclick="openLink('https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2')"><span>🔐</span><span>2FA</span></button>
+    <a href="https://play.google.com/store/apps/details?id=ro.digionline.tv" target="_blank" rel="noopener noreferrer" class="tb"><span>📺</span><span>DIGI TV</span></a>
+    <a href="https://www.digi.pt/tv/canais" target="_blank" rel="noopener noreferrer" class="tb"><span>📡</span><span>Canais TV</span></a>
+    <a href="https://play.google.com/store/apps/details?id=com.google.android.apps.authenticator2" target="_blank" rel="noopener noreferrer" class="tb"><span>🔐</span><span>2FA</span></a>
   </div>
     <!-- INSTALL BUTTON -->
   <div class="install-row" style="margin-top:16px;">
@@ -547,7 +547,7 @@ body{font-family:Inter,sans-serif;background:var(--bg);color:var(--text);min-hei
 <div class="hdr"><div style="display:flex;align-items:center;"><div class="lb">DIGI</div><span class="ls" id="lbl-com-title">Comissões</span></div><button class="btn btn-g btn-sm" onclick="showScreen('home')">← Início</button></div>
 <div class="cw">
   <div style="margin-bottom:20px;"><div style="font-family:'Bebas Neue';font-size:34px;letter-spacing:2px;color:var(--blue);" id="com-h1">Tabela de Comissões</div><div style="font-size:13px;color:var(--muted);margin-top:3px;" id="com-h2">Por serviço activado · Soluções Diferentes / DIGI</div></div>
-  <div class="ctab"><div class="cth2"><div class="cthc" style="text-align:left;padding-left:14px;" id="lbl-ades-mes">Adesões/Mês</div><div class="cthc">📺 TV</div><div class="cthc">🌐 Fibra</div><div class="cthc">📱 Móvel</div><div class="cthc">☎️ Fixo</div></div><div id="comRows"></div></div>
+  <div id="comRows"></div>
   <div class="calb">
     <div style="font-family:'Bebas Neue';font-size:20px;letter-spacing:2px;color:var(--blue);margin-bottom:14px;" id="lbl-calc">💶 Calculadora</div>
     <div class="calg"><div class="calf"><label id="lbl-tot-ades">Total Adesões</label><input type="number" id="c-ades" min="0" placeholder="Ex: 20" oninput="calcCom()"></div><div class="calf"><label>TVs</label><input type="number" id="c-tv" min="0" placeholder="0" oninput="calcCom()"></div><div class="calf"><label>Fibras</label><input type="number" id="c-fib" min="0" placeholder="0" oninput="calcCom()"></div><div class="calf"><label id="lbl-moveis">Móveis</label><input type="number" id="c-mov" min="0" placeholder="0" oninput="calcCom()"></div><div class="calf"><label>Fixo</label><input type="number" id="c-fix" min="0" placeholder="0" oninput="calcCom()"></div></div>
@@ -688,6 +688,8 @@ function showScreen(id){
   var t=document.getElementById(id);
   if(t)t.classList.add("active");
   window.scrollTo(0,0);
+  document.body.scrollTop=0;
+  document.documentElement.scrollTop=0;
   if(id==="formacao"){ fTab(0); }
 }
 
@@ -765,182 +767,61 @@ function closeRelModal(){document.getElementById("relModal").classList.remove("o
 function gerarRel(){const g=id=>document.getElementById(id).value;const p=+g("rp")||0,ab=+g("ra")||0,ao=+g("rao")||0,co=+g("rc")||0,ad=+g("rads")||0;const body=`📅 ${g("rd")}\n👤 ${g("rv")||"—"}\n📍 ${g("rz")||"—"}\n\n${"━".repeat(20)}\nFUNIL\n${"━".repeat(20)}\n🚪 Portas: ${p}\n🔓 Aberturas: ${ab} (${p?Math.round(ab/p*100):0}%)\n💬 Abordagens: ${ao} (${ab?Math.round(ao/ab*100):0}%)\n🎯 Controlos: ${co} (${ao?Math.round(co/ao*100):0}%)\n✅ Adesões: ${ad} (${co?Math.round(ad/co*100):0}%)\n\n${ad>=4?"🏆 META ATINGIDA!":"Faltam "+Math.max(0,4-ad)+"/4"}${g("ro")?"\n\n📋 "+g("ro"):""}`;newNota("relatorio");setTimeout(()=>{document.getElementById("notaTitleInput").value="Relatório "+new Date(g("rd")).toLocaleDateString("pt-PT")+" · "+(g("rz")||"—");document.getElementById("notaBodyInput").value=body;document.getElementById("notaTag").value="relatorio";saveNota();},80);closeRelModal();}
 
 // ══ COMISSÕES ══
-const COM=[{l:"até 5",tv:6,f:6,m:2,fx:1,min:0,max:5},{l:"6 até 10",tv:6,f:8,m:2,fx:1,min:6,max:10},{l:"11 até 15",tv:6,f:10,m:2,fx:1,min:11,max:15},{l:"16 até 20",tv:6,f:15,m:2,fx:1,min:16,max:20},{l:"21 até 50",tv:6,f:20,m:2,fx:1,min:21,max:50},{l:"51 até 75",tv:6,f:20,m:2.5,fx:1,min:51,max:75},{l:"mais de 75",tv:6,f:20,m:3,fx:1,min:76,max:9999}];
-function buildCom(){const el=document.getElementById("comRows");if(!el)return;const fmt=v=>v%1===0?v+"€":v.toFixed(1)+"€";el.innerHTML=COM.map((r,i)=>`<div class="ctd2" style="background:${i%2?"var(--bg)":"var(--white)"}"><div class="ctdc" style="font-size:12px;font-weight:700;color:var(--text);text-align:left;padding-left:14px;">${r.l}</div><div class="ctdc">${fmt(r.tv)}</div><div class="ctdc">${fmt(r.f)}</div><div class="ctdc">${fmt(r.m)}</div><div class="ctdc">${fmt(r.fx)}</div></div>`).join("");}
-function calcCom(){const g=id=>parseInt(document.getElementById(id)?.value)||0;const tot=g("c-ades"),tv=g("c-tv"),fib=g("c-fib"),mov=g("c-mov"),fix=g("c-fix");const res=document.getElementById("calcResult");if(!res)return;if(!tot&&!tv&&!fib&&!mov&&!fix){res.style.display="none";return;}const e=COM.find(r=>tot>=r.min&&tot<=r.max)||COM[0];const total=(tv*e.tv)+(fib*e.f)+(mov*e.m)+(fix*e.fx);res.style.display="block";document.getElementById("cr-val").textContent=total.toFixed(2).replace(".",",")+"\xa0€";document.getElementById("cr-det").innerHTML="Escalão: <strong>"+e.l+"</strong> · "+[tv&&`${tv}×TV(${e.tv}€)`,fib&&`${fib}×Fibra(${e.f}€)`,mov&&`${mov}×Móvel(${e.m}€)`,fix&&`${fix}×Fixo(${e.fx}€)`].filter(Boolean).join(" + ");}
+const COM_TV   = [{l:"por activação",v:6}];
+const COM_FIB  = [
+  {l:"1 a 5/mês",v:6},{l:"6 a 10/mês",v:8},{l:"11 a 15/mês",v:10},
+  {l:"16 a 20/mês",v:15},{l:"21 a 50/mês",v:20},{l:"51 a 75/mês",v:20},{l:"75+/mês",v:20}
+];
+const COM_MOV  = [
+  {l:"1 a 50/mês",v:2},{l:"51 a 75/mês",v:2.5},{l:"75+/mês",v:3}
+];
+const COM_FIX  = [{l:"por activação",v:1}];
+
+function buildCom(){
+  const el=document.getElementById("comRows");
+  if(!el)return;
+  // Build 4 mini-tables
+  const fmt=v=>v%1===0?v+"€":v.toFixed(1)+"€";
+  const mkTable=(title,data,color)=>{
+    return '<div style="margin-bottom:16px;">'
+      +'<div style="font-family:Bebas Neue,sans-serif;font-size:18px;letter-spacing:2px;color:'+color+';margin-bottom:6px;">'+title+'</div>'
+      +'<div style="background:var(--white);border-radius:10px;overflow:hidden;border:1px solid var(--border);">'
+      +'<div style="display:grid;grid-template-columns:1fr auto;background:'+color+';color:#fff;padding:8px 12px;font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;">'
+      +'<div>Escalão</div><div>Comissão</div></div>'
+      +data.map((r,i)=>'<div style="display:grid;grid-template-columns:1fr auto;padding:9px 12px;border-bottom:1px solid var(--border);background:'+(i%2?'var(--bg)':'var(--white)')+';">'
+        +'<div style="font-size:13px;color:var(--text);">'+r.l+'</div>'
+        +'<div style="font-size:14px;font-weight:800;color:'+color+';">'+fmt(r.v)+'</div>'
+        +'</div>').join('')
+      +'</div></div>';
+  };
+  el.innerHTML =
+    mkTable('📺 TV DIGI', COM_TV, '#002BFF') +
+    mkTable('🌐 Fibra DIGI', COM_FIB, '#002BFF') +
+    mkTable('📱 Móvel DIGI', COM_MOV, '#00B87A') +
+    mkTable('☎️ Voz Fixa DIGI', COM_FIX, '#6B7A99');
+}
+
+function calcCom(){
+  const g=id=>parseInt(document.getElementById(id)?.value)||0;
+  const tot=g("c-ades"),tv=g("c-tv"),fib=g("c-fib"),mov=g("c-mov"),fix=g("c-fix");
+  const res=document.getElementById("calcResult");
+  if(!res)return;
+  if(!tv&&!fib&&!mov&&!fix){res.style.display="none";return;}
+  // Fibra escalao based on fib count
+  const fe=COM_FIB.find((r,i)=>{
+    const limits=[[1,5],[6,10],[11,15],[16,20],[21,50],[51,75],[76,9999]];
+    return fib>=limits[i][0]&&fib<=limits[i][1];
+  })||COM_FIB[0];
+  // Movel escalao based on mov count
+  const me=mov<=50?COM_MOV[0]:mov<=75?COM_MOV[1]:COM_MOV[2];
+  const total=(tv*6)+(fib*fe.v)+(mov*me.v)+(fix*1);
+  res.style.display="block";
+  document.getElementById("cr-val").textContent=total.toFixed(2).replace(".",",")+" €";
+  document.getElementById("cr-det").innerHTML=
+    [tv&&tv+"×TV(6€)",fib&&fib+"×Fibra("+fe.v+"€) ["+fe.l+"]",
+     mov&&mov+"×Móvel("+me.v+"€) ["+me.l+"]",fix&&fix+"×Fixo(1€)"]
+    .filter(Boolean).join(" + ");
+}
 
 // ══ TEORIA ══
-const TEORIA=[{t:"Filosofia",s:"Consultor vs Vendedor",bl:[{i:"🎯",t:"Objetivo",b:"O vendedor procura aprovação. O consultor diagnostica e resolve um problema real."},{i:"📊",t:"Modelo Matemático",b:"80 portas → 40 aberturas → 20 abordagens → 10 controlos → 4 adesões."},{i:"💎",t:"Responsabilidade",b:"O resultado depende da tua execução. Sem desculpas."}],q:'"Quem ouve melhor, vende melhor."'},{t:"Abordagem",s:"Os primeiros 20 segundos",bl:[{i:"🧍",t:"Linguagem Corporal",b:"Postura aberta. Passo atrás após bater — dá espaço, elimina ameaça."},{i:"🗣️",t:"Tom",b:"Fala mais devagar. Tom firme. Usa pausas."},{i:"✅",t:"Script",b:'"Bom dia, sou da DIGI. Posso mostrar-lhe em 2 min quanto pode poupar?"'}],q:'"De desconhecido a consultor de confiança."'},{t:"Diagnóstico",s:"Escuta ativa",bl:[{i:"❓",t:"Perguntas",b:"1. Operador? 2. Quanto paga? 3. O que menos satisfaz? 4. Fidelização? 5. Telemóveis? 6. Decisor?"},{i:"🤫",t:"Silêncio",b:"Após pergunta-chave, pausa. O cliente revela a dor real."},{i:"👤",t:"Decisor",b:"Confirma cedo quem assina."}],q:'"O diagnóstico é escuta ativa."'},{t:"Objeções",s:"Reenquadramento honesto",bl:[{i:"🆕",t:'"DIGI é nova"',b:'Rede própria, premiada nPerf 2025. Posso mostrar os testes.'},{i:"📋",t:'"Mudar dá trabalho"',b:'Tratamos da portabilidade. O passo é só dizer "sim".'},{i:"🔒",t:'"Tenho fidelização"',b:'Sem problema — agendamos. Entretanto deixo a simulação.'}],q:'"A confiança é o teu maior ativo."'},{t:"Fecho",s:"Consequência natural",bl:[{i:"✅",t:"Assumido",b:'"Para registar preciso do CC e IBAN. Tem aí consigo?"'},{i:"🅰️",t:"Alternativa Dupla",b:'"Prefere quinta manhã ou sexta tarde?"'},{i:"🤐",t:"Com Pausa",b:'"Avançamos com a combinação que poupa 34€/mês?" (pausa)'}],q:'"O fecho é consequência de um bom diagnóstico."'},{t:"Perfis",s:"4 tipos de cliente",bl:[{i:"🧔",t:"Desconfiado",b:"Dados técnicos. nPerf 2025. Técnico."},{i:"👩‍💼",t:"Apressado",b:'"2 min, preço direto. Sem fidelização longa."'},{i:"👨‍💻",t:"Racional",b:"ROI claro, poupança anual, preços congelados."},{i:"👵",t:"Indeciso",b:"2 opções claras. Sai em 3 meses. Baixo risco."}],q:'"Adapta a linguagem ao cliente."'}];
-function buildTeoria(){const tabs=document.getElementById("teoriaTabs");const cards=document.getElementById("teoriaCards");if(!tabs||!cards)return;tabs.innerHTML=TEORIA.map((t,i)=>`<button class="ttab ${i===0?"active":""}" onclick="showTc(${i},this)">${t.t}</button>`).join("");cards.innerHTML=TEORIA.map((t,i)=>`<div class="tcard ${i===0?"active":""}" id="tc-${i}"><div class="tcti">${t.t.toUpperCase()}</div><div class="tcsu">${t.s}</div>${t.bl.map(b=>`<div class="tcbl"><div class="tcblt">${b.i} ${b.t}</div><p>${b.b}</p></div>`).join("")}<div class="tcq">${t.q}</div></div>`).join("");}
-function showTc(i,btn){document.querySelectorAll(".tcard").forEach(c=>c.classList.remove("active"));document.querySelectorAll(".ttab").forEach(t=>t.classList.remove("active"));document.getElementById("tc-"+i).classList.add("active");btn.classList.add("active");}
-
-// ══ QUIZ ══
-const QUIZ=[{q:"Qual é o objetivo do funil DIGI com 80 portas/dia?",opts:["10 adesões","4 adesões","20 adesões","8 adesões"],c:1,fb:"80 → 40 → 20 → 10 → 4 adesões/dia."},{q:"Técnica para fechar com cliente indeciso?",opts:["Pressionar","5 opções","2 opções + baixo risco","Oferta acaba hoje"],c:2,fb:"2 opções claras + garantia de saída em 3 meses."},{q:"Taxa de Abertura < 50% significa?",opts:["Produto mau","Presença fraca","Preço alto","Sem fidelização"],c:1,fb:"Problema na presença/apresentação — primeiros 20 segundos."},{q:"Como responder a 'Tenho fidelização'?",opts:["DIGI paga","Insistir","Agendar + simulação","Ignorar"],c:2,fb:"Sem problema — agendamos. Deixo simulação sem compromisso."},{q:"Script de Alternativa Dupla?",opts:["Quer ou não?","Quinta manhã ou sexta tarde?","Volto amanhã?","Assine aqui"],c:1,fb:"Dois momentos positivos — ambos assumem que avança."},{q:"Prémio DIGI para o Desconfiado?",opts:["SAPO","nPerf 2025 — fibra mais rápida","ANACOM","Top Marca"],c:1,fb:"Rede própria, premiada nPerf 2025."},{q:"Objetivo do silêncio no diagnóstico?",opts:["Tensão","Dar espaço ao cliente","Mostrar experiência","Esperar"],c:1,fb:"Silêncio = controlo. Cliente revela a dor real."},{q:"Poupança ilustrativa Manual DIGI?",opts:["200€/ano","300€/ano","408€/ano","600€/ano"],c:2,fb:"64€ - 30€ = 34€/mês × 12 = 408€/ano."},{q:"Comportamento ao bater à porta?",opts:["Encostar","Passo atrás","Tocar 2x","Falar logo"],c:1,fb:"Passo atrás = elimina ameaça."},{q:"O que distingue o Consultor de Elite?",opts:["Mais produtos","Espera reação","Vende features","Resolve o problema e guia com perguntas"],c:3,fb:"Resolve o problema, guia com perguntas, constrói confiança."}];
-let qs={idx:0,score:0,ans:false};
-function initQuiz(){qs={idx:0,score:0,ans:false};renderQuiz();}
-function renderQuiz(){const q=QUIZ[qs.idx];document.getElementById("quizProg").innerHTML=QUIZ.map((_,i)=>`<div class="qp ${i<qs.idx?"done":""}"></div>`).join("");document.getElementById("quizQ").textContent=`${qs.idx+1}. ${q.q}`;document.getElementById("quizOpts").innerHTML=q.opts.map((o,i)=>`<button class="qopt" onclick="ansQ(${i})">${o}</button>`).join("");document.getElementById("quizFb").classList.remove("show");document.getElementById("quizNext").style.display="none";qs.ans=false;}
-function ansQ(i){if(qs.ans)return;qs.ans=true;const q=QUIZ[qs.idx];const opts=document.querySelectorAll(".qopt");opts[i].classList.add(i===q.c?"correct":"wrong");opts[q.c].classList.add("correct");if(i===q.c)qs.score++;const fb=document.getElementById("quizFb");fb.textContent=q.fb;fb.classList.add("show");const nx=document.getElementById("quizNext");nx.style.display="block";nx.textContent=qs.idx<QUIZ.length-1?"Próxima →":`Resultado: ${qs.score}/${QUIZ.length}`;}
-function nextQuiz(){if(qs.idx<QUIZ.length-1){qs.idx++;renderQuiz();}else{const pct=Math.round(qs.score/QUIZ.length*100);document.getElementById("quizQ").innerHTML='<div style="font-size:48px;font-weight:900;color:var(--blue);">'+qs.score+'/'+QUIZ.length+'</div><div style="font-size:15px;margin-top:8px;">'+(pct>=80?'🏆 Elite!':pct>=60?'⭐ Bom!':'💪 Continua!')+'</div>';document.getElementById("quizOpts").innerHTML="";document.getElementById("quizFb").classList.remove("show");const nx=document.getElementById("quizNext");nx.textContent="← Recomeçar";nx.onclick=initQuiz;}}
-
-// ══ PWA INSTALL ══
-let deferredPrompt=null;
-
-window.addEventListener("beforeinstallprompt",e=>{
-  e.preventDefault();
-  deferredPrompt=e;
-  // Show native button in modal
-  const nb=document.getElementById("nativeInstallBtn");
-  if(nb){nb.style.display="block";}
-});
-
-window.addEventListener("appinstalled",()=>{
-  deferredPrompt=null;
-  closeInstallModal();
-});
-
-function openInstallModal(){
-  const isStandalone=window.navigator.standalone===true||window.matchMedia("(display-mode: standalone)").matches;
-  if(isStandalone){alert(T[lang].installed||"✅ App já instalada!");return;}
-  const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
-  document.getElementById("androidSteps").style.display=isIOS?"none":"block";
-  document.getElementById("iosSteps").style.display=isIOS?"block":"none";
-  const nb=document.getElementById("nativeInstallBtn");
-  if(nb)nb.style.display=deferredPrompt?"block":"none";
-  document.getElementById("installModal").classList.add("open");
-}
-
-function closeInstallModal(){document.getElementById("installModal").classList.remove("open");}
-
-function doNativeInstall(){
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
-  deferredPrompt.userChoice.then(()=>{deferredPrompt=null;closeInstallModal();});
-}
-
-// Close modal on bg click
-document.getElementById("installModal").addEventListener("click",function(e){if(e.target===this)closeInstallModal();});
-["shareModal","relModal"].forEach(id=>{const el=document.getElementById(id);if(el)el.addEventListener("click",function(e){if(e.target===this)this.classList.remove("open");});});
-
-// ══ SERVICE WORKER ══
-// SW desativado para evitar cache
-
-
-// ══ CVP ══
-const CVP_DATA = [
-  {op:"NOS", emoji:"📡", color:"#000", bg:"#f0f0f0", type:"movel",
-   steps:["Envia SMS para <b>1242</b>","Texto da SMS: <b>CVP 123456789</b> (substitui pelo NIF do cliente)","Liga para <b>1242</b> e segue instruções"],
-   sms:"1242", smsBody:"CVP ", call:"1242"},
-  {op:"Vodafone", emoji:"🔴", color:"#fff", bg:"#e60000", type:"movel",
-   steps:["Envia SMS para <b>12815</b> com a palavra <b>CVP</b>","Liga para <b>12815</b> e segue instruções"],
-   sms:"12815", smsBody:"CVP", call:"12815"},
-  {op:"MEO", emoji:"🔵", color:"#fff", bg:"#0066cc", type:"movel",
-   steps:["Envia SMS para <b>16200</b> com a palavra <b>CVP</b>","Liga para <b>16200</b> e segue instruções"],
-   sms:"16200", smsBody:"CVP", call:"16200"},
-  {op:"WTF / WOO", emoji:"🟢", color:"#fff", bg:"#00b04f", type:"movel",
-   steps:["Envia SMS para <b>1242</b>","Texto: <b>CVP 123456789</b> (NIF do cliente)","Liga para <b>1242</b> e segue instruções"],
-   sms:"1242", smsBody:"CVP ", call:"1242"},
-  {op:"Amigo (NOS)", emoji:"💜", color:"#fff", bg:"#6600cc", type:"movel",
-   steps:["Através da app <b>Amigo</b>","Liga para <b>923171717</b> e segue instruções"],
-   call:"923171717"},
-  {op:"UZO", emoji:"🟡", color:"#000", bg:"#ffdd00", type:"movel",
-   steps:["Liga para <b>707960000</b> e segue instruções"],
-   call:"707960000"},
-  {op:"Lycamobile", emoji:"🌿", color:"#fff", bg:"#00a651", type:"movel",
-   steps:["Envia email para <b>cs@lycamobile.pt</b>","Liga para <b>265001632</b> e segue instruções"],
-   call:"265001632"},
-  {op:"Yorn (Vodafone)", emoji:"🟠", color:"#fff", bg:"#ff6600", type:"movel",
-   steps:["Envia SMS para <b>12815</b> com a palavra <b>CVP</b>","Liga para <b>12715</b> e segue instruções"],
-   sms:"12815", smsBody:"CVP", call:"12715"},
-  {op:"NOWO", emoji:"⚫", color:"#fff", bg:"#222222", type:"movel",
-   steps:["Envia SMS para <b>928190785</b> com a palavra <b>CVP</b>","Liga para <b>210850083</b> e segue instruções"],
-   sms:"928190785", smsBody:"CVP", call:"210850083"},
-  {op:"MEO (Fibra/Fixo)", emoji:"🔵", color:"#fff", bg:"#0066cc", type:"fixo",
-   steps:["Liga para <b>16200</b> (Apoio ao Cliente MEO)","Pede o Código de Portabilidade para a linha fixa","Segue as instruções do assistente"],
-   call:"16200"},
-  {op:"NOS (Fibra/Fixo)", emoji:"📡", color:"#000", bg:"#f0f0f0", type:"fixo",
-   steps:["Liga para <b>1242</b> (Apoio ao Cliente NOS)","Pede o Código de Portabilidade para a linha fixa","Segue as instruções do assistente"],
-   call:"1242"},
-  {op:"Vodafone (Fibra/Fixo)", emoji:"🔴", color:"#fff", bg:"#e60000", type:"fixo",
-   steps:["Liga para <b>12815</b> (Apoio ao Cliente Vodafone)","Pede o Código de Portabilidade para a linha fixa"],
-   call:"12815"},
-];
-
-let cvpFilter = 'all';
-
-function filterCVP(f, btn) {
-  cvpFilter = f;
-  document.querySelectorAll('#cvp .ntb').forEach(b => b.classList.remove('active'));
-  if (btn) btn.classList.add('active');
-  renderCVP();
-}
-
-function renderCVP() {
-  var list = document.getElementById('cvpList');
-  if (!list) return;
-  var filtered = CVP_DATA.filter(function(c){ return cvpFilter === 'all' || c.type === cvpFilter; });
-  list.innerHTML = filtered.map(function(c) {
-    var stepsHtml = c.steps.map(function(step){ return '<div class="cvp-step">'+step+'</div>'; }).join('');
-    var smsBtn = '';
-    var callBtn = '';
-    if (c.sms) {
-      var smsUrl = 'sms:' + c.sms + '?body=' + encodeURIComponent(c.smsBody);
-      smsBtn = '<button style="display:inline-flex;align-items:center;gap:6px;background:var(--blue);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;margin-top:8px;cursor:pointer;" onclick="location.href=decodeURIComponent(this.dataset.url)" data-url="' + encodeURIComponent(smsUrl) + '">💬 SMS ' + c.sms + '</button>';
-    }
-    if (c.call) {
-      var callUrl = 'tel:' + c.call;
-      callBtn = '<button style="display:inline-flex;align-items:center;gap:6px;background:var(--green);color:#fff;border:none;border-radius:20px;padding:7px 14px;font-size:12px;font-weight:700;margin-top:8px;margin-left:6px;cursor:pointer;" onclick="location.href=decodeURIComponent(this.dataset.url)" data-url="' + encodeURIComponent(callUrl) + '">📞 ' + c.call + '</button>';
-    }
-    return '<div class="cvp-card">'
-      + '<div class="cvp-op">'
-      + '<div class="cvp-logo" style="background:' + c.bg + ';color:' + c.color + ';">' + c.emoji + '</div>'
-      + '<div><div class="cvp-name">' + c.op + '</div>'
-      + '<div class="cvp-type">' + (c.type === 'movel' ? '📱 Voz Móvel' : '☎️ Fixo / Fibra') + '</div></div>'
-      + '</div>'
-      + stepsHtml
-      + '<div style="display:flex;flex-wrap:wrap;gap:4px;">' + smsBtn + callBtn + '</div>'
-      + '</div>';
-  }).join('');
-}
-
-
-
-
-
-// ══ FORMAÇÃO TABS ══
-function fTab(i) {
-  for(var n=0;n<8;n++){
-    var p=document.getElementById('fp'+n);
-    var t=document.getElementById('ft'+n);
-    if(p) p.style.display = (n===i)?'block':'none';
-    if(t){
-      if(n===i){
-        t.style.background='var(--blue)';
-        t.style.borderColor='var(--blue)';
-        t.style.color='#fff';
-      } else {
-        t.style.background='var(--white)';
-        t.style.borderColor='var(--border)';
-        t.style.color='var(--muted)';
-      }
-    }
-  }
-}
-
-
-// ══ CANAIS TV ══
-// ══ OPEN LINK ══
-function openLink(url) {
-  var w = window.open(url, '_blank', 'noopener,noreferrer');
-  if (!w) { location.href = url; }
-}
-
-// ══ INIT ══
-// INIT
-if('serviceWorker' in navigator){navigator.serviceWorker.getRegistrations().then(function(r){r.forEach(function(s){s.unregister();});});}
-if('caches' in window){caches.keys().then(function(k){k.forEach(function(c){caches.delete(c);});});}
-loadUser();loadNotas();buildClientMenu();buildTeoria();buildCom();renderCVP();
-applyLang();
-if(currentUser){updateHU();showScreen("home");}else{showScreen("login");}
-</script>
-</body>
-</html>
+const TEORIA=[{t:"Filosofia",s:"Consultor vs Vendedor",bl:[{i:"🎯",t:"Objetivo",b:"O vendedor procura aprovação. O consultor diagnostica e resolve um problema real."},{i:"📊",t:"Modelo Matemático",b:"80 portas → 40 abert
